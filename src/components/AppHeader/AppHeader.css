@@ -1,0 +1,10 @@
+.wrapper{
+  padding: 32px;
+  display: flex;
+  gap: 32px;
+}
+
+.box{
+  display: flex;
+  flex-direction: column;
+}
