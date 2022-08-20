@@ -5,7 +5,8 @@ import { useLocation, useNavigate, Route, Routes } from "react-router-dom";
 import "./AppHeader.css";
 
 const { RangePicker } = DatePicker;
-const status = [0, 1, 2, 3, 4]
+const status = [0, 1, 2, 3, 4];
+
 const AppHeader = () => {
   const { days, setDays } = useState();
   return (

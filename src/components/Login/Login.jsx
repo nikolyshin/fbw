@@ -1,87 +1,92 @@
-import { Button, Form, Input } from 'antd';
-import React from 'react';
-import { fetchToken } from '../../api';
+import { Button, Form, Input, Spin, Alert } from "antd";
+import React, { useState } from "react";
+import { fetchToken } from "../../api";
+import { useCookies } from 'react-cookie';
 import "./Login.css";
 
-const Login = ({ setAuth }) => {
+const Login = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [cookies, setCookie] = useCookies();
 
   const onFinishFailed = (errorInfo) => {
-    console.log('Failed:', errorInfo);
+    console.log("Failed:", errorInfo);
   };
 
   const onFinish = async ({ email, password }) => {
     try {
-      // setLoader(true);
+      setLoading(true);
       const res = await fetchToken({
         email,
         password,
       });
-      console.log(res)
-      if (res.success) {
-
+      if (res.access) {
+        setCookie("token",res.access)
       } else {
-        // setError(res.error.message);
+        setError(res.detail);
       }
     } catch (error) {
       console.log(error);
     } finally {
-      // setLoader(false);
+      setLoading(false);
     }
   };
 
   return (
-    <div className='loginWrapper'>
-      <Form
-        name="basic"
-        labelCol={{
-          span: 8,
-        }}
-        wrapperCol={{
-          span: 16,
-        }}
-        onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
-        autoComplete="off"
-      >
-        <Form.Item
-          label="Email"
-          name="email"
-          rules={[
-            {
-              required: true,
-              message: 'Please input your Email!',
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
-
-        <Form.Item
-          label="Password"
-          name="password"
-          rules={[
-            {
-              required: true,
-              message: 'Please input your password!',
-            },
-          ]}
-        >
-          <Input.Password />
-        </Form.Item>
-
-        <Form.Item
+    <div className="loginWrapper">
+      <Spin spinning={loading}>
+        <Form
+          name="basic"
+          labelCol={{
+            span: 8,
+          }}
           wrapperCol={{
-            offset: 8,
             span: 16,
           }}
+          onFinish={onFinish}
+          onFinishFailed={onFinishFailed}
+          autoComplete="off"
         >
-          <Button type="primary" htmlType="submit">
-            Войти
-          </Button>
-        </Form.Item>
-      </Form>
-    </div>
+          <Form.Item
+            label="Email"
+            name="email"
+            rules={[
+              {
+                required: true,
+                message: "Please input your Email!",
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
 
+          <Form.Item
+            label="Password"
+            name="password"
+            rules={[
+              {
+                required: true,
+                message: "Please input your password!",
+              },
+            ]}
+          >
+            <Input.Password />
+          </Form.Item>
+
+          <Form.Item
+            wrapperCol={{
+              offset: 8,
+              span: 16,
+            }}
+          >
+            <Button type="primary" htmlType="submit">
+              Войти
+            </Button>
+          </Form.Item>
+        </Form>
+        {!!error && <Alert closable message={error} type="error" />}
+      </Spin>
+    </div>
   );
 };
 

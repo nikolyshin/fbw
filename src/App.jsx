@@ -7,12 +7,39 @@ import "./App.css";
 import AppHeader from "./components/AppHeader/AppHeader";
 import Delivery from "./components/Delivery";
 import Login from "./components/Login/Login";
-import { useEffect, useState } from "react";
+import { fetchUsers } from "./api";
+import { useState, useEffect } from "react";
+import { useCookies } from 'react-cookie';
+
 const { Content, Footer, Sider } = Layout;
 
 const App = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [goods, setGoods] = useState([]);
+  const [cookie] = useCookies(['token']);
+
   let navigate = useNavigate();
-  const { auth, setAuth } = useState(false);
+
+  const getUsers = async () => {
+    try {
+      setLoading(true);
+      const res = await fetchUsers({});
+      if (res) {
+        setGoods(res);
+      } else {
+        setError(res.detail);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getUsers();
+  }, []);
 
   const menuItems = [
     {
@@ -37,9 +64,8 @@ const App = () => {
       },
     },
   ];
-
-  if (!auth) {
-    return <Login setAuth={(bool) => setAuth(bool)} />
+  if (!cookie.token) {
+    return <Login />;
   }
 
   return (
