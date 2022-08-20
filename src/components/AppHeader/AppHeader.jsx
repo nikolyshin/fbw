@@ -5,7 +5,7 @@ import { useLocation, useNavigate, Route, Routes } from "react-router-dom";
 import "./AppHeader.css";
 
 const { RangePicker } = DatePicker;
-
+const status = [0, 1, 2, 3, 4]
 const AppHeader = () => {
   const { days, setDays } = useState();
   return (
@@ -17,12 +17,20 @@ const AppHeader = () => {
         <div>Последнее обновление</div>
       </div>
       <div className="box">
-        <div className="title">Агрегируем по дате</div>
         <RangePicker />
-        <div className="title">Планируем поставку на</div>
         <InputNumber min={1} value={days} onChange={setDays} />
       </div>
-      <div className="box"></div>
+      <div className="box">
+        <div>Надбавка 20%</div>
+      </div>
+      <div className="box">
+        <div>Остатки на складе</div>
+        <div className="progressWrapper">
+          {status.map((item) => (
+            <div className="progress"></div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };

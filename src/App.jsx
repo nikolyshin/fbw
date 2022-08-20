@@ -1,14 +1,18 @@
-import { Divider, Layout, Menu } from "antd";
-import { useLocation, useNavigate, Route, Routes } from "react-router-dom";
+import { Layout, Menu } from "antd";
+import { useNavigate, Route, Routes } from "react-router-dom";
 import "antd/dist/antd.css";
 import GoodList from "./components/GoodList";
 import Stats from "./components/Stats";
 import "./App.css";
 import AppHeader from "./components/AppHeader/AppHeader";
-const { Header, Content, Footer, Sider } = Layout;
+import Delivery from "./components/Delivery";
+import Login from "./components/Login/Login";
+import { useEffect, useState } from "react";
+const { Content, Footer, Sider } = Layout;
 
 const App = () => {
   let navigate = useNavigate();
+  const { auth, setAuth } = useState(false);
 
   const menuItems = [
     {
@@ -25,7 +29,18 @@ const App = () => {
         navigate("/stats");
       },
     },
+    {
+      label: "Поставки",
+      key: "delivery",
+      onClick: () => {
+        navigate("/delivery");
+      },
+    },
   ];
+
+  if (!auth) {
+    return <Login setAuth={(bool) => setAuth(bool)} />
+  }
 
   return (
     <Layout
@@ -34,7 +49,6 @@ const App = () => {
       }}
     >
       <Sider>
-        <div className="logo" />
         <Menu
           theme="dark"
           defaultSelectedKeys={["1"]}
@@ -56,6 +70,7 @@ const App = () => {
             <Routes>
               <Route path="/goodlist" element={<GoodList />} />
               <Route path="/stats" element={<Stats />} />
+              <Route path="/delivery" element={<Delivery />} />
             </Routes>
           </div>
         </Content>
