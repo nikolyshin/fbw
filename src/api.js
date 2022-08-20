@@ -27,9 +27,6 @@ client.interceptors.request.use(
 export const fetchToken = (data) => {
   return client.post(`/token/`, data).then((response) => response.data);
 };
-=======
-  return client.post(`/token/`, data).then((response) => response.data);
-};
 
 export const fetchGoods = (data) => {
   return client
