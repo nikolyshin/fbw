@@ -1,16 +1,34 @@
 import { Button, Form, Input } from 'antd';
 import React from 'react';
+import { fetchToken } from '../../api';
 import "./Login.css";
 
 const Login = ({ setAuth }) => {
-  const onFinish = (values) => {
-    console.log('Success:', values);
-  };
 
   const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo);
   };
-  console.log(setAuth)
+
+  const onFinish = async ({ email, password }) => {
+    try {
+      // setLoader(true);
+      const res = await fetchToken({
+        email,
+        password,
+      });
+      console.log(res)
+      if (res.success) {
+
+      } else {
+        // setError(res.error.message);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      // setLoader(false);
+    }
+  };
+
   return (
     <div className='loginWrapper'>
       <Form
@@ -26,12 +44,12 @@ const Login = ({ setAuth }) => {
         autoComplete="off"
       >
         <Form.Item
-          label="Username"
-          name="username"
+          label="Email"
+          name="email"
           rules={[
             {
               required: true,
-              message: 'Please input your username!',
+              message: 'Please input your Email!',
             },
           ]}
         >
@@ -57,7 +75,7 @@ const Login = ({ setAuth }) => {
             span: 16,
           }}
         >
-          <Button type="primary" htmlType="submit" onClick={() => { setAuth(true) }}>
+          <Button type="primary" htmlType="submit">
             Войти
           </Button>
         </Form.Item>
