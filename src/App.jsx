@@ -9,15 +9,15 @@ import Delivery from "./components/Delivery";
 import Login from "./components/Login/Login";
 import { fetchUsers } from "./api";
 import { useState, useEffect } from "react";
-import { useCookies } from 'react-cookie';
+import { useCookies } from "react-cookie";
 
-const { Content, Footer, Sider } = Layout;
+const { Content, Footer, Sider, Header } = Layout;
 
 const App = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [goods, setGoods] = useState([]);
-  const [cookie] = useCookies(['token']);
+  const [user, setUser] = useState(null);
+  const [cookie] = useCookies(["token"]);
 
   let navigate = useNavigate();
 
@@ -26,7 +26,7 @@ const App = () => {
       setLoading(true);
       const res = await fetchUsers({});
       if (res) {
-        setGoods(res);
+        setUser(res);
       } else {
         setError(res.detail);
       }
@@ -75,6 +75,12 @@ const App = () => {
       }}
     >
       <Sider>
+        <div className="company">
+          <p>{user?.username}</p>
+          {user?.companies.map((company) => (
+            <p>{company.name}</p>
+          ))}
+        </div>
         <Menu
           theme="dark"
           defaultSelectedKeys={["1"]}
@@ -82,9 +88,9 @@ const App = () => {
           items={menuItems}
         />
       </Sider>
+
       <Layout className="site-layout">
         <AppHeader />
-
         <Content>
           <div
             className="site-layout-background"
