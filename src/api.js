@@ -1,8 +1,7 @@
 import axios from "axios";
 
 const client = axios.create({
-    baseUrl: "http://188.225.86.213:8000",
-    withCredentials: false,
+    withCredentials: true,
     headers: {
         "Content-Type": "application/json",
     },
@@ -10,14 +9,14 @@ const client = axios.create({
 
 export const fetchToken = (data) => {
     return client
-        .post(`/token/`, data)
+        .post(`/api/token/`, data)
         .then((response) => response.data);
 };
 
-// export const fetchToken = (data) => {
-//     return client
-//         .get(`catalog/sections${trailingSlash}`, {
-//             params: data,
-//         })
-//         .then((response) => response.data);
-// };
+export const fetchGoods = (data) => {
+    return client
+        .get(`/api/goods/category/sales`, {
+            params: data,
+        })
+        .then((response) => response.data);
+};
