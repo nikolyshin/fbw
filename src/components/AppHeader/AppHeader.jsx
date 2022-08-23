@@ -20,7 +20,7 @@ const AppHeader = ({ wbKeys, currentWbKey, setCurrentWbKey }) => {
       return (
         <Menu
           selectable
-          defaultSelectedKeys={[`${currentWbKey}`]}
+          // defaultSelectedKeys={[`${currentWbKey || wbKeys[0].id}`]}
           items={wbKeys.map((item) => {
             return {
               key: item.id,

@@ -10,6 +10,8 @@ import Login from './components/Login/Login';
 import { fetchUsers } from './api';
 import { useState, useEffect } from 'react';
 import { useCookies } from 'react-cookie';
+import DashBoard from './components/DashBoard';
+import ModalLogout from './components/ModalLogout';
 
 const { Content, Footer, Sider, Header } = Layout;
 
@@ -19,6 +21,7 @@ const App = () => {
   const [currentWbKey, setCurrentWbKey] = useState(null);
   const [user, setUser] = useState(null);
   const [cookie] = useCookies(['token']);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   let navigate = useNavigate();
 
@@ -53,6 +56,13 @@ const App = () => {
       }
     },
     {
+      label: 'Склад DashBoard',
+      key: 'dashBoard',
+      onClick: () => {
+        navigate('/dashBoard');
+      }
+    },
+    {
       label: 'Stats',
       key: 'stats',
       onClick: () => {
@@ -64,6 +74,13 @@ const App = () => {
       key: 'delivery',
       onClick: () => {
         navigate('/delivery');
+      }
+    },
+    {
+      label: 'Выйти',
+      key: 'logout',
+      onClick: () => {
+        setIsModalVisible(true);
       }
     }
   ];
@@ -77,6 +94,7 @@ const App = () => {
         minHeight: '100vh'
       }}
     >
+      <ModalLogout show={isModalVisible} setShow={setIsModalVisible} />
       <Sider>
         <div className="company">
           <p>
@@ -115,6 +133,10 @@ const App = () => {
               />
               <Route path="/stats" element={<Stats />} />
               <Route path="/delivery" element={<Delivery />} />
+              <Route
+                path="/dashBoard"
+                element={<DashBoard currentWbKey={currentWbKey} />}
+              />
             </Routes>
           </div>
         </Content>
