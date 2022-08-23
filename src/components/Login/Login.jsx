@@ -1,16 +1,16 @@
-import { Button, Form, Input, Spin, Alert } from "antd";
-import React, { useState } from "react";
-import { fetchToken } from "../../api";
+import { Button, Form, Input, Spin, Alert } from 'antd';
+import React, { useState } from 'react';
+import { fetchToken } from '../../api';
 import { useCookies } from 'react-cookie';
-import "./Login.css";
+import './Login.css';
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [cookies, setCookie] = useCookies();
 
   const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
+    console.log('Failed:', errorInfo);
   };
 
   const onFinish = async ({ email, password }) => {
@@ -18,10 +18,10 @@ const Login = () => {
       setLoading(true);
       const res = await fetchToken({
         email,
-        password,
+        password
       });
       if (res.access) {
-        setCookie("token",res.access)
+        setCookie('token', res.access);
       } else {
         setError(res.detail);
       }
@@ -34,15 +34,14 @@ const Login = () => {
 
   return (
     <div className="loginWrapper">
-      test
       <Spin spinning={loading}>
         <Form
           name="basic"
           labelCol={{
-            span: 8,
+            span: 8
           }}
           wrapperCol={{
-            span: 16,
+            span: 16
           }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
@@ -54,8 +53,8 @@ const Login = () => {
             rules={[
               {
                 required: true,
-                message: "Please input your Email!",
-              },
+                message: 'Please input your Email!'
+              }
             ]}
           >
             <Input />
@@ -67,8 +66,8 @@ const Login = () => {
             rules={[
               {
                 required: true,
-                message: "Please input your password!",
-              },
+                message: 'Please input your password!'
+              }
             ]}
           >
             <Input.Password />
@@ -77,7 +76,7 @@ const Login = () => {
           <Form.Item
             wrapperCol={{
               offset: 8,
-              span: 16,
+              span: 16
             }}
           >
             <Button type="primary" htmlType="submit">
