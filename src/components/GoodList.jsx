@@ -1,18 +1,30 @@
 import { fetchGoodsList } from '../api';
 import React, { useEffect, useState } from 'react';
-import { Spin, Table, Alert } from 'antd';
+import { Spin, Table, Alert, Segmented, Divider } from 'antd';
+
+const sortingTabs = [
+  { value: 'subject', label: 'subject' },
+  { value: '-subject', label: '-subject' },
+  { value: 'category', label: 'category' },
+  { value: '-category', label: '-category' },
+  { value: 'price', label: 'Сначала недорогие' },
+  { value: '-price', label: 'Сначала дорогие' },
+  { value: 'discount', label: 'discount' },
+  { value: '-discount', label: '-discount' }
+];
 
 const GoodList = ({ currentWbKey }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [goods, setGoods] = useState([]);
+  const [currentOrdering, setCurrentOrdering] = useState(null);
 
   const getGoodsList = async () => {
     try {
       setLoading(true);
       const res = await fetchGoodsList({
         wbKey: currentWbKey,
-        ordering: 'subject'
+        ordering: currentOrdering
       });
       if (!res.detail) {
         setGoods(res);
@@ -30,7 +42,7 @@ const GoodList = ({ currentWbKey }) => {
     if (!!currentWbKey) {
       getGoodsList();
     }
-  }, [currentWbKey]);
+  }, [currentWbKey, currentOrdering]);
 
   const columns = [
     {
@@ -62,11 +74,27 @@ const GoodList = ({ currentWbKey }) => {
       title: 'Остаток на складе',
       dataIndex: 'stock',
       key: 'stock'
+    },
+    {
+      title: 'discount',
+      dataIndex: 'discount',
+      key: 'discount'
+    },
+    {
+      title: 'Цена',
+      dataIndex: 'price',
+      key: 'price'
     }
   ];
 
   return (
     <>
+      <Segmented
+        options={sortingTabs}
+        value={currentOrdering}
+        onChange={setCurrentOrdering}
+      />
+      <Divider />
       <Spin spinning={loading}>
         <Table columns={columns} dataSource={goods} />
       </Spin>
