@@ -12,6 +12,7 @@ import { useState, useEffect } from 'react';
 import { useCookies } from 'react-cookie';
 import DashBoard from './components/DashBoard';
 import ModalLogout from './components/ModalLogout';
+import moment from 'moment';
 
 const { Content, Footer, Sider, Header } = Layout;
 
@@ -19,6 +20,7 @@ const App = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [currentWbKey, setCurrentWbKey] = useState(null);
+  const [date, setDate] = useState([moment(), moment()]);
   const [user, setUser] = useState(null);
   const [cookie] = useCookies(['token']);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -52,17 +54,17 @@ const App = () => {
 
   const menuItems = [
     {
+      label: 'Склад DashBoard',
+      key: 'dashBoard',
+      onClick: () => {
+        navigate('/');
+      }
+    },
+    {
       label: 'Good List',
       key: 'goodList',
       onClick: () => {
         navigate('/goodList');
-      }
-    },
-    {
-      label: 'Склад DashBoard',
-      key: 'dashBoard',
-      onClick: () => {
-        navigate('/dashBoard');
       }
     },
     {
@@ -120,6 +122,8 @@ const App = () => {
           wbKeys={user?.wb_keys}
           currentWbKey={currentWbKey}
           setCurrentWbKey={setCurrentWbKey}
+          date={date}
+          setDate={setDate}
         />
         <Content>
           <div
@@ -137,8 +141,8 @@ const App = () => {
               <Route path="/stats" element={<Stats />} />
               <Route path="/delivery" element={<Delivery />} />
               <Route
-                path="/dashBoard"
-                element={<DashBoard currentWbKey={currentWbKey} />}
+                path="/"
+                element={<DashBoard currentWbKey={currentWbKey} date={date} />}
               />
             </Routes>
           </div>

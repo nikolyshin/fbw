@@ -2,12 +2,20 @@ import { DatePicker, InputNumber, Menu, Select } from 'antd';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import './AppHeader.css';
+import moment from 'moment';
 const { Option } = Select;
 
 const { RangePicker } = DatePicker;
 const status = [0, 1, 2, 3, 4];
 
-const AppHeader = ({ wbKeys = [], currentWbKey, setCurrentWbKey }) => {
+const AppHeader = ({
+  wbKeys = [],
+  currentWbKey,
+  setCurrentWbKey,
+  date,
+  setDate
+}) => {
+  const dateFormat = 'DD-MM-YYYY';
   const handleChange = (value) => {
     setCurrentWbKey(value);
   };
@@ -22,8 +30,19 @@ const AppHeader = ({ wbKeys = [], currentWbKey, setCurrentWbKey }) => {
         <div>Последнее обновление</div>
       </div>
       <div className="box">
-        <RangePicker />
-        <InputNumber min={1} value={days} onChange={setDays} />
+        <RangePicker
+          defaultValue={[
+            moment(date[0], dateFormat),
+            moment(date[1], dateFormat)
+          ]}
+          format={dateFormat}
+          onChange={setDate}
+          // placeholder={['Дата старта', 'Дата конца']}
+        />
+        <div className="title">
+          Планируем поставку на:{' '}
+          <InputNumber min={1} value={days} onChange={setDays} />
+        </div>
       </div>
       <div className="box">
         <div>Надбавка 20%</div>
