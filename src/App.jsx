@@ -31,6 +31,9 @@ const App = () => {
       const res = await fetchUsers({});
       if (res) {
         setUser(res);
+        if (res.wb_keys?.length) {
+          setCurrentWbKey(res.wb_keys[0].id);
+        }
       } else {
         setError(res.detail);
       }

@@ -11,7 +11,8 @@ const GoodList = ({ currentWbKey }) => {
     try {
       setLoading(true);
       const res = await fetchGoodsList({
-        wbKey: currentWbKey
+        wbKey: currentWbKey,
+        ordering: 'subject'
       });
       if (!res.detail) {
         setGoods(res);
@@ -38,9 +39,29 @@ const GoodList = ({ currentWbKey }) => {
       key: 'category'
     },
     {
-      title: 'Количество покупок',
-      dataIndex: 'sales',
-      key: 'sales'
+      title: 'Имя',
+      dataIndex: 'subject',
+      key: 'subject'
+    },
+    {
+      title: 'Артикул WB',
+      dataIndex: 'article_wb',
+      key: 'article_wb'
+    },
+    {
+      title: 'Артикул 1С',
+      dataIndex: 'article_1c',
+      key: 'article_1c'
+    },
+    {
+      title: 'БарКод',
+      dataIndex: 'barcode',
+      key: 'barcode'
+    },
+    {
+      title: 'Остаток на складе',
+      dataIndex: 'stock',
+      key: 'stock'
     }
   ];
 

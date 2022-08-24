@@ -1,41 +1,18 @@
-import {
-  DatePicker,
-  InputNumber,
-  Dropdown,
-  Menu,
-  Space,
-  Typography
-} from 'antd';
-import { DownOutlined } from '@ant-design/icons';
+import { DatePicker, InputNumber, Menu, Select } from 'antd';
 import dayjs from 'dayjs';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import './AppHeader.css';
+const { Option } = Select;
 
 const { RangePicker } = DatePicker;
 const status = [0, 1, 2, 3, 4];
 
-const AppHeader = ({ wbKeys, currentWbKey, setCurrentWbKey }) => {
-  const menu = useMemo(() => {
-    if (!!wbKeys?.length) {
-      return (
-        <Menu
-          selectable
-          // defaultSelectedKeys={[`${currentWbKey || wbKeys[0].id}`]}
-          items={wbKeys.map((item) => {
-            return {
-              key: item.id,
-              label: item.name,
-              onClick: () => {
-                setCurrentWbKey(item.id);
-              }
-            };
-          })}
-        />
-      );
-    }
-  }, [wbKeys]);
+const AppHeader = ({ wbKeys = [], currentWbKey, setCurrentWbKey }) => {
+  const handleChange = (value) => {
+    setCurrentWbKey(value);
+  };
 
-  const { days, setDays } = useState();
+  const [days, setDays] = useState();
   return (
     <div className={'wrapper'}>
       <div className="box">
@@ -54,20 +31,26 @@ const AppHeader = ({ wbKeys, currentWbKey, setCurrentWbKey }) => {
       <div className="box">
         <div>Остатки на складе</div>
         <div className="progressWrapper">
-          {status.map((item) => (
-            <div className="progress"></div>
+          {status.map((item, i) => (
+            <div key={i} className="progress"></div>
           ))}
         </div>
       </div>
       <div className="box">
-        <Dropdown overlay={menu}>
-          <Typography.Link>
-            <Space>
-              wbKeys
-              <DownOutlined />
-            </Space>
-          </Typography.Link>
-        </Dropdown>
+        <Select
+          defaultValue={currentWbKey}
+          placeholder="wbKeys"
+          style={{
+            width: 120
+          }}
+          onChange={handleChange}
+        >
+          {wbKeys.map((item) => (
+            <Option key={item.id} value={item.id}>
+              {item.name}
+            </Option>
+          ))}
+        </Select>
       </div>
     </div>
   );
