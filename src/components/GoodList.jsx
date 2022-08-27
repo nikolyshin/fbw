@@ -1,6 +1,7 @@
 import { fetchGoodsList } from "../api";
 import React, { useEffect, useState } from "react";
-import { Spin, Table, Alert, Segmented, Divider } from "antd";
+import { Spin, Table, Alert, Segmented, Divider, Input } from "antd";
+const { Search } = Input;
 
 const sortingTabs = [
   { value: "subject", label: "subject" },
@@ -15,6 +16,7 @@ const sortingTabs = [
 
 const GoodList = ({ currentWbKey }) => {
   const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState(null);
   const [error, setError] = useState("");
   const [goods, setGoods] = useState([]);
   const [currentOrdering, setCurrentOrdering] = useState(null);
@@ -25,6 +27,7 @@ const GoodList = ({ currentWbKey }) => {
       const res = await fetchGoodsList({
         wbKey: currentWbKey,
         ordering: currentOrdering,
+        search,
       });
       if (!res.detail) {
         setGoods(res);
@@ -40,7 +43,7 @@ const GoodList = ({ currentWbKey }) => {
 
   useEffect(() => {
     getGoodsList();
-  }, [currentWbKey, currentOrdering]);
+  }, [currentWbKey, currentOrdering, search]);
 
   const columns = [
     {
@@ -87,12 +90,21 @@ const GoodList = ({ currentWbKey }) => {
 
   return (
     <>
+      <Search
+        placeholder="введите значение(пока не знаю по какому полю ищем) просто параметр search"
+        loading={loading}
+        enterButton
+        allowClear
+        onSearch={setSearch}
+      />
+      <Divider />
       <Segmented
         options={sortingTabs}
         value={currentOrdering}
         onChange={setCurrentOrdering}
       />
       <Divider />
+
       <Spin spinning={loading}>
         <Table columns={columns} dataSource={goods} />
       </Spin>
