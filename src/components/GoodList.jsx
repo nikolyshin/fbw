@@ -1,21 +1,21 @@
-import { fetchGoodsList } from '../api';
-import React, { useEffect, useState } from 'react';
-import { Spin, Table, Alert, Segmented, Divider } from 'antd';
+import { fetchGoodsList } from "../api";
+import React, { useEffect, useState } from "react";
+import { Spin, Table, Alert, Segmented, Divider } from "antd";
 
 const sortingTabs = [
-  { value: 'subject', label: 'subject' },
-  { value: '-subject', label: '-subject' },
-  { value: 'category', label: 'category' },
-  { value: '-category', label: '-category' },
-  { value: 'price', label: 'Сначала недорогие' },
-  { value: '-price', label: 'Сначала дорогие' },
-  { value: 'discount', label: 'discount' },
-  { value: '-discount', label: '-discount' }
+  { value: "subject", label: "subject" },
+  { value: "-subject", label: "-subject" },
+  { value: "category", label: "category" },
+  { value: "-category", label: "-category" },
+  { value: "price", label: "Сначала недорогие" },
+  { value: "-price", label: "Сначала дорогие" },
+  { value: "discount", label: "discount" },
+  { value: "-discount", label: "-discount" },
 ];
 
 const GoodList = ({ currentWbKey }) => {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [goods, setGoods] = useState([]);
   const [currentOrdering, setCurrentOrdering] = useState(null);
 
@@ -24,7 +24,7 @@ const GoodList = ({ currentWbKey }) => {
       setLoading(true);
       const res = await fetchGoodsList({
         wbKey: currentWbKey,
-        ordering: currentOrdering
+        ordering: currentOrdering,
       });
       if (!res.detail) {
         setGoods(res);
@@ -39,52 +39,50 @@ const GoodList = ({ currentWbKey }) => {
   };
 
   useEffect(() => {
-    if (!!currentWbKey) {
-      getGoodsList();
-    }
+    getGoodsList();
   }, [currentWbKey, currentOrdering]);
 
   const columns = [
     {
-      title: 'Категории',
-      dataIndex: 'category',
-      key: 'category'
+      title: "Категории",
+      dataIndex: "category",
+      key: "category",
     },
     {
-      title: 'Имя',
-      dataIndex: 'subject',
-      key: 'subject'
+      title: "Имя",
+      dataIndex: "subject",
+      key: "subject",
     },
     {
-      title: 'Артикул WB',
-      dataIndex: 'article_wb',
-      key: 'article_wb'
+      title: "Артикул WB",
+      dataIndex: "article_wb",
+      key: "article_wb",
     },
     {
-      title: 'Артикул 1С',
-      dataIndex: 'article_1c',
-      key: 'article_1c'
+      title: "Артикул 1С",
+      dataIndex: "article_1c",
+      key: "article_1c",
     },
     {
-      title: 'БарКод',
-      dataIndex: 'barcode',
-      key: 'barcode'
+      title: "БарКод",
+      dataIndex: "barcode",
+      key: "barcode",
     },
     {
-      title: 'Остаток на складе',
-      dataIndex: 'stock',
-      key: 'stock'
+      title: "Остаток на складе",
+      dataIndex: "stock",
+      key: "stock",
     },
     {
-      title: 'discount',
-      dataIndex: 'discount',
-      key: 'discount'
+      title: "discount",
+      dataIndex: "discount",
+      key: "discount",
     },
     {
-      title: 'Цена',
-      dataIndex: 'price',
-      key: 'price'
-    }
+      title: "Цена",
+      dataIndex: "price",
+      key: "price",
+    },
   ];
 
   return (

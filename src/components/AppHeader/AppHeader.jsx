@@ -1,8 +1,8 @@
-import { DatePicker, InputNumber, Menu, Select } from 'antd';
-import dayjs from 'dayjs';
-import { useState } from 'react';
-import './AppHeader.css';
-import moment from 'moment';
+import { DatePicker, InputNumber, Menu, Select } from "antd";
+import dayjs from "dayjs";
+import { useState } from "react";
+import "./AppHeader.css";
+import moment from "moment";
 const { Option } = Select;
 
 const { RangePicker } = DatePicker;
@@ -13,19 +13,16 @@ const AppHeader = ({
   currentWbKey,
   setCurrentWbKey,
   date,
-  setDate
+  setDate,
 }) => {
-  const dateFormat = 'DD-MM-YYYY';
-  const handleChange = (value) => {
-    setCurrentWbKey(value);
-  };
+  const dateFormat = "DD-MM-YYYY";
 
   const [days, setDays] = useState();
   return (
-    <div className={'wrapper'}>
+    <div className={"wrapper"}>
       <div className="box">
         <div>{`Текущая дата: ${dayjs(new Date()).format(
-          'DD.MM.YY HH.mm'
+          "DD.MM.YY HH.mm"
         )}`}</div>
         <div>Последнее обновление</div>
       </div>
@@ -33,14 +30,14 @@ const AppHeader = ({
         <RangePicker
           defaultValue={[
             moment(date[0], dateFormat),
-            moment(date[1], dateFormat)
+            moment(date[1], dateFormat),
           ]}
           format={dateFormat}
           onChange={setDate}
           // placeholder={['Дата старта', 'Дата конца']}
         />
         <div className="title">
-          Планируем поставку на:{' '}
+          Планируем поставку на:{" "}
           <InputNumber min={1} value={days} onChange={setDays} />
         </div>
       </div>
@@ -57,12 +54,14 @@ const AppHeader = ({
       </div>
       <div className="box">
         <Select
+          mode="multiple"
+          showArrow
           defaultValue={currentWbKey}
           placeholder="wbKeys"
           style={{
-            width: 120
+            width: 300,
           }}
-          onChange={handleChange}
+          onChange={setCurrentWbKey}
         >
           {wbKeys.map((item) => (
             <Option key={item.id} value={item.id}>
