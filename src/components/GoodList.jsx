@@ -32,7 +32,9 @@ const GoodList = ({ currentWbKey }) => {
   const [goods, setGoods] = useState([]);
   const [currentOrdering, setCurrentOrdering] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [categoryFilter, setCategoryFilter] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState(null);
+  const [priceFilter, setPriceFilter] = useState(null);
+  const [discountFilter, setDiscountFilter] = useState(null);
   const [currentRowData, setCurrentRowData] = useState([]);
 
   const layout = {
@@ -51,7 +53,9 @@ const GoodList = ({ currentWbKey }) => {
         wbKey: currentWbKey,
         ordering: currentOrdering,
         search,
-        // category: categoryFilter
+        category: categoryFilter,
+        price: priceFilter,
+        discount: discountFilter
       });
       if (res.results) {
         setGoods(res.results);
@@ -67,7 +71,14 @@ const GoodList = ({ currentWbKey }) => {
 
   useEffect(() => {
     getGoodsList();
-  }, [currentWbKey, currentOrdering, search, categoryFilter]);
+  }, [
+    currentWbKey,
+    currentOrdering,
+    search,
+    categoryFilter,
+    priceFilter,
+    discountFilter
+  ]);
 
   const onFinish = (values) => {
     console.log(values);
@@ -80,9 +91,8 @@ const GoodList = ({ currentWbKey }) => {
       key: 'category',
       onCell: (record) => {
         return {
-          onDoubleClick: (event) => {
-            console.log(event.target.text);
-            setCategoryFilter(event.target.text);
+          onDoubleClick: () => {
+            setCategoryFilter(record.category);
           }
         };
       }
@@ -105,10 +115,7 @@ const GoodList = ({ currentWbKey }) => {
     {
       title: 'БарКод',
       dataIndex: 'barcode',
-      key: 'barcode',
-      onCell: (record) => {
-        // console.log(record);
-      }
+      key: 'barcode'
     },
     {
       title: 'Остаток на складе',
@@ -118,14 +125,25 @@ const GoodList = ({ currentWbKey }) => {
     {
       title: 'discount',
       dataIndex: 'discount',
-      key: 'discount'
+      key: 'discount',
+      onCell: (record) => {
+        return {
+          onDoubleClick: () => {
+            setDiscountFilter(record.discount);
+          }
+        };
+      }
     },
     {
       title: 'Цена',
       dataIndex: 'price',
       key: 'price',
       onCell: (record) => {
-        // console.log(record);
+        return {
+          onDoubleClick: () => {
+            setPriceFilter(record.price);
+          }
+        };
       }
     }
   ];
@@ -151,14 +169,14 @@ const GoodList = ({ currentWbKey }) => {
         <Table
           columns={columns}
           dataSource={goods}
-          // onRow={(record) => {
-          //   return {
-          //     onClick: () => {
-          //       setCurrentRowData(Object.entries(record));
-          //       setIsModalVisible(true);
-          //     }
-          //   };
-          // }}
+          onRow={(record) => {
+            return {
+              onContextMenu: (e) => {
+                setCurrentRowData(Object.entries(record));
+                setIsModalVisible(true);
+              }
+            };
+          }}
         />
       </Spin>
       {!!error && <Alert closable message={error} type="error" />}
