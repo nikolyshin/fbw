@@ -9,7 +9,6 @@ const sortingTabs = [
 ];
 
 const DashBoard = ({ currentWbKey, date }) => {
-  console.log(moment(date[0]).format());
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [goods, setGoods] = useState([]);
@@ -37,7 +36,7 @@ const DashBoard = ({ currentWbKey, date }) => {
   };
 
   useEffect(() => {
-    if (!!date.length) {
+    if (date) {
       getGoodsList();
     }
   }, [currentWbKey, currentOrdering, date]);

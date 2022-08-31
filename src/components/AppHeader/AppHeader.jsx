@@ -1,8 +1,8 @@
-import { DatePicker, InputNumber, Menu, Select } from "antd";
-import dayjs from "dayjs";
-import { useState } from "react";
-import "./AppHeader.css";
-import moment from "moment";
+import { DatePicker, InputNumber, Menu, Select } from 'antd';
+import dayjs from 'dayjs';
+import { useState } from 'react';
+import './AppHeader.css';
+import moment from 'moment';
 const { Option } = Select;
 
 const { RangePicker } = DatePicker;
@@ -13,31 +13,31 @@ const AppHeader = ({
   currentWbKey,
   setCurrentWbKey,
   date,
-  setDate,
+  setDate
 }) => {
-  const dateFormat = "DD-MM-YYYY";
+  const dateFormat = 'DD-MM-YYYY';
 
   const [days, setDays] = useState();
   return (
-    <div className={"wrapper"}>
+    <div className={'wrapper'}>
       <div className="box">
         <div>{`Текущая дата: ${dayjs(new Date()).format(
-          "DD.MM.YY HH.mm"
+          'DD.MM.YY HH.mm'
         )}`}</div>
         <div>Последнее обновление</div>
       </div>
       <div className="box">
         <RangePicker
           defaultValue={[
-            moment(date[0], dateFormat),
-            moment(date[1], dateFormat),
+            date ? moment(date[0], dateFormat) : null,
+            date ? moment(date[1], dateFormat) : null
           ]}
           format={dateFormat}
           onChange={setDate}
-          // placeholder={['Дата старта', 'Дата конца']}
+          placeholder={['Дата старта', 'Дата конца']}
         />
         <div className="title">
-          Планируем поставку на:{" "}
+          Планируем поставку на:{' '}
           <InputNumber min={1} value={days} onChange={setDays} />
         </div>
       </div>
@@ -59,7 +59,7 @@ const AppHeader = ({
           defaultValue={currentWbKey}
           placeholder="wbKeys"
           style={{
-            width: 300,
+            width: 300
           }}
           onChange={setCurrentWbKey}
         >
