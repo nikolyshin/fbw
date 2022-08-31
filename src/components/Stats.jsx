@@ -1,11 +1,11 @@
-import { fetchWarehousesBackground, fetchWarehousesOrders } from "../api";
-import React, { useEffect, useMemo, useState } from "react";
-import { Spin, Table, Alert } from "antd";
+import { fetchWarehousesBackground, fetchWarehousesOrders } from '../api';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Spin, Table, Alert } from 'antd';
 
 const Stats = ({ currentWbKey }) => {
   const [loadingOrders, setLoadingOrders] = useState(false);
   const [loadingBackground, setLoadingBackground] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [warehousesBackground, setWarehousesBackground] = useState([]);
   const [warehousesOrders, setWarehousesOrders] = useState([]);
 
@@ -13,7 +13,7 @@ const Stats = ({ currentWbKey }) => {
     try {
       setLoadingOrders(true);
       const res = await fetchWarehousesOrders({
-        wbKey: currentWbKey,
+        wbKey: currentWbKey
       });
       if (!res.detail) {
         setWarehousesOrders(res);
@@ -31,7 +31,7 @@ const Stats = ({ currentWbKey }) => {
     try {
       setLoadingBackground(true);
       const res = await fetchWarehousesBackground({
-        wbKey: currentWbKey,
+        wbKey: currentWbKey
       });
       if (!res.detail) {
         setWarehousesBackground(res);
@@ -58,7 +58,7 @@ const Stats = ({ currentWbKey }) => {
         return {
           title: item,
           dataIndex: item,
-          key: item,
+          key: item
         };
       });
     }
@@ -72,7 +72,7 @@ const Stats = ({ currentWbKey }) => {
         return {
           title: item,
           dataIndex: item,
-          key: item,
+          key: item
         };
       });
     }

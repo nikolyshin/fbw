@@ -1,25 +1,48 @@
-import { fetchGoodsList } from "../api";
-import React, { useEffect, useState } from "react";
-import { Spin, Table, Alert, Segmented, Divider, Input } from "antd";
+import { fetchGoodsList } from '../api';
+import React, { useEffect, useState } from 'react';
+import {
+  Spin,
+  Table,
+  Alert,
+  Segmented,
+  Divider,
+  Input,
+  Modal,
+  Button,
+  Form,
+  InputNumber
+} from 'antd';
 const { Search } = Input;
 
 const sortingTabs = [
-  { value: "subject", label: "subject" },
-  { value: "-subject", label: "-subject" },
-  { value: "category", label: "category" },
-  { value: "-category", label: "-category" },
-  { value: "price", label: "Сначала недорогие" },
-  { value: "-price", label: "Сначала дорогие" },
-  { value: "discount", label: "discount" },
-  { value: "-discount", label: "-discount" },
+  { value: 'subject', label: 'subject' },
+  { value: '-subject', label: '-subject' },
+  { value: 'category', label: 'category' },
+  { value: '-category', label: '-category' },
+  { value: 'price', label: 'Сначала недорогие' },
+  { value: '-price', label: 'Сначала дорогие' },
+  { value: 'discount', label: 'discount' },
+  { value: '-discount', label: '-discount' }
 ];
 
 const GoodList = ({ currentWbKey }) => {
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState(null);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [goods, setGoods] = useState([]);
   const [currentOrdering, setCurrentOrdering] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [categoryFilter, setCategoryFilter] = useState('');
+  const [currentRowData, setCurrentRowData] = useState([]);
+
+  const layout = {
+    labelCol: {
+      span: 5
+    },
+    wrapperCol: {
+      span: 19
+    }
+  };
 
   const getGoodsList = async () => {
     try {
@@ -28,9 +51,10 @@ const GoodList = ({ currentWbKey }) => {
         wbKey: currentWbKey,
         ordering: currentOrdering,
         search,
+        // category: categoryFilter
       });
-      if (!res.detail) {
-        setGoods(res);
+      if (res.results) {
+        setGoods(res.results);
       } else {
         setError(res.detail);
       }
@@ -43,49 +67,67 @@ const GoodList = ({ currentWbKey }) => {
 
   useEffect(() => {
     getGoodsList();
-  }, [currentWbKey, currentOrdering, search]);
+  }, [currentWbKey, currentOrdering, search, categoryFilter]);
+
+  const onFinish = (values) => {
+    console.log(values);
+  };
 
   const columns = [
     {
-      title: "Категории",
-      dataIndex: "category",
-      key: "category",
+      title: 'Категории',
+      dataIndex: 'category',
+      key: 'category',
+      onCell: (record) => {
+        return {
+          onDoubleClick: (event) => {
+            console.log(event.target.text);
+            setCategoryFilter(event.target.text);
+          }
+        };
+      }
     },
     {
-      title: "Имя",
-      dataIndex: "subject",
-      key: "subject",
+      title: 'Имя',
+      dataIndex: 'subject',
+      key: 'subject'
     },
     {
-      title: "Артикул WB",
-      dataIndex: "article_wb",
-      key: "article_wb",
+      title: 'Артикул WB',
+      dataIndex: 'article_wb',
+      key: 'article_wb'
     },
     {
-      title: "Артикул 1С",
-      dataIndex: "article_1c",
-      key: "article_1c",
+      title: 'Артикул 1С',
+      dataIndex: 'article_1c',
+      key: 'article_1c'
     },
     {
-      title: "БарКод",
-      dataIndex: "barcode",
-      key: "barcode",
+      title: 'БарКод',
+      dataIndex: 'barcode',
+      key: 'barcode',
+      onCell: (record) => {
+        // console.log(record);
+      }
     },
     {
-      title: "Остаток на складе",
-      dataIndex: "stock",
-      key: "stock",
+      title: 'Остаток на складе',
+      dataIndex: 'stock',
+      key: 'stock'
     },
     {
-      title: "discount",
-      dataIndex: "discount",
-      key: "discount",
+      title: 'discount',
+      dataIndex: 'discount',
+      key: 'discount'
     },
     {
-      title: "Цена",
-      dataIndex: "price",
-      key: "price",
-    },
+      title: 'Цена',
+      dataIndex: 'price',
+      key: 'price',
+      onCell: (record) => {
+        // console.log(record);
+      }
+    }
   ];
 
   return (
@@ -106,9 +148,45 @@ const GoodList = ({ currentWbKey }) => {
       <Divider />
 
       <Spin spinning={loading}>
-        <Table columns={columns} dataSource={goods} />
+        <Table
+          columns={columns}
+          dataSource={goods}
+          // onRow={(record) => {
+          //   return {
+          //     onClick: () => {
+          //       setCurrentRowData(Object.entries(record));
+          //       setIsModalVisible(true);
+          //     }
+          //   };
+          // }}
+        />
       </Spin>
       {!!error && <Alert closable message={error} type="error" />}
+      <Modal
+        title="Изменение товара"
+        visible={isModalVisible}
+        onCancel={() => setIsModalVisible(false)}
+        footer={null}
+      >
+        <Form {...layout} onFinish={onFinish}>
+          {currentRowData.map((item) => (
+            <Form.Item name={item[0]} label={item[0]}>
+              <Input defaultValue={item[1]} />
+            </Form.Item>
+          ))}
+
+          <Form.Item
+            wrapperCol={{
+              offset: 5,
+              span: 19
+            }}
+          >
+            <Button type="primary" htmlType="submit">
+              Применить
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
     </>
   );
 };
