@@ -1,28 +1,29 @@
-import { Layout, Menu } from "antd";
-import { useNavigate, Route, Routes } from "react-router-dom";
-import "antd/dist/antd.css";
-import GoodList from "./components/GoodList";
-import Stats from "./components/Stats";
-import "./App.css";
-import AppHeader from "./components/AppHeader/AppHeader";
-import Delivery from "./components/Delivery";
-import Login from "./components/Login/Login";
-import { fetchUsers } from "./api";
-import { useState, useEffect } from "react";
-import { useCookies } from "react-cookie";
-import DashBoard from "./components/DashBoard";
-import ModalLogout from "./components/ModalLogout";
-import moment from "moment";
+import { Layout, Menu } from 'antd';
+import { useNavigate, Route, Routes } from 'react-router-dom';
+import 'antd/dist/antd.css';
+import GoodList from './components/GoodList';
+import Stats from './components/Stats';
+import './App.css';
+import AppHeader from './components/AppHeader/AppHeader';
+
+import Login from './components/Login/Login';
+import { fetchUsers } from './api';
+import { useState, useEffect } from 'react';
+import { useCookies } from 'react-cookie';
+import DashBoard from './components/DashBoard';
+import ModalLogout from './components/ModalLogout';
+import moment from 'moment';
+import Delivery from './components/Delivery/Delivery';
 
 const { Content, Footer, Sider, Header } = Layout;
 
 const App = () => {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [currentWbKey, setCurrentWbKey] = useState([]);
   const [date, setDate] = useState([moment(), moment()]);
   const [user, setUser] = useState(null);
-  const [cookie] = useCookies(["token"]);
+  const [cookie] = useCookies(['token']);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   let navigate = useNavigate();
@@ -51,40 +52,40 @@ const App = () => {
 
   const menuItems = [
     {
-      label: "Склад DashBoard",
-      key: "dashBoard",
+      label: 'Склад DashBoard',
+      key: 'dashBoard',
       onClick: () => {
-        navigate("/");
-      },
+        navigate('/');
+      }
     },
     {
-      label: "Good List",
-      key: "goodList",
+      label: 'Good List',
+      key: 'goodList',
       onClick: () => {
-        navigate("/goodList");
-      },
+        navigate('/goodList');
+      }
     },
     {
-      label: "Stats",
-      key: "stats",
+      label: 'Stats',
+      key: 'stats',
       onClick: () => {
-        navigate("/stats");
-      },
+        navigate('/stats');
+      }
     },
     {
-      label: "Поставки",
-      key: "delivery",
+      label: 'Поставки',
+      key: 'delivery',
       onClick: () => {
-        navigate("/delivery");
-      },
+        navigate('/delivery');
+      }
     },
     {
-      label: "Выйти",
-      key: "logout",
+      label: 'Выйти',
+      key: 'logout',
       onClick: () => {
         setIsModalVisible(true);
-      },
-    },
+      }
+    }
   ];
   if (!cookie.token) {
     return <Login />;
@@ -93,7 +94,7 @@ const App = () => {
   return (
     <Layout
       style={{
-        minHeight: "100vh",
+        minHeight: '100vh'
       }}
     >
       <ModalLogout show={isModalVisible} setShow={setIsModalVisible} />
@@ -108,7 +109,7 @@ const App = () => {
         </div>
         <Menu
           theme="dark"
-          defaultSelectedKeys={["1"]}
+          defaultSelectedKeys={['1']}
           mode="inline"
           items={menuItems}
         />
@@ -127,7 +128,7 @@ const App = () => {
             className="site-layout-background"
             style={{
               padding: 24,
-              minHeight: "100vh",
+              minHeight: '100vh'
             }}
           >
             <Routes>
@@ -149,7 +150,7 @@ const App = () => {
         </Content>
         <Footer
           style={{
-            textAlign: "center",
+            textAlign: 'center'
           }}
         >
           FBW ©2022
