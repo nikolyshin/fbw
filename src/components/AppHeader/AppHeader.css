@@ -1,8 +1,10 @@
 .wrapper {
-  padding: 24px;
+  height: 140px;
   display: flex;
   justify-content: center;
+  padding: 24px;
   gap: 32px;
+  width: 100%;
 }
 
 .box {

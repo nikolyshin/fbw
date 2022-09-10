@@ -2,7 +2,22 @@
   background: #fff;
 }
 
-.company{
+.ant-table-cell {
+  white-space: nowrap;
+  min-width: 50px;
+}
+
+.ant-layout-header {
+  position: fixed;
+  z-index: 10;
+  display: flex;
+  height: auto;
+  line-height: normal !important;
+  background-color: #d9d9d9;
+  width: 100%;
+}
+
+.company {
   background: #fff;
   padding: 24px;
 }

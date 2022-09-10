@@ -1,7 +1,15 @@
-import { Form, Input, Modal } from "antd";
+import { Alert, Form, Input, Modal, Spin } from "antd";
 import React from "react";
 
-const ModalChangeProduct = ({ title, visible, onCreate, onCancel, fields }) => {
+const ModalChangeProduct = ({
+  title,
+  loading,
+  error,
+  visible,
+  onCancel,
+  onFinish,
+  fields,
+}) => {
   const layout = {
     labelCol: {
       span: 5,
@@ -21,24 +29,36 @@ const ModalChangeProduct = ({ title, visible, onCreate, onCancel, fields }) => {
       cancelText="Отмена"
       onCancel={onCancel}
       onOk={() => {
-        // form
-        //   .validateFields()
-        //   .then((values) => {
-        //     form.resetFields();
-        //     onCreate(values);
-        //   })
-        //   .catch((info) => {
-        //     console.log('Validate Failed:', info);
-        //   });
+        form
+          .validateFields()
+          .then((values) => {
+            onFinish(values);
+          })
+          .catch((info) => {
+            console.log("Validate Failed:", info);
+          });
       }}
     >
-      <Form form={form} {...layout} fields={fields}>
-        {fields.map(({ name, value }, i) => (
-          <Form.Item key={i} name={name} label={name}>
-            <Input />
-          </Form.Item>
-        ))}
-      </Form>
+      <Spin spinning={loading}>
+        <Form form={form} {...layout} fields={fields}>
+          {fields.map(({ name }, i) => (
+            <Form.Item
+              key={i}
+              name={name}
+              label={name}
+              rules={[
+                {
+                  required: true,
+                  message: `Введите ${name}!`,
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+          ))}
+        </Form>
+      </Spin>
+      {!!error && <Alert closable message={error} type="error" />}
     </Modal>
   );
 };

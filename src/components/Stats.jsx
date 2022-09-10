@@ -1,12 +1,7 @@
-import {
-  fetchWarehouses,
-  fetchWarehousesBackground,
-  fetchWarehousesOrders,
-} from "../api";
-import React, { useEffect, useMemo, useState } from "react";
-import { Spin, Table, Alert } from "antd";
+import { fetchWarehouses, fetchWarehousesOrders } from "../api";
+import React, { useEffect, useState } from "react";
+import { Spin, Table, Alert, Input, InputNumber } from "antd";
 import moment from "moment";
-import ModalChangeProduct from "./ModalChangeProduct";
 import ModalOtgruzka from "./ModalOtgruzka";
 
 const staticColumns = [
@@ -15,25 +10,20 @@ const staticColumns = [
     dataIndex: "category",
     key: "category",
     fixed: "left",
-    width: 150,
   },
   {
     title: "Имя",
     dataIndex: "subject",
     key: "subject",
     fixed: "left",
-    width: 150,
-  },
-  {
-    title: "Артикул WB",
-    dataIndex: "article_wb",
-    key: "article_wb",
-    fixed: "left",
-    width: 150,
   },
 ];
 
 const Stats = ({ currentWbKey, date }) => {
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+  });
   const [loadingOrders, setLoadingOrders] = useState(false);
   const [loadingBackground, setLoadingBackground] = useState(false);
   const [error, setError] = useState("");
@@ -45,38 +35,28 @@ const Stats = ({ currentWbKey, date }) => {
     data: [],
     visible: false,
   });
-  const [pagination, setPagination] = useState({
-    current: 1,
-    pageSize: 30,
-    showSizeChanger: false,
-  });
 
   const onCreate = (values) => {
     console.log("Received values of form: ", values);
     // setVisible(false);
   };
 
-  const getWarehousesOrders = async (pagination, filters, sorter) => {
-    let ordering;
-    if (!!sorter) {
-      ordering = sorter.order
-        ? `${sorter.order === "ascend" ? "" : "-"}${sorter.field}`
-        : null;
-    }
+  const getWarehousesOrders = async (pagination) => {
     try {
       setLoadingOrders(true);
       const res = await fetchWarehousesOrders({
         wbKey: currentWbKey,
-        page: pagination?.current,
+        offset: (pagination?.current - 1) * pagination?.pageSize || null,
+        limit: pagination?.pageSize,
         date_from: moment(date[0]).format("YYYY-MM-DD"),
         date_to: moment(date[1]).format("YYYY-MM-DD"),
-        ordering,
       });
       if (!res?.detail) {
         setWarehousesOrders(res?.results);
         setPagination((prev) => {
           return {
             ...prev,
+            pageSize: pagination?.pageSize,
             current: pagination?.current,
             total: Math.ceil(res.count),
           };
@@ -121,104 +101,51 @@ const Stats = ({ currentWbKey, date }) => {
     if (!!warehousesBackground.length) {
       const arr = [];
       warehousesBackground.forEach((item) => {
-        arr.push(
-          {
-            title: `Кол-во на складе ${item.name}`,
-            dataIndex: `count_${item.id}`,
-            key: `count_${item.id}`,
-            width: 150,
-            onCell: (record) => {
-              return {
-                onClick: () => {
-                  setModalData({
-                    visible: true,
-                    data: [
-                      {
-                        name: "Имя",
-                        value: record.subject,
-                        disabled: true,
-                      },
-                      {
-                        name: "item_id",
-                        value: record.id,
-                        disabled: true,
-                      },
-                      {
-                        name: "warehouse_id",
-                        value: record.stocks.filter(
-                          (stock) => stock.warehouse_id === item.id
-                        )[0]?.warehouse_id,
-                        disabled: true,
-                      },
-                      {
-                        name: "warehouse_name",
-                        value: record.stocks.filter(
-                          (stock) => stock.warehouse_id === item.id
-                        )[0]?.warehouse_name,
-                        disabled: true,
-                      },
-                      {
-                        name: "quantity",
-                        value: record.stocks.filter(
-                          (stock) => stock.warehouse_id === item.id
-                        )[0]?.incomes_plan,
-                      },
-                      { name: "Факт поставки" },
-                    ],
-                  });
-                },
-              };
+        arr.push({
+          title: item.name,
+          children: [
+            {
+              title: "Кол-во",
+              dataIndex: `count_${item.id}`,
+              key: `count_${item.id}`,
+              width: 40,
             },
-          },
-          {
-            title: `Продаж на складе ${item.name}`,
-            dataIndex: `sales_${item.id}`,
-            key: `sales_${item.id}`,
-            width: 150,
-            onCell: (record) => {
-              return {
-                onClick: () => {
-                  setModalData({
-                    visible: true,
-                    data: [
-                      {
-                        name: "Имя",
-                        value: record.subject,
-                        disabled: true,
-                      },
-                      {
-                        name: "item_id",
-                        value: record.id,
-                        disabled: true,
-                      },
-                      {
-                        name: "warehouse_id",
-                        value: record.stocks.filter(
-                          (stock) => stock.warehouse_id === item.id
-                        )[0]?.warehouse_id,
-                        disabled: true,
-                      },
-                      {
-                        name: "warehouse_name",
-                        value: record.stocks.filter(
-                          (stock) => stock.warehouse_id === item.id
-                        )[0]?.warehouse_name,
-                        disabled: true,
-                      },
-                      {
-                        name: "quantity",
-                        value: record.stocks.filter(
-                          (stock) => stock.warehouse_id === item.id
-                        )[0]?.incomes_plan,
-                      },
-                      { name: "Факт поставки" },
-                    ],
-                  });
-                },
-              };
+            {
+              title: "Прод.",
+              dataIndex: `sales_${item.id}`,
+              key: `sales_${item.id}`,
+              width: 40,
             },
-          }
-        );
+            {
+              title: "План",
+              dataIndex: `plane_${item.id}`,
+              key: `plane_${item.id}`,
+              width: 40,
+            },
+            {
+              title: "Факт",
+              dataIndex: `fact_${item.id}`,
+              key: `fact_${item.id}`,
+              render: (_, record) => (
+                <InputNumber
+                  min={0}
+                  defaultValue={record[`fact_${item.id}`]}
+                  onPressEnter={(e) => {
+                    let oldItems =
+                      JSON.parse(localStorage.getItem("incomes")) || [];
+
+                    oldItems.push({
+                      item_id: record.id,
+                      quantity: e.target.value,
+                      warehouse_id: item.id,
+                    });
+                    localStorage.setItem("incomes", JSON.stringify(oldItems));
+                  }}
+                />
+              ),
+            },
+          ],
+        });
       });
 
       setColumnsBackground(arr);
@@ -233,6 +160,8 @@ const Stats = ({ currentWbKey, date }) => {
         item.stocks.map((el) => {
           obj[`sales_${el.warehouse_id}`] = el.orders;
           obj[`count_${el.warehouse_id}`] = el.quantity;
+          obj[`plane_${el.warehouse_id}`] = el.incomes_plan;
+          obj[`fact_${el.warehouse_id}`] = el.incomes;
         });
         arr.push(obj);
       });
@@ -244,7 +173,11 @@ const Stats = ({ currentWbKey, date }) => {
     <>
       <Spin spinning={loadingOrders}>
         <Table
+          size="small"
+          tableLayout="fixed"
+          bordered
           scroll={{ x: true }}
+          sticky={{ offsetHeader: 140 }}
           pagination={pagination}
           onChange={getWarehousesOrders}
           columns={[...staticColumns, ...columnsBackground]}

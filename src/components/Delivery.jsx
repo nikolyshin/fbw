@@ -1,39 +1,27 @@
 import {
   fetchGetGoodsIncomes,
   fetchGoodsIncomes,
-  fetchSetStatus
-} from '../../api';
-import React, { useEffect, useState } from 'react';
-import './Delivery.css';
-import { Spin, Table, Alert, Input, Select } from 'antd';
-
-import ModalChangeProduct from '../ModalChangeProduct';
-import { useRef } from 'react';
+  fetchSetStatus,
+} from "../api";
+import React, { useEffect, useState } from "react";
+import { Spin, Table, Alert, Input, Select } from "antd";
+import { useRef } from "react";
+import moment from "moment";
 
 const Delivery = ({ currentWbKey }) => {
   const { Option } = Select;
   const idRef = useRef(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [goods, setGoods] = useState([]);
   const [detail, setDetail] = useState([]);
-  const [modalData, setModalData] = useState({
-    data: [],
-    visible: false
-  });
   const [pagination, setPagination] = useState({
     current: 1,
-    pageSize: 30,
-    showSizeChanger: false
+    pageSize: 10,
+    showSizeChanger: true,
   });
 
-  const statuses = ['Заказано поставщику', 'В пути на WB', 'Принято на склад'];
-
-  const onCreate = () => {
-    setModalData((prev) => {
-      return { ...prev, visible: false };
-    });
-  };
+  const statuses = ["Заказано поставщику", "В пути на WB", "Принято на склад"];
 
   const getGetGoodsList = async (id) => {
     try {
@@ -51,10 +39,10 @@ const Delivery = ({ currentWbKey }) => {
     }
   };
 
-  const setStatus = async (data) => {
+  const editDetail = async ({ id, status, number }) => {
     try {
       setLoading(true);
-      const res = await fetchSetStatus(idRef.current, { status: data });
+      const res = await fetchSetStatus(id || idRef.current, { status, number });
       if (res.incomes) {
         setDetail(res.incomes);
       } else {
@@ -72,15 +60,17 @@ const Delivery = ({ currentWbKey }) => {
       setLoading(true);
       const res = await fetchGoodsIncomes({
         wbKey: currentWbKey,
-        page: pagination?.current
+        limit: pagination?.pageSize,
+        offset: (pagination?.current - 1) * pagination?.pageSize || null,
       });
       if (res.results) {
         setGoods(res.results);
         setPagination((prev) => {
           return {
             ...prev,
+            pageSize: pagination?.pageSize,
             current: pagination?.current,
-            total: Math.ceil(res.count)
+            total: Math.ceil(res.count),
           };
         });
       } else {
@@ -99,49 +89,59 @@ const Delivery = ({ currentWbKey }) => {
 
   const columns = [
     {
-      title: 'Дата',
-      dataIndex: 'date',
-      key: 'date'
+      title: "Дата",
+      dataIndex: "date",
+      key: "date",
+      render: (date) => {
+        return <p>{moment(date).format("YYYY-MM-DD")}</p>;
+      },
     },
     {
-      title: 'Склад',
-      dataIndex: 'warehouse_name',
-      key: 'warehouse_name'
+      title: "Склад",
+      dataIndex: "warehouse_name",
+      key: "warehouse_name",
     },
     {
-      title: 'Количество',
-      dataIndex: 'quantity',
-      key: 'quantity'
+      title: "Кол-во",
+      dataIndex: "quantity",
+      key: "quantity",
     },
     {
-      title: 'Номер поставки',
-      dataIndex: 'quantity',
-      key: 'quantity',
+      title: "Номер поставки",
+      dataIndex: "quantity",
+      key: "quantity",
+      width: 150,
       render: (_, record) => (
-        <Input placeholder="Номер поставки" defaultValue={record.number} />
-      )
-    }
+        <Input
+          placeholder="Номер поставки"
+          defaultValue={record.number}
+          onPressEnter={(e) => {
+            editDetail({ id: record.id, number: e.target.value });
+          }}
+        />
+      ),
+    },
   ];
 
   const columnsDetail = [
     {
-      title: 'article',
-      dataIndex: 'article',
-      key: 'article'
+      title: "Арт",
+      dataIndex: "article",
+      key: "article",
     },
     {
-      title: 'status',
-      dataIndex: 'status',
-      key: 'status',
+      title: "Статус",
+      dataIndex: "status",
+      key: "status",
       render: (_, record) => (
         <Select
           defaultValue={record.status}
           placeholder="Выберите статус"
           onChange={(value) => {
-            setStatus(value);
+            editDetail({ status: value });
           }}
           style={{
-            width: 150
+            width: 150,
           }}
         >
           {statuses?.map((item, i) => (
@@ -150,24 +150,27 @@ const Delivery = ({ currentWbKey }) => {
             </Option>
           ))}
         </Select>
-      )
+      ),
     },
     {
-      title: 'item_name',
-      dataIndex: 'item_name',
-      key: 'item_name'
+      title: "item_name",
+      dataIndex: "item_name",
+      key: "item_name",
     },
     {
-      title: 'quantity',
-      dataIndex: 'quantity',
-      key: 'quantity'
-    }
+      title: "Кол-во",
+      dataIndex: "quantity",
+      key: "quantity",
+    },
   ];
 
   return (
-    <div className="table">
+    <div style={{ display: "flex", gap: 16 }}>
       <Spin spinning={loading}>
         <Table
+          size="small"
+          scroll={{ x: true }}
+          sticky={{ offsetHeader: 140 }}
           columns={columns}
           dataSource={goods}
           pagination={pagination}
@@ -177,26 +180,22 @@ const Delivery = ({ currentWbKey }) => {
               onDoubleClick: (e) => {
                 idRef.current = record.id;
                 getGetGoodsList(record.id);
-              }
+              },
             };
           }}
         />
       </Spin>
       <Spin spinning={loading}>
-        <Table columns={columnsDetail} dataSource={detail} pagination={false} />
+        <Table
+          size="small"
+          scroll={{ x: true }}
+          columns={columnsDetail}
+          dataSource={detail}
+          pagination={false}
+          sticky={{ offsetHeader: 140 }}
+        />
       </Spin>
       {!!error && <Alert closable message={error} type="error" />}
-      <ModalChangeProduct
-        title={'Изменение товара'}
-        visible={modalData.visible}
-        fields={modalData.data}
-        onCreate={onCreate}
-        onCancel={() => {
-          setModalData((prev) => {
-            return { ...prev, visible: false };
-          });
-        }}
-      />
     </div>
   );
 };

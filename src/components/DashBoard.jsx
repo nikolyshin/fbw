@@ -1,25 +1,18 @@
 import { fetchGoods } from "../api";
 import React, { useEffect, useState } from "react";
-import { Spin, Table, Alert, Segmented, Divider } from "antd";
+import { Spin, Table, Alert } from "antd";
 import moment from "moment";
-
-// const sortingTabs = [
-//   { value: "sales", label: "sales" },
-//   { value: "-sales", label: "-sales" },
-// ];
 
 const DashBoard = ({ currentWbKey, date }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [goods, setGoods] = useState([]);
-  // const [currentOrdering, setCurrentOrdering] = useState(null);
   const [pagination, setPagination] = useState({
     current: 1,
-    pageSize: 30,
-    showSizeChanger: false,
+    pageSize: 10,
   });
 
-  const getList = async (pagination, filters, sorter) => {
+  const getList = async (pagination, sorter) => {
     let ordering;
     if (!!sorter) {
       ordering = sorter.order
@@ -33,7 +26,8 @@ const DashBoard = ({ currentWbKey, date }) => {
         date_to: moment(date[1]).format("YYYY-MM-DD"),
         wbKey: currentWbKey,
         ordering,
-        page: pagination?.current,
+        limit: pagination?.pageSize,
+        offset: (pagination?.current - 1) * pagination?.pageSize || null,
       });
       if (res.results) {
         setGoods(res.results);
@@ -42,6 +36,7 @@ const DashBoard = ({ currentWbKey, date }) => {
             ...prev,
             current: pagination?.current,
             total: Math.ceil(res.count),
+            pageSize: pagination?.pageSize,
           };
         });
       } else {
@@ -65,33 +60,33 @@ const DashBoard = ({ currentWbKey, date }) => {
       title: "Категории",
       dataIndex: "category",
       key: "category",
+      width: "50%",
     },
     {
       title: "Количество покупок",
       dataIndex: "sales",
       sorter: true,
       key: "sales",
+      width: "50%",
     },
   ];
 
   return (
-    <>
-      {/* <Segmented
-        options={sortingTabs}
-        value={currentOrdering}
-        onChange={setCurrentOrdering}
-      />
-      <Divider /> */}
+    <div style={{ width: "50%" }}>
       <Spin spinning={loading}>
         <Table
+          size="small"
+          tableLayout="fixed"
+          scroll={{ x: true }}
           pagination={pagination}
+          sticky={{ offsetHeader: 140 }}
           columns={columns}
           onChange={getList}
           dataSource={goods}
         />
       </Spin>
       {!!error && <Alert closable message={error} type="error" />}
-    </>
+    </div>
   );
 };
 

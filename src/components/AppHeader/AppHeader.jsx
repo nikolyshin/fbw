@@ -1,8 +1,9 @@
-import { DatePicker, InputNumber, Menu, Select } from 'antd';
-import dayjs from 'dayjs';
-import { useState } from 'react';
-import './AppHeader.css';
-import moment from 'moment';
+import { DatePicker, InputNumber, Menu, Select } from "antd";
+import dayjs from "dayjs";
+import { useState } from "react";
+import "./AppHeader.css";
+import moment from "moment";
+import { useLocation } from "react-router-dom";
 const { Option } = Select;
 
 const { RangePicker } = DatePicker;
@@ -13,16 +14,21 @@ const AppHeader = ({
   currentWbKey,
   setCurrentWbKey,
   date,
-  setDate
+  setDate,
 }) => {
-  const dateFormat = 'DD-MM-YYYY';
-
+  const dateFormat = "DD-MM-YYYY";
+  let router = useLocation();
   const [days, setDays] = useState();
+
+  const hideElements = () => {
+    return !["/goodlist", "/"].includes(router.pathname);
+  };
+
   return (
-    <div className={'wrapper'}>
+    <div className={"wrapper"}>
       <div className="box">
         <div>{`Текущая дата: ${dayjs(new Date()).format(
-          'DD.MM.YY HH.mm'
+          "DD.MM.YY HH.mm"
         )}`}</div>
         <div>Последнее обновление</div>
       </div>
@@ -30,20 +36,24 @@ const AppHeader = ({
         <RangePicker
           defaultValue={[
             date ? moment(date[0], dateFormat) : null,
-            date ? moment(date[1], dateFormat) : null
+            date ? moment(date[1], dateFormat) : null,
           ]}
           format={dateFormat}
           onChange={setDate}
-          placeholder={['Дата старта', 'Дата конца']}
+          placeholder={["Дата старта", "Дата конца"]}
         />
-        <div className="title">
-          Планируем поставку на:{' '}
-          <InputNumber min={1} value={days} onChange={setDays} />
+        {hideElements() && (
+          <div className="title">
+            Планируем поставку на:{" "}
+            <InputNumber min={1} value={days} onChange={setDays} />
+          </div>
+        )}
+      </div>
+      {hideElements() && (
+        <div className="box">
+          <div>Надбавка 20%</div>
         </div>
-      </div>
-      <div className="box">
-        <div>Надбавка 20%</div>
-      </div>
+      )}
       <div className="box">
         <div>Остатки на складе</div>
         <div className="progressWrapper">
@@ -59,7 +69,7 @@ const AppHeader = ({
           defaultValue={currentWbKey}
           placeholder="wbKeys"
           style={{
-            width: 300
+            width: 300,
           }}
           onChange={setCurrentWbKey}
         >

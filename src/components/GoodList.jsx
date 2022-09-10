@@ -1,53 +1,44 @@
-import { fetchGoodsList } from "../api";
+import { fetchEditProduct, fetchGoodsList } from "../api";
 import React, { useEffect, useState } from "react";
-import {
-  Spin,
-  Table,
-  Alert,
-  Segmented,
-  Divider,
-  Input,
-  Button,
-  Space,
-} from "antd";
-import { CloseCircleOutlined } from "@ant-design/icons";
+import { Spin, Table, Alert, Divider, Input } from "antd";
 import ModalChangeProduct from "./ModalChangeProduct";
+import { useRef } from "react";
 const { Search } = Input;
-
-// const sortingTabs = [
-//   { value: "subject", label: "subject" },
-//   { value: "-subject", label: "-subject" },
-//   { value: "category", label: "category" },
-//   { value: "-category", label: "-category" },
-//   { value: "price", label: "Сначала недорогие" },
-//   { value: "-price", label: "Сначала дорогие" },
-//   { value: "discount", label: "discount" },
-//   { value: "-discount", label: "-discount" },
-// ];
 
 const GoodList = ({ currentWbKey }) => {
   const [loading, setLoading] = useState(false);
+  const [loadingEdit, setLoadingEdit] = useState(false);
+  const [errorEdit, setErrorEdit] = useState(null);
   const [search, setSearch] = useState(null);
   const [error, setError] = useState("");
   const [goods, setGoods] = useState([]);
-  // const [currentOrdering, setCurrentOrdering] = useState(null);
+  const idRef = useRef(null);
   const [modalData, setModalData] = useState({
     data: [],
     visible: false,
   });
-  const [categoryFilter, setCategoryFilter] = useState(null);
-  const [priceFilter, setPriceFilter] = useState(null);
-  const [discountFilter, setDiscountFilter] = useState(null);
   const [pagination, setPagination] = useState({
     current: 1,
-    pageSize: 30,
-    showSizeChanger: false,
+    pageSize: 10,
   });
 
-  const onCreate = () => {
-    setModalData((prev) => {
-      return { ...prev, visible: false };
-    });
+  const onFinish = async (data) => {
+    console.log(idRef.current);
+    try {
+      setLoadingEdit(true);
+      const res = await fetchEditProduct(idRef.current, data);
+      if (res.results) {
+        setModalData((prev) => {
+          return { ...prev, visible: false };
+        });
+      } else {
+        setErrorEdit(res.detail);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoadingEdit(false);
+    }
   };
 
   const getGoodsList = async (pagination, filters, sorter) => {
@@ -64,16 +55,18 @@ const GoodList = ({ currentWbKey }) => {
         wbKey: currentWbKey,
         ordering,
         search,
-        page: pagination?.current,
-        category: categoryFilter,
-        price: priceFilter,
-        discount: discountFilter,
+        limit: pagination?.pageSize,
+        offset: (pagination?.current - 1) * pagination?.pageSize || null,
+        category: filters?.category,
+        price: filters?.price,
+        discount: filters?.discount,
       });
       if (res.results) {
         setGoods(res.results);
         setPagination((prev) => {
           return {
             ...prev,
+            pageSize: pagination?.pageSize,
             current: pagination?.current,
             total: Math.ceil(res.count),
           };
@@ -90,156 +83,101 @@ const GoodList = ({ currentWbKey }) => {
 
   useEffect(() => {
     getGoodsList();
-  }, [
-    currentWbKey,
-    // currentOrdering,
-    search,
-    categoryFilter,
-    priceFilter,
-    discountFilter,
-  ]);
+  }, [currentWbKey, search]);
 
   const columns = [
     {
-      title: "",
-      dataIndex: "edit",
-      key: "edit",
-      render: (_, record) => (
-        <a
-          onClick={() => {
-            setModalData({
-              visible: true,
-              data: Object.entries(record).map((item) => {
-                return { name: item[0], value: item[1] };
-              }),
-            });
-          }}
-        >
-          Изменить {record.name}
-        </a>
-      ),
-    },
-    {
       title: "Категории",
       dataIndex: "category",
-      key: "category",
+      key: "category",     
+      filters: goods.map((item) => {
+        return { text: item.category, value: item.category };
+      }),
       sorter: true,
-      onCell: (record) => {
-        return {
-          onDoubleClick: () => {
-            setCategoryFilter(record.category);
-          },
-        };
-      },
     },
     {
-      title: "Имя",
+      title: "Группа товара",
       dataIndex: "subject",
       key: "subject",
-      sorter: true,
+      sorter: true,     
+    },
+    {
+      title: "brand",
+      dataIndex: "brand",
+      key: "brand",
+     
     },
     {
       title: "Артикул WB",
       dataIndex: "article_wb",
       key: "article_wb",
+     
     },
     {
       title: "Артикул 1С",
       dataIndex: "article_1c",
       key: "article_1c",
+     
     },
     {
       title: "БарКод",
       dataIndex: "barcode",
       key: "barcode",
+     
     },
     {
-      title: "Остаток на складе",
+      title: "Остаток",
       dataIndex: "stock",
-      key: "stock",
+      key: "stock",     
     },
     {
       title: "discount",
       dataIndex: "discount",
       sorter: true,
-      key: "discount",
-      onCell: (record) => {
-        return {
-          onDoubleClick: () => {
-            setDiscountFilter(record.discount);
-          },
-        };
-      },
+      key: "discount",     
+      width: 120,
+      filters: goods.map((item) => {
+        return { text: item.discount, value: item.discount };
+      }),
     },
     {
       title: "Цена",
       dataIndex: "price",
       sorter: true,
       key: "price",
-      onCell: (record) => {
-        return {
-          onDoubleClick: () => {
-            setPriceFilter(record.price);
-          },
-        };
-      },
+      width: 120,
+      filters: goods.map((item) => {
+        return { text: item.price, value: item.price };
+      }),
     },
   ];
 
   return (
     <>
       <Search
-        placeholder="введите значение(пока не знаю по какому полю ищем) просто параметр search"
+        style={{ width: "50%" }}
+        placeholder="Поиск"
         loading={loading}
         enterButton
         allowClear
         onSearch={setSearch}
       />
       <Divider />
-      <Space>
-        {!!categoryFilter && (
-          <Button
-            icon={<CloseCircleOutlined />}
-            onClick={() => setCategoryFilter(null)}
-          >
-            {categoryFilter}
-          </Button>
-        )}
-        {!!discountFilter && (
-          <Button
-            icon={<CloseCircleOutlined />}
-            onClick={() => setDiscountFilter(null)}
-          >
-            {discountFilter}
-          </Button>
-        )}
-        {!!priceFilter && (
-          <Button
-            icon={<CloseCircleOutlined />}
-            onClick={() => setPriceFilter(null)}
-          >
-            {priceFilter}
-          </Button>
-        )}
-      </Space>
-
-      <Divider />
-      {/* <Segmented
-        options={sortingTabs}
-        value={currentOrdering}
-        onChange={setCurrentOrdering}
-      />
-      <Divider /> */}
-
       <Spin spinning={loading}>
         <Table
+          tableLayout="fixed"
+          size="small"
+          bordered
           columns={columns}
+          scroll={{ x: true }}
           dataSource={goods}
+          sticky={{ offsetHeader: 140 }}
           pagination={pagination}
           onChange={getGoodsList}
           onRow={(record) => {
             return {
-              onContextMenu: (e) => {
+              onDoubleClick: () => {
+                idRef.current = record.id;
                 setModalData({
                   visible: true,
                   data: Object.entries(record).map((item) => {
@@ -255,8 +193,10 @@ const GoodList = ({ currentWbKey }) => {
       <ModalChangeProduct
         title={"Изменение товара"}
         visible={modalData.visible}
+        loading={loadingEdit}
+        error={errorEdit}
         fields={modalData.data}
-        onCreate={onCreate}
+        onFinish={onFinish}
         onCancel={() => {
           setModalData((prev) => {
             return { ...prev, visible: false };
