@@ -44,6 +44,14 @@ export const fetchGoodsList = (data) => {
     .then((response) => response.data);
 };
 
+export const fetchGoodsListFilters = (data) => {
+  return client
+    .get(`/goods/filters/`, {
+      params: data,
+    })
+    .then((response) => response.data);
+};
+
 export const fetchEditProduct = (id, data) => {
   return client.put(`/goods/${id}/`, data).then((response) => response.data);
 };
@@ -101,5 +109,11 @@ export const fetchSetStatus = (id, data) => {
 export const fetchWarehousesCreateIncomes = (data) => {
   return client
     .post(`/goods/warehouses/create_incomes/`, data)
+    .then((response) => response.data);
+};
+
+export const fetchWarehousesCreateIncomesBackup = (data) => {
+  return client
+    .post(`/goods/warehouses/create_incomes_backup/`, data)
     .then((response) => response.data);
 };

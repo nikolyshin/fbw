@@ -1,8 +1,11 @@
-import { fetchEditProduct, fetchGoodsList } from "../api";
-import React, { useEffect, useState } from "react";
+import {
+  fetchEditProduct,
+  fetchGoodsList,
+  fetchGoodsListFilters,
+} from "../api";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import { Spin, Table, Alert, Divider, Input } from "antd";
 import ModalChangeProduct from "./ModalChangeProduct";
-import { useRef } from "react";
 const { Search } = Input;
 
 const GoodList = ({ currentWbKey }) => {
@@ -12,6 +15,7 @@ const GoodList = ({ currentWbKey }) => {
   const [search, setSearch] = useState(null);
   const [error, setError] = useState("");
   const [goods, setGoods] = useState([]);
+  const [filters, setFilters] = useState({});
   const idRef = useRef(null);
   const [modalData, setModalData] = useState({
     data: [],
@@ -23,11 +27,10 @@ const GoodList = ({ currentWbKey }) => {
   });
 
   const onFinish = async (data) => {
-    console.log(idRef.current);
     try {
       setLoadingEdit(true);
       const res = await fetchEditProduct(idRef.current, data);
-      if (res.results) {
+      if (!res.detail) {
         setModalData((prev) => {
           return { ...prev, visible: false };
         });
@@ -41,6 +44,24 @@ const GoodList = ({ currentWbKey }) => {
     }
   };
 
+  const getGoodsListFilters = async () => {
+    try {
+      setLoading(true);
+      const res = await fetchGoodsListFilters({
+        wbKey: currentWbKey,
+      });
+      if (!res.detail) {
+        setFilters(res);
+      } else {
+        setError(res.detail);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const getGoodsList = async (pagination, filters, sorter) => {
     let ordering;
     if (!!sorter) {
@@ -48,7 +69,6 @@ const GoodList = ({ currentWbKey }) => {
         ? `${sorter.order === "ascend" ? "" : "-"}${sorter.field}`
         : null;
     }
-
     try {
       setLoading(true);
       const res = await fetchGoodsList({
@@ -82,75 +102,77 @@ const GoodList = ({ currentWbKey }) => {
   };
 
   useEffect(() => {
+    getGoodsListFilters();
+  }, [currentWbKey]);
+
+  useEffect(() => {
     getGoodsList();
   }, [currentWbKey, search]);
 
-  const columns = [
-    {
-      title: "Категории",
-      dataIndex: "category",
-      key: "category",     
-      filters: goods.map((item) => {
-        return { text: item.category, value: item.category };
-      }),
-      sorter: true,
-    },
-    {
-      title: "Группа товара",
-      dataIndex: "subject",
-      key: "subject",
-      sorter: true,     
-    },
-    {
-      title: "brand",
-      dataIndex: "brand",
-      key: "brand",
-     
-    },
-    {
-      title: "Артикул WB",
-      dataIndex: "article_wb",
-      key: "article_wb",
-     
-    },
-    {
-      title: "Артикул 1С",
-      dataIndex: "article_1c",
-      key: "article_1c",
-     
-    },
-    {
-      title: "БарКод",
-      dataIndex: "barcode",
-      key: "barcode",
-     
-    },
-    {
-      title: "Остаток",
-      dataIndex: "stock",
-      key: "stock",     
-    },
-    {
-      title: "discount",
-      dataIndex: "discount",
-      sorter: true,
-      key: "discount",     
-      width: 120,
-      filters: goods.map((item) => {
-        return { text: item.discount, value: item.discount };
-      }),
-    },
-    {
-      title: "Цена",
-      dataIndex: "price",
-      sorter: true,
-      key: "price",
-      width: 120,
-      filters: goods.map((item) => {
-        return { text: item.price, value: item.price };
-      }),
-    },
-  ];
+  const columns = useMemo(() => {
+    if (Object.keys(filters).length) {
+      return [
+        {
+          title: "Категории",
+          dataIndex: "category",
+          key: "category",
+          filters: filters?.categories?.map((item) => {
+            return { text: item, value: item };
+          }),
+          sorter: true,
+        },
+        {
+          title: "Группа товара",
+          dataIndex: "subject",
+          key: "subject",
+          sorter: true,
+        },
+        {
+          title: "brand",
+          dataIndex: "brand",
+          key: "brand",
+        },
+        {
+          title: "Арт. WB",
+          dataIndex: "article_wb",
+          key: "article_wb",
+        },
+        {
+          title: "Арт. 1С",
+          dataIndex: "article_1c",
+          key: "article_1c",
+        },
+        {
+          title: "БарКод",
+          dataIndex: "barcode",
+          key: "barcode",
+        },
+        {
+          title: "Остаток",
+          dataIndex: "stock",
+          key: "stock",
+        },
+        {
+          title: "discount",
+          dataIndex: "discount",
+          sorter: true,
+          key: "discount",
+          filters: filters?.discounts?.map((item) => {
+            return { text: item, value: item };
+          }),
+        },
+        {
+          title: "Цена",
+          dataIndex: "price",
+          sorter: true,
+          key: "price",
+          filters: filters?.prices?.map((item) => {
+            return { text: item, value: item };
+          }),
+        },
+      ];
+    }
+  }, [filters]);
 
   return (
     <>
@@ -165,7 +187,6 @@ const GoodList = ({ currentWbKey }) => {
       <Divider />
       <Spin spinning={loading}>
         <Table
-          tableLayout="fixed"
           size="small"
           bordered
           columns={columns}

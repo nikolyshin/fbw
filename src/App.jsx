@@ -21,6 +21,7 @@ const App = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [currentWbKey, setCurrentWbKey] = useState([]);
+  const [planIncomes, setPlanIncomes] = useState(null);
   const [date, setDate] = useState([moment(), moment()]);
   const [user, setUser] = useState(null);
   const [cookie] = useCookies(["token"]);
@@ -135,6 +136,8 @@ const App = () => {
             wbKeys={user?.wb_keys}
             currentWbKey={currentWbKey}
             setCurrentWbKey={setCurrentWbKey}
+            planIncomes={planIncomes}
+            setPlanIncomes={setPlanIncomes}
             date={date}
             setDate={setDate}
           />
@@ -156,7 +159,7 @@ const App = () => {
               />
               <Route
                 path="/stats"
-                element={<Stats date={date} currentWbKey={currentWbKey} />}
+                element={<Stats date={date} planIncomes={planIncomes} currentWbKey={currentWbKey} />}
               />
               <Route path="/delivery" element={<Delivery />} />
               <Route

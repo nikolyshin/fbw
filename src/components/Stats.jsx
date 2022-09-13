@@ -1,8 +1,11 @@
-import { fetchWarehouses, fetchWarehousesOrders } from "../api";
+import {
+  fetchWarehouses,
+  fetchWarehousesCreateIncomesBackup,
+  fetchWarehousesOrders,
+} from "../api";
 import React, { useEffect, useState } from "react";
-import { Spin, Table, Alert, Input, InputNumber } from "antd";
+import { Spin, Table, Alert, InputNumber } from "antd";
 import moment from "moment";
-import ModalOtgruzka from "./ModalOtgruzka";
 
 const staticColumns = [
   {
@@ -19,7 +22,7 @@ const staticColumns = [
   },
 ];
 
-const Stats = ({ currentWbKey, date }) => {
+const Stats = ({ currentWbKey, date, planIncomes }) => {
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 10,
@@ -31,14 +34,13 @@ const Stats = ({ currentWbKey, date }) => {
   const [dataSource, setDataSource] = useState([]);
   const [warehousesBackground, setWarehousesBackground] = useState([]);
   const [warehousesOrders, setWarehousesOrders] = useState([]);
-  const [modalData, setModalData] = useState({
-    data: [],
-    visible: false,
-  });
 
-  const onCreate = (values) => {
-    console.log("Received values of form: ", values);
-    // setVisible(false);
+  const createIncomesBackup = async (data) => {
+    try {
+      await fetchWarehousesCreateIncomesBackup({ data });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const getWarehousesOrders = async (pagination) => {
@@ -47,6 +49,7 @@ const Stats = ({ currentWbKey, date }) => {
       const res = await fetchWarehousesOrders({
         wbKey: currentWbKey,
         offset: (pagination?.current - 1) * pagination?.pageSize || null,
+        planIncomes: planIncomes,
         limit: pagination?.pageSize,
         date_from: moment(date[0]).format("YYYY-MM-DD"),
         date_to: moment(date[1]).format("YYYY-MM-DD"),
@@ -91,7 +94,7 @@ const Stats = ({ currentWbKey, date }) => {
 
   useEffect(() => {
     getWarehousesOrders();
-  }, [currentWbKey, date]);
+  }, [currentWbKey, date, planIncomes]);
 
   useEffect(() => {
     getWarehousesBackground();
@@ -130,7 +133,29 @@ const Stats = ({ currentWbKey, date }) => {
                 <InputNumber
                   min={0}
                   defaultValue={record[`fact_${item.id}`]}
+                  onBlur={(e) => {
+                    createIncomesBackup({
+                      item_id: record.id,
+                      quantity: Number(e.target.value),
+                      warehouse_id: item.id,
+                    });
+                    let oldItems =
+                      JSON.parse(localStorage.getItem("incomes")) || [];
+
+                    oldItems.push({
+                      item_id: record.id,
+                      quantity: e.target.value,
+                      warehouse_id: item.id,
+                    });
+                    localStorage.setItem("incomes", JSON.stringify(oldItems));
+                  }}
                   onPressEnter={(e) => {
+                    createIncomesBackup({
+                      item_id: record.id,
+                      quantity: Number(e.target.value),
+                      warehouse_id: item.id,
+                    });
+
                     let oldItems =
                       JSON.parse(localStorage.getItem("incomes")) || [];
 
@@ -185,17 +210,6 @@ const Stats = ({ currentWbKey, date }) => {
         />
       </Spin>
       {!!error && <Alert closable message={error} type="error" />}
-      <ModalOtgruzka
-        title={"Задача на отгрузку"}
-        visible={modalData.visible}
-        fields={modalData.data}
-        onCreate={onCreate}
-        onCancel={() => {
-          setModalData((prev) => {
-            return { ...prev, visible: false };
-          });
-        }}
-      />
     </>
   );
 };
