@@ -1,8 +1,8 @@
-import axios from "axios";
-import Cookies from "js-cookie";
+import axios from 'axios';
+import Cookies from 'js-cookie';
 
 const client = axios.create({
-  baseURL: "https://mp-log.ru/api/v1",
+  baseURL: 'https://188.166.126.42:8000/api/v1'
 });
 
 client.interceptors.response.use(
@@ -14,8 +14,8 @@ client.interceptors.response.use(
 
 client.interceptors.request.use(
   (config) => {
-    if (Cookies.get("token")) {
-      config.headers["Authorization"] = `Bearer ${Cookies.get("token")}`;
+    if (Cookies.get('token')) {
+      config.headers['Authorization'] = `Bearer ${Cookies.get('token')}`;
     }
     return config;
   },
@@ -31,7 +31,7 @@ export const fetchToken = (data) => {
 export const fetchGoods = (data) => {
   return client
     .get(`/goods/category/sales/`, {
-      params: data,
+      params: data
     })
     .then((response) => response.data);
 };
@@ -39,7 +39,7 @@ export const fetchGoods = (data) => {
 export const fetchGoodsList = (data) => {
   return client
     .get(`/goods/`, {
-      params: data,
+      params: data
     })
     .then((response) => response.data);
 };
@@ -47,7 +47,7 @@ export const fetchGoodsList = (data) => {
 export const fetchGoodsListFilters = (data) => {
   return client
     .get(`/goods/filters/`, {
-      params: data,
+      params: data
     })
     .then((response) => response.data);
 };
@@ -59,7 +59,7 @@ export const fetchEditProduct = (id, data) => {
 export const fetchUsers = (data) => {
   return client
     .get(`/users/me`, {
-      params: data,
+      params: data
     })
     .then((response) => response.data);
 };
@@ -67,7 +67,7 @@ export const fetchUsers = (data) => {
 export const fetchWarehousesOrders = (data) => {
   return client
     .get(`/goods/warehouses/orders/`, {
-      params: data,
+      params: data
     })
     .then((response) => response.data);
 };
@@ -75,7 +75,7 @@ export const fetchWarehousesOrders = (data) => {
 export const fetchWarehousesBackground = (data) => {
   return client
     .get(`/goods/warehouses/background/`, {
-      params: data,
+      params: data
     })
     .then((response) => response.data);
 };
@@ -83,7 +83,7 @@ export const fetchWarehousesBackground = (data) => {
 export const fetchWarehouses = (data) => {
   return client
     .get(`/goods/warehouses/wh_list`, {
-      params: data,
+      params: data
     })
     .then((response) => response.data);
 };
@@ -91,7 +91,7 @@ export const fetchWarehouses = (data) => {
 export const fetchGoodsIncomes = (data) => {
   return client
     .get(`/goods/incomes/`, {
-      params: data,
+      params: data
     })
     .then((response) => response.data);
 };
