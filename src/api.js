@@ -56,6 +56,14 @@ export const fetchEditProduct = (id, data) => {
   return client.put(`/goods/${id}/`, data).then((response) => response.data);
 };
 
+export const fetchEditProductBackup = (id) => {
+  return client
+    .get(`/goods/${id.id}/update_backup/`, {
+      params: id
+    })
+    .then((response) => response.data);
+};
+
 export const fetchUsers = (data) => {
   return client
     .get(`/users/me`, {

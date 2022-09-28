@@ -1,31 +1,56 @@
-import { Alert, Form, Input, Modal, Spin } from "antd";
-import React from "react";
+import { Alert, Button, Divider, Form, Input, Modal, Space, Spin } from 'antd';
+import moment from 'moment';
+import React, { useEffect, useState } from 'react';
+import { fetchEditProductBackup } from '../api';
 
 const ModalChangeProduct = ({
-  title,
+  id,
   loading,
   error,
   visible,
   onCancel,
   onFinish,
-  fields,
+  fields
 }) => {
+  const [draft, setDraft] = useState(null);
+  const [draftDate, setDraftDate] = useState(null);
+  const [draftError, setDraftError] = useState(null);
+  const [step, setStep] = useState(0);
+
   const layout = {
     labelCol: {
-      span: 5,
+      span: 5
     },
     wrapperCol: {
-      span: 19,
-    },
+      span: 19
+    }
+  };
+  const [form] = Form.useForm();
+
+  const getBackup = async () => {
+    try {
+      const res = await fetchEditProductBackup({ id });
+      if (res.backup_data) {
+        setDraft(res.backup_data);
+        setDraftError(res.description);
+        setDraftDate(res.run_dt);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const [form] = Form.useForm();
+  useEffect(() => {
+    if (id) {
+      getBackup();
+    }
+  }, [id]);
 
   return (
     <Modal
       visible={visible}
-      title={title}
-      okText="Изменить"
+      title={step === 0 ? 'Изменение товара' : 'Драфт товара'}
+      okText={step === 0 ? 'Изменить' : 'Отправить повторно'}
       cancelText="Отмена"
       onCancel={onCancel}
       onOk={() => {
@@ -35,12 +60,22 @@ const ModalChangeProduct = ({
             onFinish(values);
           })
           .catch((info) => {
-            console.log("Validate Failed:", info);
+            console.log('Validate Failed:', info);
           });
       }}
     >
       <Spin spinning={loading}>
-        <Form form={form} {...layout} fields={fields}>
+        <Form
+          form={form}
+          {...layout}
+          fields={
+            step === 0
+              ? fields
+              : Object.entries(draft).map((item) => {
+                  return { name: item[0], value: item[1] };
+                })
+          }
+        >
           {fields.map(({ name }, i) => (
             <Form.Item
               key={i}
@@ -49,14 +84,50 @@ const ModalChangeProduct = ({
               rules={[
                 {
                   required: true,
-                  message: `Введите ${name}!`,
-                },
+                  message: `Введите ${name}!`
+                }
               ]}
             >
               <Input />
             </Form.Item>
           ))}
         </Form>
+        <Space style={{ width: '100%' }} direction="vertical">
+          {!!draftDate && step === 1 && (
+            <>
+              <Alert
+                message={moment(draftDate).format('YYYY-MM-DD')}
+                type="info"
+                closable={false}
+              />
+            </>
+          )}
+          {!!draftError && step === 1 && (
+            <Alert message={draftError} type="error" />
+          )}
+          {step === 1 && (
+            <Button
+              type="primary"
+              htmlType="submit"
+              onClick={() => {
+                setStep(0);
+              }}
+            >
+              Вернуться назад
+            </Button>
+          )}
+        </Space>
+        {!!draft && step === 0 && (
+          <Button
+            type="primary"
+            htmlType="submit"
+            onClick={() => {
+              setStep(1);
+            }}
+          >
+            Показать драфт
+          </Button>
+        )}
       </Spin>
       {!!error && <Alert closable message={error} type="error" />}
     </Modal>
