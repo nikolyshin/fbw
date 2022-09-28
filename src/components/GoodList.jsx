@@ -6,7 +6,37 @@ import {
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { Spin, Table, Alert, Divider, Input } from 'antd';
 import ModalChangeProduct from './ModalChangeProduct';
+import { Resizable } from 'react-resizable';
 const { Search } = Input;
+
+const ResizableTitle = (props) => {
+  const { onResize, width, ...restProps } = props;
+
+  if (!width) {
+    return <th {...restProps} />;
+  }
+
+  return (
+    <Resizable
+      width={width}
+      height={0}
+      handle={
+        <span
+          className="react-resizable-handle"
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+        />
+      }
+      onResize={onResize}
+      draggableOpts={{
+        enableUserSelectHack: true
+      }}
+    >
+      <th {...restProps} />
+    </Resizable>
+  );
+};
 
 const GoodList = ({ currentWbKey }) => {
   const [loading, setLoading] = useState(false);
@@ -25,6 +55,92 @@ const GoodList = ({ currentWbKey }) => {
     current: 1,
     pageSize: 10
   });
+
+  const [columns, setColumns] = useState([
+    {
+      title: 'Категории',
+      dataIndex: 'category',
+      key: 'category',
+      filters: filters?.categories?.map((item) => {
+        return { text: item, value: item };
+      }),
+      sorter: true,
+      width: 100
+    },
+    {
+      title: 'Группа товара',
+      dataIndex: 'subject',
+      key: 'subject',
+      sorter: true,
+      width: 100
+    },
+    {
+      title: 'brand',
+      dataIndex: 'brand',
+      key: 'brand',
+      width: 20
+    },
+    {
+      title: 'Арт. WB',
+      dataIndex: 'article_wb',
+      key: 'article_wb',
+      width: 20
+    },
+    {
+      title: 'Арт. 1С',
+      dataIndex: 'article_1c',
+      key: 'article_1c',
+      width: 20
+    },
+    {
+      title: 'БарКод',
+      dataIndex: 'barcode',
+      key: 'barcode',
+      width: 20
+    },
+    {
+      title: 'Остаток',
+      dataIndex: 'stock',
+      key: 'stock',
+      width: 20
+    },
+    {
+      title: 'discount',
+      dataIndex: 'discount',
+      sorter: true,
+      key: 'discount',
+      width: 20,
+      filters: filters?.discounts?.map((item) => {
+        return { text: item, value: item };
+      })
+    },
+    {
+      title: 'Цена',
+      dataIndex: 'price',
+      sorter: true,
+      width: 20,
+      key: 'price',
+      filters: filters?.prices?.map((item) => {
+        return { text: item, value: item };
+      })
+    }
+  ]);
+
+  const handleResize =
+    (index) =>
+    (_, { size }) => {
+      const newColumns = [...columns];
+      newColumns[index] = { ...newColumns[index], width: size.width };
+      setColumns(newColumns);
+    };
+
+  const mergeColumns = columns.map((col, index) => ({
+    ...col,
+    onHeaderCell: (column) => ({
+      width: column.width,
+      onResize: handleResize(index)
+    })
+  }));
 
   const onFinish = async (data) => {
     try {
@@ -109,70 +225,70 @@ const GoodList = ({ currentWbKey }) => {
     getGoodsList();
   }, [currentWbKey, search]);
 
-  const columns = useMemo(() => {
-    if (Object.keys(filters).length) {
-      return [
-        {
-          title: 'Категории',
-          dataIndex: 'category',
-          key: 'category',
-          filters: filters?.categories?.map((item) => {
-            return { text: item, value: item };
-          }),
-          sorter: true
-        },
-        {
-          title: 'Группа товара',
-          dataIndex: 'subject',
-          key: 'subject',
-          sorter: true
-        },
-        {
-          title: 'brand',
-          dataIndex: 'brand',
-          key: 'brand'
-        },
-        {
-          title: 'Арт. WB',
-          dataIndex: 'article_wb',
-          key: 'article_wb'
-        },
-        {
-          title: 'Арт. 1С',
-          dataIndex: 'article_1c',
-          key: 'article_1c'
-        },
-        {
-          title: 'БарКод',
-          dataIndex: 'barcode',
-          key: 'barcode'
-        },
-        {
-          title: 'Остаток',
-          dataIndex: 'stock',
-          key: 'stock'
-        },
-        {
-          title: 'discount',
-          dataIndex: 'discount',
-          sorter: true,
-          key: 'discount',
-          filters: filters?.discounts?.map((item) => {
-            return { text: item, value: item };
-          })
-        },
-        {
-          title: 'Цена',
-          dataIndex: 'price',
-          sorter: true,
-          key: 'price',
-          filters: filters?.prices?.map((item) => {
-            return { text: item, value: item };
-          })
-        }
-      ];
-    }
-  }, [filters]);
+  // const columns = useMemo(() => {
+  //   // if (Object.keys(filters).length) {
+  //     return [
+  //       {
+  //         title: 'Категории',
+  //         dataIndex: 'category',
+  //         key: 'category',
+  //         filters: filters?.categories?.map((item) => {
+  //           return { text: item, value: item };
+  //         }),
+  //         sorter: true
+  //       },
+  //       {
+  //         title: 'Группа товара',
+  //         dataIndex: 'subject',
+  //         key: 'subject',
+  //         sorter: true
+  //       },
+  //       {
+  //         title: 'brand',
+  //         dataIndex: 'brand',
+  //         key: 'brand'
+  //       },
+  //       {
+  //         title: 'Арт. WB',
+  //         dataIndex: 'article_wb',
+  //         key: 'article_wb'
+  //       },
+  //       {
+  //         title: 'Арт. 1С',
+  //         dataIndex: 'article_1c',
+  //         key: 'article_1c'
+  //       },
+  //       {
+  //         title: 'БарКод',
+  //         dataIndex: 'barcode',
+  //         key: 'barcode'
+  //       },
+  //       {
+  //         title: 'Остаток',
+  //         dataIndex: 'stock',
+  //         key: 'stock'
+  //       },
+  //       {
+  //         title: 'discount',
+  //         dataIndex: 'discount',
+  //         sorter: true,
+  //         key: 'discount',
+  //         filters: filters?.discounts?.map((item) => {
+  //           return { text: item, value: item };
+  //         })
+  //       },
+  //       {
+  //         title: 'Цена',
+  //         dataIndex: 'price',
+  //         sorter: true,
+  //         key: 'price',
+  //         filters: filters?.prices?.map((item) => {
+  //           return { text: item, value: item };
+  //         })
+  //       }
+  //     ];
+  // //   }
+  // // }, [filters]);
 
   return (
     <>
@@ -189,7 +305,12 @@ const GoodList = ({ currentWbKey }) => {
         <Table
           size="small"
           bordered
-          columns={columns}
+          components={{
+            header: {
+              cell: ResizableTitle
+            }
+          }}
+          columns={mergeColumns}
           scroll={{ x: true }}
           dataSource={goods}
           sticky={{ offsetHeader: 140 }}

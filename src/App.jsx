@@ -1,30 +1,30 @@
-import { Layout, Menu } from "antd";
-import { useNavigate, Route, Routes } from "react-router-dom";
-import "antd/dist/antd.css";
-import GoodList from "./components/GoodList";
-import Stats from "./components/Stats";
-import "./App.css";
-import AppHeader from "./components/AppHeader/AppHeader";
+import { Layout, Menu } from 'antd';
+import { useNavigate, Route, Routes } from 'react-router-dom';
+import 'antd/dist/antd.css';
+import GoodList from './components/GoodList';
+import Stats from './components/Stats';
+import './App.css';
+import AppHeader from './components/AppHeader/AppHeader';
 
-import Login from "./components/Login/Login";
-import { fetchUsers } from "./api";
-import { useState, useEffect } from "react";
-import { useCookies } from "react-cookie";
-import DashBoard from "./components/DashBoard";
-import ModalLogout from "./components/ModalLogout";
-import moment from "moment";
-import Delivery from "./components/Delivery";
+import Login from './components/Login/Login';
+import { fetchUsers } from './api';
+import { useState, useEffect } from 'react';
+import { useCookies } from 'react-cookie';
+import DashBoard from './components/DashBoard';
+import ModalLogout from './components/ModalLogout';
+import moment from 'moment';
+import Delivery from './components/Delivery';
 
 const { Content, Footer, Sider, Header } = Layout;
 
 const App = () => {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [currentWbKey, setCurrentWbKey] = useState([]);
   const [planIncomes, setPlanIncomes] = useState(null);
   const [date, setDate] = useState([moment(), moment()]);
   const [user, setUser] = useState(null);
-  const [cookie] = useCookies(["token"]);
+  const [cookie] = useCookies(['token']);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   let navigate = useNavigate();
@@ -53,40 +53,40 @@ const App = () => {
 
   const menuItems = [
     {
-      label: "Склад DashBoard",
-      key: "dashBoard",
+      label: 'Склад DashBoard',
+      key: 'dashBoard',
       onClick: () => {
-        navigate("/");
-      },
+        navigate('/');
+      }
     },
     {
-      label: "Good List",
-      key: "goodList",
+      label: 'Good List',
+      key: 'goodList',
       onClick: () => {
-        navigate("/goodlist");
-      },
+        navigate('/goodlist');
+      }
     },
     {
-      label: "Stats",
-      key: "stats",
+      label: 'Stats',
+      key: 'stats',
       onClick: () => {
-        navigate("/stats");
-      },
+        navigate('/stats');
+      }
     },
     {
-      label: "Поставки",
-      key: "delivery",
+      label: 'Поставки',
+      key: 'delivery',
       onClick: () => {
-        navigate("/delivery");
-      },
+        navigate('/delivery');
+      }
     },
     {
-      label: "Выйти",
-      key: "logout",
+      label: 'Выйти',
+      key: 'logout',
       onClick: () => {
         setIsModalVisible(true);
-      },
-    },
+      }
+    }
   ];
   if (!cookie.token) {
     return <Login />;
@@ -95,18 +95,19 @@ const App = () => {
   return (
     <Layout
       style={{
-        minHeight: "100vh",
+        minHeight: '100vh'
       }}
     >
       <ModalLogout show={isModalVisible} setShow={setIsModalVisible} />
       <Sider
         style={{
-          overflow: "auto",
-          height: "100vh",
-          position: "fixed",
+          overflow: 'auto',
+          height: '100vh',
+          position: 'fixed',
           left: 0,
           top: 0,
           bottom: 0,
+          zIndex: 10
         }}
       >
         <div className="company">
@@ -119,7 +120,7 @@ const App = () => {
         </div>
         <Menu
           theme="dark"
-          defaultSelectedKeys={["1"]}
+          defaultSelectedKeys={['1']}
           mode="inline"
           items={menuItems}
         />
@@ -127,7 +128,7 @@ const App = () => {
 
       <Layout
         style={{
-          marginLeft: "200px",
+          marginLeft: '200px'
         }}
         className="site-layout"
       >
@@ -143,35 +144,39 @@ const App = () => {
           />
         </Header>
 
-        <Content>
-          <div
-            className="site-layout-background"
-            style={{
-              marginTop: 140,
-              padding: 24,
-              minHeight: "100vh",
-            }}
-          >
-            <Routes>
-              <Route
-                path="/goodlist"
-                element={<GoodList currentWbKey={currentWbKey} />}
-              />
-              <Route
-                path="/stats"
-                element={<Stats date={date} planIncomes={planIncomes} currentWbKey={currentWbKey} />}
-              />
-              <Route path="/delivery" element={<Delivery />} />
-              <Route
-                path="/"
-                element={<DashBoard currentWbKey={currentWbKey} date={date} />}
-              />
-            </Routes>
-          </div>
+        <Content
+          className="site-layout-background"
+          style={{
+            padding: 24,
+            marginTop: 140,
+            minHeight: 280
+          }}
+        >
+          <Routes>
+            <Route
+              path="/goodlist"
+              element={<GoodList currentWbKey={currentWbKey} />}
+            />
+            <Route
+              path="/stats"
+              element={
+                <Stats
+                  date={date}
+                  planIncomes={planIncomes}
+                  currentWbKey={currentWbKey}
+                />
+              }
+            />
+            <Route path="/delivery" element={<Delivery />} />
+            <Route
+              path="/"
+              element={<DashBoard currentWbKey={currentWbKey} date={date} />}
+            />
+          </Routes>
         </Content>
         <Footer
           style={{
-            textAlign: "center",
+            textAlign: 'center'
           }}
         >
           FBW ©2022
