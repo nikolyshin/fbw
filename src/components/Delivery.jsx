@@ -4,15 +4,15 @@ import {
   fetchSetStatus
 } from '../api';
 import React, { useEffect, useState } from 'react';
-import { Spin, Table, Alert, Input } from 'antd';
-import { useRef } from 'react';
+import { Spin, Table, Alert, Input, Select } from 'antd';
 import moment from 'moment';
+const { Option } = Select;
 
-const Delivery = ({ currentWbKey, setCurrentStatus }) => {
-  const idRef = useRef(null);
+const Delivery = ({ currentWbKey }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [goods, setGoods] = useState([]);
+  const [status, setStatus] = useState(null);
   const [detail, setDetail] = useState([]);
   const [pagination, setPagination] = useState({
     current: 1,
@@ -20,27 +20,29 @@ const Delivery = ({ currentWbKey, setCurrentStatus }) => {
     showSizeChanger: true
   });
 
+  const statuses = ['Заказано поставщику', 'В пути на WB', 'Принято на склад'];
+
   const getDeatil = async (id) => {
     try {
       setLoading(true);
       const res = await fetchGetGoodsIncomes(id);
       if (res.incomes) {
         setDetail(res.incomes);
-        setCurrentStatus(res.status || null);
+        setStatus(res.status || null);
       } else {
         setError(res.detail);
       }
     } catch (error) {
-      console.log(error);
+      setError(error);
     } finally {
       setLoading(false);
     }
   };
 
-  const changeNumber = async ({ id, number }) => {
+  const changeDetail = async ({ id, number, status }) => {
     try {
       setLoading(true);
-      const res = await fetchSetStatus(id || idRef.current, { number });
+      const res = await fetchSetStatus(id, { number, status });
       if (res.incomes) {
         setDetail(res.incomes);
       } else {
@@ -90,6 +92,7 @@ const Delivery = ({ currentWbKey, setCurrentStatus }) => {
       title: 'Дата',
       dataIndex: 'date',
       key: 'date',
+      // width: 100,
       render: (date) => {
         return <p>{moment(date).format('YYYY-MM-DD')}</p>;
       }
@@ -98,30 +101,28 @@ const Delivery = ({ currentWbKey, setCurrentStatus }) => {
       title: 'Склад',
       dataIndex: 'warehouse_name',
       key: 'warehouse_name'
+      // width: 150
     },
     {
       title: 'Кол-во',
       dataIndex: 'quantity',
       key: 'quantity'
+      // width: 100
     },
     {
       title: 'Номер поставки',
       dataIndex: 'number',
       key: 'number',
-
+      // width: 100,
       render: (_, record) => (
         <Input
           placeholder="Номер поставки"
           defaultValue={record.number}
           onPressEnter={(e) => {
-            localStorage.setItem('currentDetail', e.target.value);
-            changeNumber({ id: record.id, number: e.target.value });
-            getDeatil(e.target.value);
-          }}
-          onBlur={(e) => {
-            localStorage.setItem('currentDetail', e.target.value);
-            changeNumber({ id: record.id, number: e.target.value });
-            getDeatil(e.target.value);
+            if (e.target.value) {
+              changeDetail({ id: record.id, number: e.target.value });
+              getDeatil(e.target.value);
+            }
           }}
         />
       )
@@ -130,19 +131,47 @@ const Delivery = ({ currentWbKey, setCurrentStatus }) => {
 
   const columnsDetail = [
     {
-      title: 'Арт',
-      dataIndex: 'article',
-      key: 'article'
-    },
-    {
-      title: 'item_name',
-      dataIndex: 'item_name',
-      key: 'item_name'
-    },
-    {
-      title: 'Кол-во',
-      dataIndex: 'quantity',
-      key: 'quantity'
+      title: () => {
+        if (!!detail.length)
+          return (
+            <Select
+              value={status}
+              placeholder="Выберите статус"
+              onChange={(value) => {
+                changeDetail({ status: value });
+              }}
+              style={{
+                width: 300
+              }}
+            >
+              {statuses?.map((item, i) => (
+                <Option key={i} value={item}>
+                  {item}
+                </Option>
+              ))}
+            </Select>
+          );
+        return <></>;
+      },
+
+      children: [
+        {
+          title: 'Арт',
+          dataIndex: 'article',
+          key: 'article'
+        },
+        {
+          title: 'item_name',
+          dataIndex: 'item_name',
+          key: 'item_name'
+        },
+        {
+          title: 'Кол-во',
+          dataIndex: 'quantity',
+          key: 'quantity',
+          width: 100
+        }
+      ]
     }
   ];
 
@@ -151,6 +180,7 @@ const Delivery = ({ currentWbKey, setCurrentStatus }) => {
       <div style={{ display: 'flex', gap: 16 }}>
         <Spin spinning={loading}>
           <Table
+            bordered
             size="small"
             scroll={{ x: true }}
             sticky={{ offsetHeader: 140 }}
@@ -163,6 +193,7 @@ const Delivery = ({ currentWbKey, setCurrentStatus }) => {
         <Spin spinning={loading}>
           <Table
             size="small"
+            bordered
             scroll={{ x: true }}
             columns={columnsDetail}
             dataSource={detail}

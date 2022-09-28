@@ -21,7 +21,6 @@ const App = () => {
   const [error, setError] = useState('');
   const [currentWbKey, setCurrentWbKey] = useState([]);
   const [planIncomes, setPlanIncomes] = useState(null);
-  const [currentStatus, setCurrentStatus] = useState(null);
   const [date, setDate] = useState([moment(), moment()]);
   const [user, setUser] = useState(null);
   const [cookie] = useCookies(['token']);
@@ -138,8 +137,6 @@ const App = () => {
             currentWbKey={currentWbKey}
             setCurrentWbKey={setCurrentWbKey}
             planIncomes={planIncomes}
-            currentStatus={currentStatus}
-            setCurrentStatus={setCurrentStatus}
             setPlanIncomes={setPlanIncomes}
             date={date}
             setDate={setDate}
@@ -169,10 +166,7 @@ const App = () => {
                 />
               }
             />
-            <Route
-              path="/delivery"
-              element={<Delivery setCurrentStatus={setCurrentStatus} />}
-            />
+            <Route path="/delivery" element={<Delivery />} />
             <Route
               path="/"
               element={<DashBoard currentWbKey={currentWbKey} date={date} />}
