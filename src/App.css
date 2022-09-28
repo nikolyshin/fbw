@@ -2,10 +2,10 @@
   background: #fff;
 }
 
-.ant-table-cell {
+/* .ant-table-cell {
   white-space: nowrap;
   min-width: 100px;
-}
+} */
 
 .ant-layout-header {
   position: fixed;

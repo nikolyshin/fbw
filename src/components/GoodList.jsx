@@ -78,38 +78,38 @@ const GoodList = ({ currentWbKey }) => {
       title: 'brand',
       dataIndex: 'brand',
       key: 'brand',
-      width: 20
+      width: 100
     },
     {
       title: 'Арт. WB',
       dataIndex: 'article_wb',
       key: 'article_wb',
-      width: 20
+      width: 100
     },
     {
       title: 'Арт. 1С',
       dataIndex: 'article_1c',
       key: 'article_1c',
-      width: 20
+      width: 100
     },
     {
       title: 'БарКод',
       dataIndex: 'barcode',
       key: 'barcode',
-      width: 20
+      width: 100
     },
     {
       title: 'Остаток',
       dataIndex: 'stock',
       key: 'stock',
-      width: 20
+      width: 100
     },
     {
       title: 'discount',
       dataIndex: 'discount',
       sorter: true,
       key: 'discount',
-      width: 20,
+      width: 100,
       filters: filters?.discounts?.map((item) => {
         return { text: item, value: item };
       })
@@ -118,7 +118,7 @@ const GoodList = ({ currentWbKey }) => {
       title: 'Цена',
       dataIndex: 'price',
       sorter: true,
-      width: 20,
+      width: 100,
       key: 'price',
       filters: filters?.prices?.map((item) => {
         return { text: item, value: item };
@@ -311,7 +311,7 @@ const GoodList = ({ currentWbKey }) => {
             }
           }}
           columns={mergeColumns}
-          scroll={{ x: true }}
+          scroll={{ x: 1500 }}
           dataSource={goods}
           sticky={{ offsetHeader: 140 }}
           pagination={pagination}
