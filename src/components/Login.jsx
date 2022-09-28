@@ -1,8 +1,7 @@
 import { Button, Form, Input, Spin, Alert } from 'antd';
 import React, { useState } from 'react';
-import { fetchToken } from '../../api';
+import { fetchToken } from '../api';
 import { useCookies } from 'react-cookie';
-import './Login.css';
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
@@ -33,7 +32,16 @@ const Login = () => {
   };
 
   return (
-    <div className="loginWrapper">
+    <div
+      style={{
+        position: 'absolute',
+        alignItems: 'center',
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        justifyContent: 'center'
+      }}
+    >
       <Spin spinning={loading}>
         <Form
           name="basic"

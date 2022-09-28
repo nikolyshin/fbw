@@ -4,12 +4,11 @@ import {
   fetchSetStatus
 } from '../api';
 import React, { useEffect, useState } from 'react';
-import { Spin, Table, Alert, Input, Select } from 'antd';
+import { Spin, Table, Alert, Input } from 'antd';
 import { useRef } from 'react';
 import moment from 'moment';
 
-const Delivery = ({ currentWbKey }) => {
-  const { Option } = Select;
+const Delivery = ({ currentWbKey, setCurrentStatus }) => {
   const idRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -21,14 +20,13 @@ const Delivery = ({ currentWbKey }) => {
     showSizeChanger: true
   });
 
-  const statuses = ['Заказано поставщику', 'В пути на WB', 'Принято на склад'];
-
   const getDeatil = async (id) => {
     try {
       setLoading(true);
       const res = await fetchGetGoodsIncomes(id);
       if (res.incomes) {
         setDetail(res.incomes);
+        setCurrentStatus(res.status || null);
       } else {
         setError(res.detail);
       }
@@ -39,10 +37,10 @@ const Delivery = ({ currentWbKey }) => {
     }
   };
 
-  const editDetail = async ({ id, status, number }) => {
+  const changeNumber = async ({ id, number }) => {
     try {
       setLoading(true);
-      const res = await fetchSetStatus(id || idRef.current, { status, number });
+      const res = await fetchSetStatus(id || idRef.current, { number });
       if (res.incomes) {
         setDetail(res.incomes);
       } else {
@@ -108,19 +106,21 @@ const Delivery = ({ currentWbKey }) => {
     },
     {
       title: 'Номер поставки',
-      dataIndex: 'quantity',
-      key: 'quantity',
+      dataIndex: 'number',
+      key: 'number',
 
       render: (_, record) => (
         <Input
           placeholder="Номер поставки"
           defaultValue={record.number}
           onPressEnter={(e) => {
-            editDetail({ id: record.id, number: e.target.value });
+            localStorage.setItem('currentDetail', e.target.value);
+            changeNumber({ id: record.id, number: e.target.value });
             getDeatil(e.target.value);
           }}
           onBlur={(e) => {
-            editDetail({ id: record.id, number: e.target.value });
+            localStorage.setItem('currentDetail', e.target.value);
+            changeNumber({ id: record.id, number: e.target.value });
             getDeatil(e.target.value);
           }}
         />
@@ -133,30 +133,6 @@ const Delivery = ({ currentWbKey }) => {
       title: 'Арт',
       dataIndex: 'article',
       key: 'article'
-    },
-    {
-      title: 'Статус',
-      dataIndex: 'status',
-      key: 'status',
-      render: (_, record) => (
-        <Select
-          defaultValue={record.status}
-          value={record.status}
-          placeholder="Выберите статус"
-          onChange={(value) => {
-            editDetail({ status: value });
-          }}
-          style={{
-            width: 150
-          }}
-        >
-          {statuses?.map((item, i) => (
-            <Option key={i} value={item}>
-              {item}
-            </Option>
-          ))}
-        </Select>
-      )
     },
     {
       title: 'item_name',
