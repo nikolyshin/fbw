@@ -9,6 +9,18 @@ import ModalChangeProduct from './ModalChangeProduct';
 import ResizableTitle from './ResizableTitle';
 
 const { Search } = Input;
+const names = {
+  category: 'Категории',
+  subject: 'Группа товара',
+  multiplicity: 'Кратность',
+  brand: 'Брэнд',
+  article_wb: 'Арт WB',
+  article_1c: 'Арт 1С',
+  barcode: 'БарКод',
+  stock: 'Остаток',
+  discount: 'discount',
+  price: 'Цена'
+};
 
 const GoodList = ({ currentWbKey }) => {
   const [loading, setLoading] = useState(false);
@@ -133,68 +145,65 @@ const GoodList = ({ currentWbKey }) => {
     if (Object.keys(filters).length) {
       setColumns([
         {
-          title: 'Категории',
+          title: names.category,
           dataIndex: 'category',
-          key: 'category',
           filters: filters?.categories?.map((item) => {
             return { text: item, value: item };
           }),
           sorter: true,
-          width: 100
+          width: 120
         },
         {
-          title: 'Группа товара',
+          title: names.subject,
           dataIndex: 'subject',
-          key: 'subject',
           sorter: true,
           width: 100
         },
         {
-          title: 'brand',
+          title: names.multiplicity,
+          dataIndex: 'multiplicity',
+          width: 100
+        },
+
+        {
+          title: names.brand,
           dataIndex: 'brand',
-          key: 'brand',
           width: 100
         },
         {
-          title: 'Арт. WB',
+          title: names.article_wb,
           dataIndex: 'article_wb',
-          key: 'article_wb',
           width: 100
         },
         {
-          title: 'Арт. 1С',
+          title: names.article_1c,
           dataIndex: 'article_1c',
-          key: 'article_1c',
           width: 100
         },
         {
-          title: 'БарКод',
+          title: names.barcode,
           dataIndex: 'barcode',
-          key: 'barcode',
           width: 100
         },
         {
-          title: 'Остаток',
+          title: names.stock,
           dataIndex: 'stock',
-          key: 'stock',
           width: 100
         },
         {
-          title: 'discount',
+          title: names.discount,
           dataIndex: 'discount',
           sorter: true,
-          key: 'discount',
           width: 100,
           filters: filters?.discounts?.map((item) => {
             return { text: item, value: item };
           })
         },
         {
-          title: 'Цена',
+          title: names.price,
           dataIndex: 'price',
           sorter: true,
           width: 100,
-          key: 'price',
           filters: filters?.prices?.map((item) => {
             return { text: item, value: item };
           })
@@ -236,7 +245,11 @@ const GoodList = ({ currentWbKey }) => {
                 setModalData({
                   visible: true,
                   data: Object.entries(record).map((item) => {
-                    return { name: item[0], value: item[1] };
+                    return {
+                      name: item[0],
+                      value: item[1],
+                      label: names[item[0]]
+                    };
                   })
                 });
               }

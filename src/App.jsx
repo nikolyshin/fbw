@@ -21,6 +21,7 @@ const App = () => {
   const [error, setError] = useState('');
   const [currentWbKey, setCurrentWbKey] = useState([]);
   const [planIncomes, setPlanIncomes] = useState(1);
+  const [createdIncomes, setCreatedIncomes] = useState([]);
   const [date, setDate] = useState([moment(), moment()]);
   const [user, setUser] = useState(null);
   const [cookie] = useCookies(['token']);
@@ -140,6 +141,7 @@ const App = () => {
             setPlanIncomes={setPlanIncomes}
             date={date}
             setDate={setDate}
+            setCreatedIncomes={setCreatedIncomes}
           />
         </Header>
 
@@ -161,6 +163,7 @@ const App = () => {
               element={
                 <Stats
                   date={date}
+                  createdIncomes={createdIncomes}
                   planIncomes={planIncomes}
                   currentWbKey={currentWbKey}
                 />

@@ -15,6 +15,7 @@ const AppHeader = ({
   setCurrentWbKey,
   planIncomes,
   setPlanIncomes,
+  setCreatedIncomes,
   date,
   setDate
 }) => {
@@ -29,7 +30,9 @@ const AppHeader = ({
     try {
       // setLoadingOrders(true);
       const res = await fetchWarehousesCreateIncomes(incomes);
-      if (!res?.detail) {
+      if (res) {
+        localStorage.removeItem('incomes');
+        setCreatedIncomes((prev) => [...prev, res]);
       } else {
         // setError(res?.detail);
       }

@@ -91,29 +91,22 @@ const Delivery = ({ currentWbKey }) => {
     {
       title: 'Дата',
       dataIndex: 'date',
-      key: 'date',
-      // width: 100,
       render: (date) => {
         return <p>{moment(date).format('YYYY-MM-DD')}</p>;
       }
     },
     {
       title: 'Склад',
-      dataIndex: 'warehouse_name',
-      key: 'warehouse_name'
-      // width: 150
+      dataIndex: 'warehouse_name'
     },
     {
       title: 'Кол-во',
-      dataIndex: 'quantity',
-      key: 'quantity'
-      // width: 100
+      dataIndex: 'quantity'
     },
     {
       title: 'Номер поставки',
       dataIndex: 'number',
-      key: 'number',
-      // width: 100,
+
       render: (_, record) => (
         <Input
           placeholder="Номер поставки"
@@ -157,18 +150,15 @@ const Delivery = ({ currentWbKey }) => {
       children: [
         {
           title: 'Арт',
-          dataIndex: 'article',
-          key: 'article'
+          dataIndex: 'article'
         },
         {
           title: 'item_name',
-          dataIndex: 'item_name',
-          key: 'item_name'
+          dataIndex: 'item_name'
         },
         {
           title: 'Кол-во',
           dataIndex: 'quantity',
-          key: 'quantity',
           width: 100
         }
       ]

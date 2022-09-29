@@ -60,7 +60,7 @@ const Login = ({ setStep }) => {
 
         <Form.Item
           label="Пароль"
-          name="Password"
+          name="password"
           rules={[
             {
               required: true,

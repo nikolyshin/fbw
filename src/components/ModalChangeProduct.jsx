@@ -1,4 +1,4 @@
-import { Alert, Button, Divider, Form, Input, Modal, Space, Spin } from 'antd';
+import { Alert, Button, Form, Input, Modal, Space, Spin } from 'antd';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { fetchEditProductBackup } from '../api';
@@ -76,15 +76,15 @@ const ModalChangeProduct = ({
                 })
           }
         >
-          {fields.map(({ name }, i) => (
+          {fields.map(({ name, label }, i) => (
             <Form.Item
               key={i}
               name={name}
-              label={name}
+              label={label || name}
               rules={[
                 {
                   required: true,
-                  message: `Введите ${name}!`
+                  message: `Введите ${label || name}!`
                 }
               ]}
             >

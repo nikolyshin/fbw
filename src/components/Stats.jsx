@@ -11,44 +11,65 @@ const staticColumns = [
   {
     title: 'Категории',
     dataIndex: 'category',
-    key: 'category',
     fixed: 'left'
   },
   {
     title: 'Имя',
     dataIndex: 'subject',
-    key: 'subject',
     fixed: 'left'
   }
 ];
 
-const Stats = ({ currentWbKey, date, planIncomes }) => {
+const createdIncomesColumns = [
+  {
+    title: 'Арт',
+    dataIndex: 'article'
+  },
+  {
+    title: 'id',
+    dataIndex: 'id'
+  },
+  {
+    title: 'Дата',
+    dataIndex: 'date',
+    render: (date) => {
+      return <p>{moment(date).format('YYYY-MM-DD')}</p>;
+    }
+  },
+  {
+    title: 'Кол-во',
+    dataIndex: 'quantity'
+  },
+  {
+    title: 'Имя',
+    dataIndex: 'item_name'
+  }
+];
+
+const Stats = ({ currentWbKey, date, planIncomes, createdIncomes }) => {
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 10
   });
-  const [loadingOrders, setLoadingOrders] = useState(false);
-  const [loadingBackground, setLoadingBackground] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [columnsBackground, setColumnsBackground] = useState([]);
   const [dataSource, setDataSource] = useState([]);
   const [warehousesBackground, setWarehousesBackground] = useState([]);
   const [warehousesOrders, setWarehousesOrders] = useState([]);
 
-  const createIncomesBackup = async (data) => {
+  const handlerCreateIncomes = async ({ e, record, item }) => {
     try {
-      await fetchWarehousesCreateIncomesBackup({ data });
+      await fetchWarehousesCreateIncomesBackup({
+        data: {
+          item_id: record.id,
+          quantity: Number(e.target.value),
+          warehouse_id: item.id
+        }
+      });
     } catch (error) {
       console.log(error);
     }
-  };
-
-  const handlerCreateIncomes = ({ e, record, item }) => {
-    createIncomesBackup({
-      item_id: record.id,
-      quantity: Number(e.target.value),
-      warehouse_id: item.id
-    });
 
     let items = JSON.parse(localStorage.getItem('incomes')) || [];
 
@@ -71,7 +92,7 @@ const Stats = ({ currentWbKey, date, planIncomes }) => {
 
   const getWarehousesOrders = async (pagination) => {
     try {
-      setLoadingOrders(true);
+      setLoading(true);
       const res = await fetchWarehousesOrders({
         wbKey: currentWbKey,
         offset: (pagination?.current - 1) * pagination?.pageSize || null,
@@ -96,13 +117,13 @@ const Stats = ({ currentWbKey, date, planIncomes }) => {
     } catch (error) {
       console.log(error);
     } finally {
-      setLoadingOrders(false);
+      setLoading(false);
     }
   };
 
   const getWarehousesBackground = async () => {
     try {
-      setLoadingBackground(true);
+      setLoading(true);
       const res = await fetchWarehouses({
         wbKey: currentWbKey
       });
@@ -114,7 +135,7 @@ const Stats = ({ currentWbKey, date, planIncomes }) => {
     } catch (error) {
       console.log(error);
     } finally {
-      setLoadingBackground(false);
+      setLoading(false);
     }
   };
 
@@ -136,19 +157,16 @@ const Stats = ({ currentWbKey, date, planIncomes }) => {
             {
               title: 'Кол-во',
               dataIndex: `count_${item.id}`,
-              key: `count_${item.id}`,
               width: 40
             },
             {
               title: 'Прод.',
               dataIndex: `sales_${item.id}`,
-              key: `sales_${item.id}`,
               width: 40
             },
             {
               title: 'План',
               dataIndex: `plane_${item.id}`,
-              key: `plane_${item.id}`,
               width: 40
             },
             {
@@ -181,7 +199,7 @@ const Stats = ({ currentWbKey, date, planIncomes }) => {
       const arr = [];
       warehousesOrders.forEach((item) => {
         const obj = { ...item };
-        item.stocks.map((el) => {
+        item.stocks.forEach((el) => {
           obj[`sales_${el.warehouse_id}`] = el.orders;
           obj[`count_${el.warehouse_id}`] = el.quantity;
           obj[`plane_${el.warehouse_id}`] = el.incomes_plan;
@@ -195,19 +213,32 @@ const Stats = ({ currentWbKey, date, planIncomes }) => {
 
   return (
     <>
-      <Spin spinning={loadingOrders}>
-        <Table
-          size="small"
-          tableLayout="fixed"
-          bordered
-          scroll={{ x: true }}
-          sticky={{ offsetHeader: 140 }}
-          pagination={pagination}
-          onChange={getWarehousesOrders}
-          columns={[...staticColumns, ...columnsBackground]}
-          dataSource={dataSource}
-        />
-      </Spin>
+      <div style={{ display: 'flex', gap: 16 }}>
+        <Spin spinning={loading}>
+          <Table
+            size="small"
+            tableLayout="fixed"
+            bordered
+            scroll={{ x: true }}
+            sticky={{ offsetHeader: 140 }}
+            pagination={pagination}
+            onChange={getWarehousesOrders}
+            columns={[...staticColumns, ...columnsBackground]}
+            dataSource={dataSource}
+          />
+        </Spin>
+        {createdIncomes.map((item) => (
+          <Table
+            bordered
+            size="small"
+            scroll={{ x: true }}
+            sticky={{ offsetHeader: 140 }}
+            columns={createdIncomesColumns}
+            dataSource={item[0].incomes}
+            pagination={false}
+          />
+        ))}
+      </div>
       {!!error && <Alert closable message={error} type="error" />}
     </>
   );
