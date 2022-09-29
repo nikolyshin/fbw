@@ -5,7 +5,6 @@ import GoodList from './components/GoodList';
 import Stats from './components/Stats';
 import './App.css';
 import AppHeader from './components/AppHeader/AppHeader';
-import Login from './components/Login';
 import { fetchUsers } from './api';
 import { useState, useEffect } from 'react';
 import { useCookies } from 'react-cookie';
@@ -13,6 +12,7 @@ import DashBoard from './components/DashBoard';
 import ModalLogout from './components/ModalLogout';
 import moment from 'moment';
 import Delivery from './components/Delivery';
+import Auth from './components/auth/Auth';
 
 const { Content, Footer, Sider, Header } = Layout;
 
@@ -20,7 +20,7 @@ const App = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [currentWbKey, setCurrentWbKey] = useState([]);
-  const [planIncomes, setPlanIncomes] = useState(null);
+  const [planIncomes, setPlanIncomes] = useState(1);
   const [date, setDate] = useState([moment(), moment()]);
   const [user, setUser] = useState(null);
   const [cookie] = useCookies(['token']);
@@ -88,7 +88,7 @@ const App = () => {
     }
   ];
   if (!cookie.token) {
-    return <Login />;
+    return <Auth />;
   }
 
   return (
@@ -178,7 +178,7 @@ const App = () => {
             textAlign: 'center'
           }}
         >
-          FBW ©2022
+          FBW ©{moment().format('YYYY')}
         </Footer>
       </Layout>
     </Layout>

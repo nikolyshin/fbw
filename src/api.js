@@ -125,3 +125,9 @@ export const fetchWarehousesCreateIncomesBackup = (data) => {
     .post(`/goods/warehouses/create_incomes_backup/`, data)
     .then((response) => response.data);
 };
+
+export const fetchRegistration = (data) => {
+  return client
+    .post(`/users/registration`, data)
+    .then((response) => response.data);
+};

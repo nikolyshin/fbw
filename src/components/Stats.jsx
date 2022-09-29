@@ -1,35 +1,35 @@
 import {
   fetchWarehouses,
   fetchWarehousesCreateIncomesBackup,
-  fetchWarehousesOrders,
-} from "../api";
-import React, { useEffect, useState } from "react";
-import { Spin, Table, Alert, InputNumber } from "antd";
-import moment from "moment";
+  fetchWarehousesOrders
+} from '../api';
+import React, { useEffect, useState } from 'react';
+import { Spin, Table, Alert, InputNumber } from 'antd';
+import moment from 'moment';
 
 const staticColumns = [
   {
-    title: "Категории",
-    dataIndex: "category",
-    key: "category",
-    fixed: "left",
+    title: 'Категории',
+    dataIndex: 'category',
+    key: 'category',
+    fixed: 'left'
   },
   {
-    title: "Имя",
-    dataIndex: "subject",
-    key: "subject",
-    fixed: "left",
-  },
+    title: 'Имя',
+    dataIndex: 'subject',
+    key: 'subject',
+    fixed: 'left'
+  }
 ];
 
 const Stats = ({ currentWbKey, date, planIncomes }) => {
   const [pagination, setPagination] = useState({
     current: 1,
-    pageSize: 10,
+    pageSize: 10
   });
   const [loadingOrders, setLoadingOrders] = useState(false);
   const [loadingBackground, setLoadingBackground] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [columnsBackground, setColumnsBackground] = useState([]);
   const [dataSource, setDataSource] = useState([]);
   const [warehousesBackground, setWarehousesBackground] = useState([]);
@@ -43,16 +43,42 @@ const Stats = ({ currentWbKey, date, planIncomes }) => {
     }
   };
 
+  const handlerCreateIncomes = ({ e, record, item }) => {
+    createIncomesBackup({
+      item_id: record.id,
+      quantity: Number(e.target.value),
+      warehouse_id: item.id
+    });
+
+    let items = JSON.parse(localStorage.getItem('incomes')) || [];
+
+    let index = items.findIndex(
+      (element) =>
+        element.item_id === record.id && element.warehouse_id === item.id
+    );
+    if (index !== -1) {
+      items[index].quantity = Number(e.target.value);
+    } else {
+      items.push({
+        item_id: record.id,
+        quantity: e.target.value,
+        warehouse_id: item.id
+      });
+    }
+
+    localStorage.setItem('incomes', JSON.stringify(items));
+  };
+
   const getWarehousesOrders = async (pagination) => {
     try {
       setLoadingOrders(true);
       const res = await fetchWarehousesOrders({
         wbKey: currentWbKey,
         offset: (pagination?.current - 1) * pagination?.pageSize || null,
-        planIncomes: planIncomes,
+        plan_period: planIncomes,
         limit: pagination?.pageSize,
-        date_from: moment(date[0]).format("YYYY-MM-DD"),
-        date_to: moment(date[1]).format("YYYY-MM-DD"),
+        date_from: moment(date[0]).format('YYYY-MM-DD'),
+        date_to: moment(date[1]).format('YYYY-MM-DD')
       });
       if (!res?.detail) {
         setWarehousesOrders(res?.results);
@@ -61,7 +87,7 @@ const Stats = ({ currentWbKey, date, planIncomes }) => {
             ...prev,
             pageSize: pagination?.pageSize,
             current: pagination?.current,
-            total: Math.ceil(res.count),
+            total: Math.ceil(res.count)
           };
         });
       } else {
@@ -78,7 +104,7 @@ const Stats = ({ currentWbKey, date, planIncomes }) => {
     try {
       setLoadingBackground(true);
       const res = await fetchWarehouses({
-        wbKey: currentWbKey,
+        wbKey: currentWbKey
       });
       if (!res.detail) {
         setWarehousesBackground(res);
@@ -108,25 +134,25 @@ const Stats = ({ currentWbKey, date, planIncomes }) => {
           title: item.name,
           children: [
             {
-              title: "Кол-во",
+              title: 'Кол-во',
               dataIndex: `count_${item.id}`,
               key: `count_${item.id}`,
-              width: 40,
+              width: 40
             },
             {
-              title: "Прод.",
+              title: 'Прод.',
               dataIndex: `sales_${item.id}`,
               key: `sales_${item.id}`,
-              width: 40,
+              width: 40
             },
             {
-              title: "План",
+              title: 'План',
               dataIndex: `plane_${item.id}`,
               key: `plane_${item.id}`,
-              width: 40,
+              width: 40
             },
             {
-              title: "Факт",
+              title: 'Факт',
               dataIndex: `fact_${item.id}`,
               key: `fact_${item.id}`,
               render: (_, record) => (
@@ -134,42 +160,15 @@ const Stats = ({ currentWbKey, date, planIncomes }) => {
                   min={0}
                   defaultValue={record[`fact_${item.id}`]}
                   onBlur={(e) => {
-                    createIncomesBackup({
-                      item_id: record.id,
-                      quantity: Number(e.target.value),
-                      warehouse_id: item.id,
-                    });
-                    let oldItems =
-                      JSON.parse(localStorage.getItem("incomes")) || [];
-
-                    oldItems.push({
-                      item_id: record.id,
-                      quantity: e.target.value,
-                      warehouse_id: item.id,
-                    });
-                    localStorage.setItem("incomes", JSON.stringify(oldItems));
+                    handlerCreateIncomes({ e, record, item });
                   }}
                   onPressEnter={(e) => {
-                    createIncomesBackup({
-                      item_id: record.id,
-                      quantity: Number(e.target.value),
-                      warehouse_id: item.id,
-                    });
-
-                    let oldItems =
-                      JSON.parse(localStorage.getItem("incomes")) || [];
-
-                    oldItems.push({
-                      item_id: record.id,
-                      quantity: e.target.value,
-                      warehouse_id: item.id,
-                    });
-                    localStorage.setItem("incomes", JSON.stringify(oldItems));
+                    handlerCreateIncomes({ e, record, item });
                   }}
                 />
-              ),
-            },
-          ],
+              )
+            }
+          ]
         });
       });
 

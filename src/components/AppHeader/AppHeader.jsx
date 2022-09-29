@@ -3,20 +3,20 @@ import dayjs from 'dayjs';
 import './AppHeader.css';
 import moment from 'moment';
 import { useLocation } from 'react-router-dom';
-import {  fetchWarehousesCreateIncomes } from '../../api';
+import { fetchWarehousesCreateIncomes } from '../../api';
 const { Option } = Select;
 
 const { RangePicker } = DatePicker;
 const status = [0, 1, 2, 3, 4];
 
-
 const AppHeader = ({
   wbKeys = [],
   currentWbKey,
   setCurrentWbKey,
+  planIncomes,
   setPlanIncomes,
   date,
-  setDate,
+  setDate
 }) => {
   const dateFormat = 'DD-MM-YYYY';
   let router = useLocation();
@@ -63,6 +63,7 @@ const AppHeader = ({
             Планируем поставку на:{' '}
             <InputNumber
               min={0}
+              value={planIncomes}
               onBlur={(e) => {
                 setPlanIncomes(e.target.value);
               }}
