@@ -1,33 +1,41 @@
-import { fetchGoods } from "../api";
-import React, { useEffect, useState } from "react";
-import { Spin, Table, Alert } from "antd";
-import moment from "moment";
+import { fetchGoods } from '../api';
+import React, { useEffect, useState } from 'react';
+import { Spin, Table, Alert } from 'antd';
+import moment from 'moment';
+
+const names = {
+  category: 'Категории',
+  brand: 'Брэнд',
+  sales: 'Продаж',
+  wb_key: 'Кабинет'
+};
 
 const DashBoard = ({ currentWbKey, date }) => {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [goods, setGoods] = useState([]);
   const [pagination, setPagination] = useState({
     current: 1,
-    pageSize: 10,
+    pageSize: 10
   });
 
-  const getList = async (pagination, sorter) => {
+  const getList = async (pagination, filters, sorter) => {
     let ordering;
     if (!!sorter) {
       ordering = sorter.order
-        ? `${sorter.order === "ascend" ? "" : "-"}${sorter.field}`
+        ? `${sorter.order === 'ascend' ? '' : '-'}${sorter.field}`
         : null;
     }
+    console.log(sorter);
     try {
       setLoading(true);
       const res = await fetchGoods({
-        date_from: moment(date[0]).format("YYYY-MM-DD"),
-        date_to: moment(date[1]).format("YYYY-MM-DD"),
-        wbKey: currentWbKey,
+        date_from: moment(date[0]).format('YYYY-MM-DD'),
+        date_to: moment(date[1]).format('YYYY-MM-DD'),
+        wb_keys: currentWbKey,
         ordering,
         limit: pagination?.pageSize,
-        offset: (pagination?.current - 1) * pagination?.pageSize || null,
+        offset: (pagination?.current - 1) * pagination?.pageSize || null
       });
       if (res.results) {
         setGoods(res.results);
@@ -36,7 +44,7 @@ const DashBoard = ({ currentWbKey, date }) => {
             ...prev,
             current: pagination?.current,
             total: Math.ceil(res.count),
-            pageSize: pagination?.pageSize,
+            pageSize: pagination?.pageSize
           };
         });
       } else {
@@ -57,26 +65,32 @@ const DashBoard = ({ currentWbKey, date }) => {
 
   const columns = [
     {
-      title: "Категории",
-      dataIndex: "category",
-      key: "category",
-      width: "50%",
+      title: names.category,
+      dataIndex: 'category',
+      sorter: true
     },
     {
-      title: "Количество покупок",
-      dataIndex: "sales",
-      sorter: true,
-      key: "sales",
-      width: "50%",
+      title: names.sales,
+      dataIndex: 'sales',
+      sorter: true
     },
+    {
+      title: names.brand,
+      dataIndex: 'brand',
+      sorter: true
+    },
+    {
+      title: names.wb_key,
+      dataIndex: 'wb_key',
+      sorter: true
+    }
   ];
 
   return (
-    <div style={{ width: "50%" }}>
+    <>
       <Spin spinning={loading}>
         <Table
           size="small"
-          tableLayout="fixed"
           scroll={{ x: true }}
           pagination={pagination}
           sticky={{ offsetHeader: 140 }}
@@ -86,7 +100,7 @@ const DashBoard = ({ currentWbKey, date }) => {
         />
       </Spin>
       {!!error && <Alert closable message={error} type="error" />}
-    </div>
+    </>
   );
 };
 

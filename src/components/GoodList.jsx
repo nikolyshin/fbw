@@ -80,7 +80,7 @@ const GoodList = ({ currentWbKey }) => {
     try {
       setLoading(true);
       const res = await fetchGoodsListFilters({
-        wbKey: currentWbKey
+        wb_keys: currentWbKey
       });
       if (!res.detail) {
         setFilters(res);
@@ -104,7 +104,7 @@ const GoodList = ({ currentWbKey }) => {
     try {
       setLoading(true);
       const res = await fetchGoodsList({
-        wbKey: currentWbKey,
+        wb_keys: currentWbKey,
         ordering,
         search,
         limit: pagination?.pageSize,
@@ -147,6 +147,7 @@ const GoodList = ({ currentWbKey }) => {
         {
           title: names.category,
           dataIndex: 'category',
+          filterSearch: true,
           filters: filters?.categories?.map((item) => {
             return { text: item, value: item };
           }),
@@ -195,6 +196,7 @@ const GoodList = ({ currentWbKey }) => {
           dataIndex: 'discount',
           sorter: true,
           width: 100,
+          filterSearch: true,
           filters: filters?.discounts?.map((item) => {
             return { text: item, value: item };
           })
@@ -204,6 +206,7 @@ const GoodList = ({ currentWbKey }) => {
           dataIndex: 'price',
           sorter: true,
           width: 100,
+          filterSearch: true,
           filters: filters?.prices?.map((item) => {
             return { text: item, value: item };
           })

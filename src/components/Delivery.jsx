@@ -59,7 +59,7 @@ const Delivery = ({ currentWbKey }) => {
     try {
       setLoading(true);
       const res = await fetchGoodsIncomes({
-        wbKey: currentWbKey,
+        wb_keys: currentWbKey,
         limit: pagination?.pageSize,
         offset: (pagination?.current - 1) * pagination?.pageSize || null
       });

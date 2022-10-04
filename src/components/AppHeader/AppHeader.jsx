@@ -4,6 +4,9 @@ import './AppHeader.css';
 import moment from 'moment';
 import { useLocation } from 'react-router-dom';
 import { fetchWarehousesCreateIncomes } from '../../api';
+import { useState } from 'react';
+import ModalSuccess from '../ModalSuccess';
+import ModalError from '../ModalError';
 const { Option } = Select;
 
 const { RangePicker } = DatePicker;
@@ -15,12 +18,15 @@ const AppHeader = ({
   setCurrentWbKey,
   planIncomes,
   setPlanIncomes,
-  setCreatedIncomes,
   date,
   setDate
 }) => {
   const dateFormat = 'DD-MM-YYYY';
   let router = useLocation();
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [isModalSuccessVisible, setIsModalSuccessVisible] = useState(false);
+  const [isModalErrorVisible, setIsModalErrorVisible] = useState(false);
   const hideElements = () => {
     return !['/goodlist', '/'].includes(router.pathname);
   };
@@ -28,18 +34,19 @@ const AppHeader = ({
   const createIncomes = async () => {
     let incomes = JSON.parse(localStorage.getItem('incomes')) || [];
     try {
-      // setLoadingOrders(true);
+      setLoading(true);
       const res = await fetchWarehousesCreateIncomes(incomes);
       if (res) {
         localStorage.removeItem('incomes');
-        setCreatedIncomes((prev) => [...prev, res]);
+        setIsModalSuccessVisible(true);
       } else {
-        // setError(res?.detail);
+        setIsModalErrorVisible(true);
+        setError(res?.detail);
       }
     } catch (error) {
       console.log(error);
     } finally {
-      // setLoadingOrders(false);
+      setLoading(false);
     }
   };
 
@@ -112,6 +119,16 @@ const AppHeader = ({
             Создать отгрузку
           </Button>
         )}
+        <ModalSuccess
+          show={isModalSuccessVisible}
+          setShow={setIsModalSuccessVisible}
+          title="Отгрузка успешно создана"
+        />
+        <ModalError
+          show={isModalErrorVisible}
+          setShow={setIsModalErrorVisible}
+          title="Произошла ошибка"
+        />
       </div>
     </div>
   );

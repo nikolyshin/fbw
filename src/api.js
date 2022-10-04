@@ -1,8 +1,12 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import qs from 'qs';
 
 const client = axios.create({
-  baseURL: 'https://mp-log.ru/api/v1'
+  baseURL: 'https://mp-log.ru/api/v1',
+  paramsSerializer: (params) => {
+    return qs.stringify(params, { arrayFormat: 'comma', skipNulls: true });
+  }
 });
 
 client.interceptors.response.use(

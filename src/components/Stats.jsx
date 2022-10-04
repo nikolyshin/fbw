@@ -20,32 +20,6 @@ const staticColumns = [
   }
 ];
 
-const createdIncomesColumns = [
-  {
-    title: 'Арт',
-    dataIndex: 'article'
-  },
-  {
-    title: 'id',
-    dataIndex: 'id'
-  },
-  {
-    title: 'Дата',
-    dataIndex: 'date',
-    render: (date) => {
-      return <p>{moment(date).format('YYYY-MM-DD')}</p>;
-    }
-  },
-  {
-    title: 'Кол-во',
-    dataIndex: 'quantity'
-  },
-  {
-    title: 'Имя',
-    dataIndex: 'item_name'
-  }
-];
-
 const Stats = ({ currentWbKey, date, planIncomes, createdIncomes }) => {
   const [pagination, setPagination] = useState({
     current: 1,
@@ -90,11 +64,11 @@ const Stats = ({ currentWbKey, date, planIncomes, createdIncomes }) => {
     localStorage.setItem('incomes', JSON.stringify(items));
   };
 
-  const getWarehousesOrders = async (pagination) => {
+  const getOrders = async (pagination) => {
     try {
       setLoading(true);
       const res = await fetchWarehousesOrders({
-        wbKey: currentWbKey,
+        wb_keys: currentWbKey,
         offset: (pagination?.current - 1) * pagination?.pageSize || null,
         plan_period: planIncomes,
         limit: pagination?.pageSize,
@@ -125,7 +99,7 @@ const Stats = ({ currentWbKey, date, planIncomes, createdIncomes }) => {
     try {
       setLoading(true);
       const res = await fetchWarehouses({
-        wbKey: currentWbKey
+        wb_keys: currentWbKey
       });
       if (!res.detail) {
         setWarehousesBackground(res);
@@ -140,7 +114,7 @@ const Stats = ({ currentWbKey, date, planIncomes, createdIncomes }) => {
   };
 
   useEffect(() => {
-    getWarehousesOrders();
+    getOrders();
   }, [currentWbKey, date, planIncomes]);
 
   useEffect(() => {
@@ -213,32 +187,18 @@ const Stats = ({ currentWbKey, date, planIncomes, createdIncomes }) => {
 
   return (
     <>
-      <div style={{ display: 'flex', gap: 16 }}>
-        <Spin spinning={loading}>
-          <Table
-            size="small"
-            tableLayout="fixed"
-            bordered
-            scroll={{ x: true }}
-            sticky={{ offsetHeader: 140 }}
-            pagination={pagination}
-            onChange={getWarehousesOrders}
-            columns={[...staticColumns, ...columnsBackground]}
-            dataSource={dataSource}
-          />
-        </Spin>
-        {createdIncomes.map((item) => (
-          <Table
-            bordered
-            size="small"
-            scroll={{ x: true }}
-            sticky={{ offsetHeader: 140 }}
-            columns={createdIncomesColumns}
-            dataSource={item[0].incomes}
-            pagination={false}
-          />
-        ))}
-      </div>
+      <Spin spinning={loading}>
+        <Table
+          size="small"
+          bordered
+          scroll={{ x: true }}
+          sticky={{ offsetHeader: 140 }}
+          pagination={pagination}
+          onChange={getOrders}
+          columns={[...staticColumns, ...columnsBackground]}
+          dataSource={dataSource}
+        />
+      </Spin>
       {!!error && <Alert closable message={error} type="error" />}
     </>
   );
