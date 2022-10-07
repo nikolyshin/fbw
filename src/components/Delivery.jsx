@@ -4,9 +4,20 @@ import {
   fetchSetStatus
 } from '../api';
 import React, { useEffect, useState } from 'react';
-import { Spin, Table, Alert, Input, Select } from 'antd';
+import { Spin, Table, Alert, Input, Select, DatePicker } from 'antd';
 import moment from 'moment';
 const { Option } = Select;
+
+const names = {
+  plan_date: 'Плановая дата',
+  number: 'Номер поставки',
+  quantity: 'Кол-во',
+  warehouse_name: 'Склад',
+  date: 'Дата',
+  status: 'Статус'
+};
+
+const dateFormat = 'DD-MM-YYYY';
 
 const Delivery = ({ currentWbKey }) => {
   const [loading, setLoading] = useState(false);
@@ -14,6 +25,8 @@ const Delivery = ({ currentWbKey }) => {
   const [goods, setGoods] = useState([]);
   const [status, setStatus] = useState(null);
   const [detail, setDetail] = useState([]);
+  const [columns, setColumns] = useState([]);
+  const [filters, setFilters] = useState({});
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 10,
@@ -39,10 +52,10 @@ const Delivery = ({ currentWbKey }) => {
     }
   };
 
-  const changeDetail = async ({ id, number, status }) => {
+  const changeDetail = async ({ id, number, status, plan_date }) => {
     try {
       setLoading(true);
-      const res = await fetchSetStatus(id, { number, status });
+      const res = await fetchSetStatus(id, { number, status, plan_date });
       if (res.incomes) {
         setDetail(res.incomes);
       } else {
@@ -87,81 +100,96 @@ const Delivery = ({ currentWbKey }) => {
     getGoodsList();
   }, [currentWbKey]);
 
-  const columns = [
-    {
-      title: 'Дата',
-      dataIndex: 'date',
-      render: (date) => {
-        return <p>{moment(date).format('YYYY-MM-DD')}</p>;
-      }
-    },
-    {
-      title: 'Склад',
-      dataIndex: 'warehouse_name'
-    },
-    {
-      title: 'Кол-во',
-      dataIndex: 'quantity'
-    },
-    {
-      title: 'Номер поставки',
-      dataIndex: 'number',
-
-      render: (_, record) => (
-        <Input
-          placeholder="Номер поставки"
-          defaultValue={record.number}
-          onPressEnter={(e) => {
-            if (e.target.value) {
-              changeDetail({ id: record.id, number: e.target.value });
-              getDeatil(e.target.value);
+  useEffect(() => {
+    setColumns([
+      {
+        title: names.date,
+        dataIndex: 'date',
+        render: (date) => {
+          return <p>{moment(date).format('YYYY-MM-DD')}</p>;
+        }
+      },
+      {
+        title: names.warehouse_name,
+        dataIndex: 'warehouse_name'
+      },
+      {
+        title: names.quantity,
+        dataIndex: 'quantity'
+      },
+      {
+        title: names.number,
+        dataIndex: 'number',
+        render: (_, record) => (
+          <Input
+            placeholder={names.number}
+            defaultValue={record.number}
+            onPressEnter={(e) => {
+              if (e.target.value) {
+                changeDetail({ id: record.id, number: e.target.value });
+                getDeatil(e.target.value);
+              }
+            }}
+          />
+        )
+      },
+      {
+        title: names.plan_date,
+        dataIndex: 'plan_date',
+        render: (_, record) => (
+          <DatePicker
+            defaultValue={
+              record.plan_date ? moment(record.plan_date, dateFormat) : null
             }
-          }}
-        />
-      )
-    }
-  ];
+            format={dateFormat}
+            onChange={(value) => {
+              changeDetail({
+                id: record.id,
+                plan_date: moment(value).format('YYYY-MM-DD')
+              });
+            }}
+            placeholder="Выберите время"
+          />
+        )
+      },
+      {
+        title: names.status,
+        dataIndex: 'status',
+        render: (_, record) => (
+          <Select
+            value={record.status}
+            placeholder="Выберите статус"
+            onChange={(value) => {
+              changeDetail({ id: record.id, status: value });
+            }}
+            style={{
+              width: 200
+            }}
+          >
+            {statuses.map((item, i) => (
+              <Option key={i} value={item}>
+                {item}
+              </Option>
+            ))}
+          </Select>
+        )
+      }
+    ]);
+  }, []);
 
   const columnsDetail = [
     {
-      title: () => {
-        if (!!detail.length)
-          return (
-            <Select
-              value={status}
-              placeholder="Выберите статус"
-              onChange={(value) => {
-                changeDetail({ status: value });
-              }}
-              style={{
-                width: 300
-              }}
-            >
-              {statuses?.map((item, i) => (
-                <Option key={i} value={item}>
-                  {item}
-                </Option>
-              ))}
-            </Select>
-          );
-        return <></>;
-      },
-
-      children: [
-        {
-          title: 'Арт',
-          dataIndex: 'article'
-        },
-        {
-          title: 'item_name',
-          dataIndex: 'item_name'
-        },
-        {
-          title: 'Кол-во',
-          dataIndex: 'quantity',
-          width: 100
-        }
-      ]
+      title: 'Арт',
+      dataIndex: 'article'
+    },
+    {
+      title: 'item_name',
+      dataIndex: 'item_name'
+    },
+    {
+      title: 'Кол-во',
+      dataIndex: 'quantity',
+      width: 100
     }
   ];
 

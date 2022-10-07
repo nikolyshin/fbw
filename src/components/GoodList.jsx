@@ -4,9 +4,10 @@ import {
   fetchGoodsListFilters
 } from '../api';
 import React, { useEffect, useState, useRef } from 'react';
-import { Spin, Table, Alert, Divider, Input } from 'antd';
+import { Spin, Table, Alert, Divider, Input, Select } from 'antd';
 import ModalChangeProduct from './ModalChangeProduct';
 import ResizableTitle from './ResizableTitle';
+const { Option } = Select;
 
 const { Search } = Input;
 const names = {
@@ -42,16 +43,17 @@ const GoodList = ({ currentWbKey }) => {
   });
 
   const [columns, setColumns] = useState([]);
+  const [columnsSelect, setColumnsSelect] = useState([]);
 
   const handleResize =
     (index) =>
     (_, { size }) => {
-      const newColumns = [...columns];
+      const newColumns = [...columnsSelect];
       newColumns[index] = { ...newColumns[index], width: size.width };
-      setColumns(newColumns);
+      setColumnsSelect(newColumns);
     };
 
-  const mergeColumns = columns.map((col, index) => ({
+  const mergeColumns = columnsSelect.map((col, index) => ({
     ...col,
     onHeaderCell: (column) => ({
       width: column.width,
@@ -143,121 +145,123 @@ const GoodList = ({ currentWbKey }) => {
   }, [currentWbKey, search]);
 
   useEffect(() => {
-    if (Object.keys(filters).length) {
-      setColumns([
-        {
-          title: names.category,
-          dataIndex: 'category',
-          filterSearch: true,
-          filters: filters?.categories?.map((item) => {
-            return { text: item, value: item };
-          }),
-          sorter: true,
-          width: 120
-        },
-        {
-          title: names.subject,
-          dataIndex: 'subject',
-          filterSearch: true,
-          filters: filters?.subjects?.map((item) => {
-            return { text: item, value: item };
-          }),
-          sorter: true,
-          width: 100
-        },
-        {
-          title: names.multiplicity,
-          dataIndex: 'multiplicity',
-          filterSearch: true,
-          // filters: filters?.multiplicity?.map((item) => {
-          //   return { text: item, value: item };
-          // }),
-          sorter: true,
-          width: 100
-        },
+    setColumnsSelect(columns);
+  }, [columns]);
 
-        {
-          title: names.brand,
-          dataIndex: 'brand',
-          filterSearch: true,
-          filters: filters?.brands?.map((item) => {
-            return { text: item, value: item };
-          }),
-          sorter: true,
-          width: 100
-        },
-        {
-          title: names.article_wb,
-          dataIndex: 'article_wb',
-          filterSearch: true,
-          filters: filters?.articles_wb?.map((item) => {
-            return { text: item, value: item };
-          }),
-          sorter: true,
-          width: 100
-        },
-        {
-          title: names.article_1c,
-          dataIndex: 'article_1c',
-          filterSearch: true,
-          filters: filters?.articles_1c?.map((item) => {
-            return { text: item, value: item };
-          }),
-          sorter: true,
-          width: 100
-        },
-        {
-          title: names.barcode,
-          dataIndex: 'barcode',
-          filterSearch: true,
-          filters: filters?.barcodes?.map((item) => {
-            return { text: item, value: item };
-          }),
-          sorter: true,
-          width: 100
-        },
-        {
-          title: names.stock,
-          dataIndex: 'stock',
-          filterSearch: true,
-          // filters: filters?.stock?.map((item) => {
-          //   return { text: item, value: item };
-          // }),
-          sorter: true,
-          width: 100
-        },
-        {
-          title: names.discount,
-          dataIndex: 'discount',
-          sorter: true,
-          width: 100,
-          filterSearch: true,
-          filters: filters?.discounts?.map((item) => {
-            return { text: item, value: item };
-          })
-        },
-        {
-          title: names.discount_price,
-          dataIndex: 'discount_price',
-          sorter: true,
-          width: 100,
-          filterSearch: true,
-          filters: filters?.discounts?.map((item) => {
-            return { text: item, value: item };
-          })
-        },
-        {
-          title: names.price,
-          dataIndex: 'price',
-          sorter: true,
-          width: 100,
-          filterSearch: true,
-          filters: filters?.prices?.map((item) => {
-            return { text: item, value: item };
-          })
-        }
-      ]);
-    }
+  useEffect(() => {
+    setColumns([
+      {
+        title: names.category,
+        dataIndex: 'category',
+        filterSearch: true,
+        filters: filters?.categories?.map((item) => {
+          return { text: item, value: item };
+        }),
+        sorter: true,
+        width: 120
+      },
+      {
+        title: names.subject,
+        dataIndex: 'subject',
+        filterSearch: true,
+        filters: filters?.subjects?.map((item) => {
+          return { text: item, value: item };
+        }),
+        sorter: true,
+        width: 100
+      },
+      {
+        title: names.multiplicity,
+        dataIndex: 'multiplicity',
+        filterSearch: true,
+        // filters: filters?.multiplicity?.map((item) => {
+        //   return { text: item, value: item };
+        // }),
+        sorter: true,
+        width: 100
+      },
+
+      {
+        title: names.brand,
+        dataIndex: 'brand',
+        filterSearch: true,
+        filters: filters?.brands?.map((item) => {
+          return { text: item, value: item };
+        }),
+        sorter: true,
+        width: 100
+      },
+      {
+        title: names.article_wb,
+        dataIndex: 'article_wb',
+        filterSearch: true,
+        filters: filters?.articles_wb?.map((item) => {
+          return { text: item, value: item };
+        }),
+        sorter: true,
+        width: 100
+      },
+      {
+        title: names.article_1c,
+        dataIndex: 'article_1c',
+        filterSearch: true,
+        filters: filters?.articles_1c?.map((item) => {
+          return { text: item, value: item };
+        }),
+        sorter: true,
+        width: 100
+      },
+      {
+        title: names.barcode,
+        dataIndex: 'barcode',
+        filterSearch: true,
+        filters: filters?.barcodes?.map((item) => {
+          return { text: item, value: item };
+        }),
+        sorter: true,
+        width: 100
+      },
+      {
+        title: names.stock,
+        dataIndex: 'stock',
+        filterSearch: true,
+        // filters: filters?.stock?.map((item) => {
+        //   return { text: item, value: item };
+        // }),
+        sorter: true,
+        width: 100
+      },
+      {
+        title: names.discount,
+        dataIndex: 'discount',
+        sorter: true,
+        width: 100,
+        filterSearch: true,
+        filters: filters?.discounts?.map((item) => {
+          return { text: item, value: item };
+        })
+      },
+      {
+        title: names.discount_price,
+        dataIndex: 'discount_price',
+        sorter: true,
+        width: 100,
+        filterSearch: true,
+        filters: filters?.discounts?.map((item) => {
+          return { text: item, value: item };
+        })
+      },
+      {
+        title: names.price,
+        dataIndex: 'price',
+        sorter: true,
+        width: 100,
+        filterSearch: true,
+        filters: filters?.prices?.map((item) => {
+          return { text: item, value: item };
+        })
+      }
+    ]);
   }, [filters]);
 
   return (
@@ -270,7 +274,29 @@ const GoodList = ({ currentWbKey }) => {
         allowClear
         onSearch={setSearch}
       />
+
       <Divider />
+      <Select
+        mode="multiple"
+        showArrow
+        value={columnsSelect.map((item) => item.title)}
+        placeholder="Выбрать склад"
+        style={{
+          width: 600,
+          marginBottom: '24px'
+        }}
+        onChange={(value) => {
+          setColumnsSelect([
+            ...columns.filter((item) => value.includes(item.title))
+          ]);
+        }}
+      >
+        {columns.map((item) => (
+          <Option key={item} value={item.title}>
+            {item.title}
+          </Option>
+        ))}
+      </Select>
       <Spin spinning={loading}>
         <Table
           size="small"

@@ -4,23 +4,25 @@ import {
   fetchWarehousesOrders
 } from '../api';
 import React, { useEffect, useState } from 'react';
-import { Spin, Table, Alert, InputNumber } from 'antd';
+import { Spin, Table, Alert, InputNumber, Select } from 'antd';
 import moment from 'moment';
 
-const staticColumns = [
-  {
-    title: 'Категории',
-    dataIndex: 'category',
-    fixed: 'left'
-  },
-  {
-    title: 'Имя',
-    dataIndex: 'subject',
-    fixed: 'left'
-  }
-];
+const { Option } = Select;
 
-const Stats = ({ currentWbKey, date, planIncomes, createdIncomes }) => {
+const names = {
+  category: 'Категории',
+  subject: 'Группа товара',
+  multiplicity: 'Кратность',
+  brand: 'Брэнд',
+  article_wb: 'Арт WB',
+  article_1c: 'Арт 1С',
+  barcode: 'БарКод',
+  stock: 'Остаток',
+  wb_key: 'Кабинет',
+  wb_id: 'wb_id'
+};
+
+const Stats = ({ currentWbKey, date, planIncomes }) => {
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 10
@@ -28,8 +30,10 @@ const Stats = ({ currentWbKey, date, planIncomes, createdIncomes }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [columnsBackground, setColumnsBackground] = useState([]);
+  const [columns, setColumns] = useState([]);
   const [dataSource, setDataSource] = useState([]);
-  const [warehousesBackground, setWarehousesBackground] = useState([]);
+  const [warehouses, setWarehouses] = useState([]);
+  const [warehousesSelect, setWarehousesSelect] = useState([]);
   const [warehousesOrders, setWarehousesOrders] = useState([]);
 
   const handlerCreateIncomes = async ({ e, record, item }) => {
@@ -95,14 +99,14 @@ const Stats = ({ currentWbKey, date, planIncomes, createdIncomes }) => {
     }
   };
 
-  const getWarehousesBackground = async () => {
+  const getwarehouses = async () => {
     try {
       setLoading(true);
       const res = await fetchWarehouses({
         wb_keys: currentWbKey
       });
       if (!res.detail) {
-        setWarehousesBackground(res);
+        setWarehouses(res);
       } else {
         setError(res.detail);
       }
@@ -118,14 +122,17 @@ const Stats = ({ currentWbKey, date, planIncomes, createdIncomes }) => {
   }, [currentWbKey, date, planIncomes]);
 
   useEffect(() => {
-    getWarehousesBackground();
+    getwarehouses();
   }, []);
 
   useEffect(() => {
-    if (!!warehousesBackground.length) {
-      const arr = [];
-      warehousesBackground.forEach((item) => {
-        arr.push({
+    setWarehousesSelect(warehouses);
+  }, [warehouses]);
+
+  useEffect(() => {
+    setColumnsBackground([
+      ...warehousesSelect.map((item) => {
+        return {
           title: item.name,
           children: [
             {
@@ -150,7 +157,6 @@ const Stats = ({ currentWbKey, date, planIncomes, createdIncomes }) => {
               render: (_, record) => (
                 <InputNumber
                   min={0}
-                  defaultValue={record[`fact_${item.id}`]}
                   onBlur={(e) => {
                     handlerCreateIncomes({ e, record, item });
                   }}
@@ -159,14 +165,22 @@ const Stats = ({ currentWbKey, date, planIncomes, createdIncomes }) => {
                   }}
                 />
               )
+            },
+            {
+              title: 'На сборке',
+              dataIndex: `on_build_goods_${item.id}`,
+              width: 40
+            },
+            {
+              title: 'В пути',
+              dataIndex: `on_road_goods_${item.id}`,
+              width: 40
             }
           ]
-        });
-      });
-
-      setColumnsBackground(arr);
-    }
-  }, [warehousesBackground]);
+        };
+      })
+    ]);
+  }, [warehousesSelect]);
 
   useEffect(() => {
     if (!!warehousesOrders.length) {
@@ -178,6 +192,8 @@ const Stats = ({ currentWbKey, date, planIncomes, createdIncomes }) => {
           obj[`count_${el.warehouse_id}`] = el.quantity;
           obj[`plane_${el.warehouse_id}`] = el.incomes_plan;
           obj[`fact_${el.warehouse_id}`] = el.incomes;
+          obj[`on_build_goods_${el.warehouse_id}`] = el.on_build_goods;
+          obj[`on_road_goods_${el.warehouse_id}`] = el.on_road_goods;
         });
         arr.push(obj);
       });
@@ -185,8 +201,77 @@ const Stats = ({ currentWbKey, date, planIncomes, createdIncomes }) => {
     }
   }, [warehousesOrders]);
 
+  useEffect(() => {
+    setColumns([
+      {
+        title: names.category,
+        dataIndex: 'category',
+        fixed: 'left',
+        width: 120
+      },
+      {
+        title: names.subject,
+        dataIndex: 'subject',
+        fixed: 'left',
+        width: 100
+      },
+      {
+        title: names.brand,
+        dataIndex: 'brand',
+        width: 100
+      },
+      {
+        title: names.article_1c,
+        dataIndex: 'article_1c',
+        width: 100
+      },
+      {
+        title: names.barcode,
+        dataIndex: 'barcode',
+        width: 100
+      },
+      {
+        title: names.stock,
+        dataIndex: 'stock',
+        width: 100
+      },
+      {
+        title: names.wb_id,
+        dataIndex: 'wb_id',
+        width: 100
+      },
+      {
+        title: names.wb_key,
+        dataIndex: 'wb_key',
+        width: 100
+      }
+    ]);
+  }, []);
+
   return (
     <>
+      <Select
+        mode="multiple"
+        showArrow
+        value={warehousesSelect.map((item) => item.id)}
+        placeholder="Выбрать склад"
+        style={{
+          width: 600,
+          marginBottom: '24px'
+        }}
+        onChange={(value) => {
+          setWarehousesSelect([
+            ...warehouses.filter((item) => value.includes(item.id))
+          ]);
+        }}
+      >
+        {warehouses.map((item) => (
+          <Option key={item.id} value={item.id}>
+            {item.name}
+          </Option>
+        ))}
+      </Select>
+
       <Spin spinning={loading}>
         <Table
           size="small"
@@ -195,7 +280,7 @@ const Stats = ({ currentWbKey, date, planIncomes, createdIncomes }) => {
           sticky={{ offsetHeader: 140 }}
           pagination={pagination}
           onChange={getOrders}
-          columns={[...staticColumns, ...columnsBackground]}
+          columns={[...columns, ...columnsBackground]}
           dataSource={dataSource}
         />
       </Spin>
