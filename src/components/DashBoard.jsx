@@ -1,7 +1,8 @@
-import { fetchGoods } from '../api';
-import React, { useEffect, useState } from 'react';
+import { fetchGoods, fetchGoodsFilters } from '../api';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Spin, Table, Alert } from 'antd';
 import moment from 'moment';
+import ResizableTitle from './ResizableTitle';
 
 const names = {
   category: 'Категории',
@@ -14,10 +15,57 @@ const DashBoard = ({ currentWbKey, date }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [goods, setGoods] = useState([]);
+  const [filters, setFilters] = useState({});
+  const [columns, setColumns] = useState([]);
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 10
   });
+
+  const arrDates = useMemo(() => {
+    var now = date[0].clone(),
+      dates = [];
+
+    while (now.isSameOrBefore(date[1])) {
+      dates.push(now.format('YYYY-MM-DD'));
+      now.add(1, 'days');
+    }
+    return dates;
+  }, [date]);
+
+  const handleResize =
+    (index) =>
+    (_, { size }) => {
+      const newColumns = [...columns];
+      newColumns[index] = { ...newColumns[index], width: size.width };
+      setColumns(newColumns);
+    };
+
+  const mergeColumns = columns.map((col, index) => ({
+    ...col,
+    onHeaderCell: (column) => ({
+      width: column.width,
+      onResize: handleResize(index)
+    })
+  }));
+
+  const getListFilters = async () => {
+    try {
+      setLoading(true);
+      const res = await fetchGoodsFilters({
+        wb_keys: currentWbKey
+      });
+      if (!res.detail) {
+        setFilters(res);
+      } else {
+        setError(res.detail);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getList = async (pagination, filters, sorter) => {
     let ordering;
@@ -26,7 +74,6 @@ const DashBoard = ({ currentWbKey, date }) => {
         ? `${sorter.order === 'ascend' ? '' : '-'}${sorter.field}`
         : null;
     }
-    console.log(sorter);
     try {
       setLoading(true);
       const res = await fetchGoods({
@@ -35,10 +82,22 @@ const DashBoard = ({ currentWbKey, date }) => {
         wb_keys: currentWbKey,
         ordering,
         limit: pagination?.pageSize,
-        offset: (pagination?.current - 1) * pagination?.pageSize || null
+        offset: (pagination?.current - 1) * pagination?.pageSize || null,
+        category: filters?.category,
+        wb_key: filters?.wb_key,
+        brand: filters?.brand
       });
       if (res.results) {
-        setGoods(res.results);
+        const arr = [];
+        res.results.forEach((item) => {
+          const obj = { ...item };
+          item.days.forEach((el) => {
+            obj[`${el.date}`] = el.sales;
+          });
+          arr.push(obj);
+        });
+
+        setGoods(arr);
         setPagination((prev) => {
           return {
             ...prev,
@@ -63,38 +122,75 @@ const DashBoard = ({ currentWbKey, date }) => {
     }
   }, [currentWbKey, date]);
 
-  const columns = [
-    {
-      title: names.category,
-      dataIndex: 'category',
-      sorter: true
-    },
-    {
-      title: names.sales,
-      dataIndex: 'sales',
-      sorter: true
-    },
-    {
-      title: names.brand,
-      dataIndex: 'brand',
-      sorter: true
-    },
-    {
-      title: names.wb_key,
-      dataIndex: 'wb_key',
-      sorter: true
-    }
-  ];
+  useEffect(() => {
+    getListFilters();
+  }, [currentWbKey]);
+
+  useEffect(() => {
+    setColumns([
+      {
+        title: names.category,
+        dataIndex: 'category',
+        sorter: true,
+        filterSearch: true,
+        width: 200,
+        fixed: 'left',
+        filters: filters?.categories?.map((item) => {
+          return { text: item, value: item };
+        })
+      },
+      {
+        title: names.sales,
+        dataIndex: 'sales',
+        width: 200,
+        fixed: 'left',
+        sorter: true
+      },
+      {
+        title: names.brand,
+        dataIndex: 'brand',
+        width: 200,
+        sorter: true,
+        filterSearch: true,
+        filters: filters?.brands?.map((item) => {
+          return { text: item, value: item };
+        })
+      },
+      {
+        title: names.wb_key,
+        dataIndex: 'wb_key',
+        width: 200,
+        sorter: true,
+        filterSearch: true,
+        filters: filters?.wb_keys?.map((item) => {
+          return { text: item, value: item };
+        })
+      },
+      ...arrDates.map((day) => {
+        return {
+          title: moment(day).format('DD-MM-YYYY'),
+          dataIndex: moment(day).format('YYYY-MM-DD'),
+          width: 100
+        };
+      })
+    ]);
+  }, [filters, arrDates]);
 
   return (
     <>
       <Spin spinning={loading}>
         <Table
           size="small"
-          scroll={{ x: true }}
+          scroll={{ x: 0 }}
+          bordered
+          components={{
+            header: {
+              cell: ResizableTitle
+            }
+          }}
           pagination={pagination}
           sticky={{ offsetHeader: 140 }}
-          columns={columns}
+          columns={mergeColumns}
           onChange={getList}
           dataSource={goods}
         />

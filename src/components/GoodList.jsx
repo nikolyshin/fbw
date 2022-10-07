@@ -19,7 +19,8 @@ const names = {
   barcode: 'БарКод',
   stock: 'Остаток',
   discount: 'discount',
-  price: 'Цена'
+  price: 'Цена',
+  discount_price: 'discount_price'
 };
 
 const GoodList = ({ currentWbKey }) => {
@@ -157,43 +158,87 @@ const GoodList = ({ currentWbKey }) => {
         {
           title: names.subject,
           dataIndex: 'subject',
+          filterSearch: true,
+          filters: filters?.subjects?.map((item) => {
+            return { text: item, value: item };
+          }),
           sorter: true,
           width: 100
         },
         {
           title: names.multiplicity,
           dataIndex: 'multiplicity',
+          filterSearch: true,
+          // filters: filters?.multiplicity?.map((item) => {
+          //   return { text: item, value: item };
+          // }),
+          sorter: true,
           width: 100
         },
 
         {
           title: names.brand,
           dataIndex: 'brand',
+          filterSearch: true,
+          filters: filters?.brands?.map((item) => {
+            return { text: item, value: item };
+          }),
+          sorter: true,
           width: 100
         },
         {
           title: names.article_wb,
           dataIndex: 'article_wb',
+          filterSearch: true,
+          filters: filters?.articles_wb?.map((item) => {
+            return { text: item, value: item };
+          }),
+          sorter: true,
           width: 100
         },
         {
           title: names.article_1c,
           dataIndex: 'article_1c',
+          filterSearch: true,
+          filters: filters?.articles_1c?.map((item) => {
+            return { text: item, value: item };
+          }),
+          sorter: true,
           width: 100
         },
         {
           title: names.barcode,
           dataIndex: 'barcode',
+          filterSearch: true,
+          filters: filters?.barcodes?.map((item) => {
+            return { text: item, value: item };
+          }),
+          sorter: true,
           width: 100
         },
         {
           title: names.stock,
           dataIndex: 'stock',
+          filterSearch: true,
+          // filters: filters?.stock?.map((item) => {
+          //   return { text: item, value: item };
+          // }),
+          sorter: true,
           width: 100
         },
         {
           title: names.discount,
           dataIndex: 'discount',
+          sorter: true,
+          width: 100,
+          filterSearch: true,
+          filters: filters?.discounts?.map((item) => {
+            return { text: item, value: item };
+          })
+        },
+        {
+          title: names.discount_price,
+          dataIndex: 'discount_price',
           sorter: true,
           width: 100,
           filterSearch: true,

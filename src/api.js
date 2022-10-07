@@ -40,6 +40,14 @@ export const fetchGoods = (data) => {
     .then((response) => response.data);
 };
 
+export const fetchGoodsFilters = (data) => {
+  return client
+    .get(`/goods/category/sales/filters/`, {
+      params: data
+    })
+    .then((response) => response.data);
+};
+
 export const fetchGoodsList = (data) => {
   return client
     .get(`/goods/`, {
@@ -60,9 +68,9 @@ export const fetchEditProduct = (id, data) => {
   return client.put(`/goods/${id}/`, data).then((response) => response.data);
 };
 
-export const fetchEditProductBackup = (id) => {
+export const fetchGoodsBackup = (id) => {
   return client
-    .get(`/goods/${id.id}/update_backup/`, {
+    .get(`/goods/${id.id}/backups/`, {
       params: id
     })
     .then((response) => response.data);

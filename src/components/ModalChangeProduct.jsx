@@ -1,7 +1,7 @@
 import { Alert, Button, Form, Input, Modal, Space, Spin } from 'antd';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import { fetchEditProductBackup } from '../api';
+import { fetchGoodsBackup } from '../api';
 
 const ModalChangeProduct = ({
   id,
@@ -29,7 +29,7 @@ const ModalChangeProduct = ({
 
   const getBackup = async () => {
     try {
-      const res = await fetchEditProductBackup({ id });
+      const res = await fetchGoodsBackup({ id });
       if (res.backup_data) {
         setDraft(res.backup_data);
         setDraftError(res.description);
@@ -77,17 +77,7 @@ const ModalChangeProduct = ({
           }
         >
           {fields.map(({ name, label }, i) => (
-            <Form.Item
-              key={i}
-              name={name}
-              label={label || name}
-              rules={[
-                {
-                  required: true,
-                  message: `Введите ${label || name}!`
-                }
-              ]}
-            >
+            <Form.Item key={i} name={name} label={label || name}>
               <Input />
             </Form.Item>
           ))}
