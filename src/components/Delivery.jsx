@@ -23,7 +23,6 @@ const Delivery = ({ currentWbKey }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [goods, setGoods] = useState([]);
-  const [status, setStatus] = useState(null);
   const [detail, setDetail] = useState([]);
   const [columns, setColumns] = useState([]);
   const [filters, setFilters] = useState({});
@@ -33,7 +32,11 @@ const Delivery = ({ currentWbKey }) => {
     showSizeChanger: true
   });
 
-  const statuses = ['Заказано поставщику', 'В пути на WB', 'Принято на склад'];
+  const statuses = [
+    { name: 'Заказано поставщику', value: 'ordered' },
+    { name: 'В пути на WB', value: 'on_road_to_wb' },
+    { name: 'Принято на склад', value: 'accepted_to_warehouse' }
+  ];
 
   const getDeatil = async (id) => {
     try {
@@ -41,7 +44,6 @@ const Delivery = ({ currentWbKey }) => {
       const res = await fetchGetGoodsIncomes(id);
       if (res.incomes) {
         setDetail(res.incomes);
-        setStatus(res.status || null);
       } else {
         setError(res.detail);
       }
@@ -167,8 +169,8 @@ const Delivery = ({ currentWbKey }) => {
             }}
           >
             {statuses.map((item, i) => (
-              <Option key={i} value={item}>
-                {item}
+              <Option key={i} value={item.value}>
+                {item.name}
               </Option>
             ))}
           </Select>

@@ -7,6 +7,8 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Spin, Table, Alert, Divider, Input, Select } from 'antd';
 import ModalChangeProduct from './ModalChangeProduct';
 import ResizableTitle from './ResizableTitle';
+import { resize } from './resize';
+import { FilterRange } from './FilterRange';
 const { Option } = Select;
 
 const { Search } = Input;
@@ -44,22 +46,6 @@ const GoodList = ({ currentWbKey }) => {
 
   const [columns, setColumns] = useState([]);
   const [columnsSelect, setColumnsSelect] = useState([]);
-
-  const handleResize =
-    (index) =>
-    (_, { size }) => {
-      const newColumns = [...columnsSelect];
-      newColumns[index] = { ...newColumns[index], width: size.width };
-      setColumnsSelect(newColumns);
-    };
-
-  const mergeColumns = columnsSelect.map((col, index) => ({
-    ...col,
-    onHeaderCell: (column) => ({
-      width: column.width,
-      onResize: handleResize(index)
-    })
-  }));
 
   const onFinish = async (data) => {
     try {
@@ -173,10 +159,7 @@ const GoodList = ({ currentWbKey }) => {
       {
         title: names.multiplicity,
         dataIndex: 'multiplicity',
-        filterSearch: true,
-        // filters: filters?.multiplicity?.map((item) => {
-        //   return { text: item, value: item };
-        // }),
+        ...FilterRange('multiplicity'),
         sorter: true,
         width: 100
       },
@@ -278,6 +261,7 @@ const GoodList = ({ currentWbKey }) => {
       <Divider />
       <Select
         mode="multiple"
+        allowClear
         showArrow
         value={columnsSelect.map((item) => item.title)}
         placeholder="Выбрать склад"
@@ -292,7 +276,7 @@ const GoodList = ({ currentWbKey }) => {
         }}
       >
         {columns.map((item) => (
-          <Option key={item} value={item.title}>
+          <Option key={item.title} value={item.title}>
             {item.title}
           </Option>
         ))}
@@ -306,7 +290,10 @@ const GoodList = ({ currentWbKey }) => {
               cell: ResizableTitle
             }
           }}
-          columns={mergeColumns}
+          columns={resize({
+            columns: columnsSelect,
+            setColumns: setColumnsSelect
+          })}
           scroll={{ x: 0 }}
           dataSource={goods}
           sticky={{ offsetHeader: 140 }}

@@ -1,8 +1,10 @@
 import { fetchGoods, fetchGoodsFilters } from '../api';
 import React, { useEffect, useMemo, useState } from 'react';
-import { Spin, Table, Alert } from 'antd';
+import { Spin, Table, Alert, Select } from 'antd';
 import moment from 'moment';
 import ResizableTitle from './ResizableTitle';
+import { resize } from './resize';
+const { Option } = Select;
 
 const names = {
   category: 'Категории',
@@ -17,6 +19,7 @@ const DashBoard = ({ currentWbKey, date }) => {
   const [goods, setGoods] = useState([]);
   const [filters, setFilters] = useState({});
   const [columns, setColumns] = useState([]);
+  const [columnsSelect, setColumnsSelect] = useState([]);
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 10
@@ -32,22 +35,6 @@ const DashBoard = ({ currentWbKey, date }) => {
     }
     return dates;
   }, [date]);
-
-  const handleResize =
-    (index) =>
-    (_, { size }) => {
-      const newColumns = [...columns];
-      newColumns[index] = { ...newColumns[index], width: size.width };
-      setColumns(newColumns);
-    };
-
-  const mergeColumns = columns.map((col, index) => ({
-    ...col,
-    onHeaderCell: (column) => ({
-      width: column.width,
-      onResize: handleResize(index)
-    })
-  }));
 
   const getListFilters = async () => {
     try {
@@ -127,6 +114,10 @@ const DashBoard = ({ currentWbKey, date }) => {
   }, [currentWbKey]);
 
   useEffect(() => {
+    setColumnsSelect(columns);
+  }, [columns]);
+
+  useEffect(() => {
     setColumns([
       {
         title: names.category,
@@ -178,6 +169,28 @@ const DashBoard = ({ currentWbKey, date }) => {
 
   return (
     <>
+      <Select
+        mode="multiple"
+        allowClear
+        showArrow
+        value={columnsSelect.map((item) => item.title)}
+        placeholder="Выбрать колонку"
+        style={{
+          width: 600,
+          marginBottom: '24px'
+        }}
+        onChange={(value) => {
+          setColumnsSelect([
+            ...columns.filter((item) => value.includes(item.title))
+          ]);
+        }}
+      >
+        {columns.map((item) => (
+          <Option key={item.title} value={item.title}>
+            {item.title}
+          </Option>
+        ))}
+      </Select>
       <Spin spinning={loading}>
         <Table
           size="small"
@@ -190,7 +203,10 @@ const DashBoard = ({ currentWbKey, date }) => {
           }}
           pagination={pagination}
           sticky={{ offsetHeader: 140 }}
-          columns={mergeColumns}
+          columns={resize({
+            columns: columnsSelect,
+            setColumns: setColumnsSelect
+          })}
           onChange={getList}
           dataSource={goods}
         />

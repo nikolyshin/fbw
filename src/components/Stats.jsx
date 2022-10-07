@@ -252,6 +252,7 @@ const Stats = ({ currentWbKey, date, planIncomes }) => {
     <>
       <Select
         mode="multiple"
+        allowClear
         showArrow
         value={warehousesSelect.map((item) => item.id)}
         placeholder="Выбрать склад"

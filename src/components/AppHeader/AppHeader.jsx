@@ -28,7 +28,7 @@ const AppHeader = ({
   const [isModalSuccessVisible, setIsModalSuccessVisible] = useState(false);
   const [isModalErrorVisible, setIsModalErrorVisible] = useState(false);
   const hideElements = () => {
-    return !['/goodlist', '/'].includes(router.pathname);
+    return !['/goodlist', '/', '/delivery'].includes(router.pathname);
   };
 
   const createIncomes = async () => {
