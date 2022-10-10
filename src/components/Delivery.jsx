@@ -1,6 +1,7 @@
 import {
   fetchGetGoodsIncomes,
   fetchGoodsIncomes,
+  fetchGoodsIncomesFilters,
   fetchSetStatus
 } from '../api';
 import React, { useEffect, useState } from 'react';
@@ -31,12 +32,6 @@ const Delivery = ({ currentWbKey }) => {
     pageSize: 10,
     showSizeChanger: true
   });
-
-  const statuses = [
-    { name: 'Заказано поставщику', value: 'ordered' },
-    { name: 'В пути на WB', value: 'on_road_to_wb' },
-    { name: 'Принято на склад', value: 'accepted_to_warehouse' }
-  ];
 
   const getDeatil = async (id) => {
     try {
@@ -70,13 +65,32 @@ const Delivery = ({ currentWbKey }) => {
     }
   };
 
-  const getGoodsList = async (pagination) => {
+  const getGoodsListFilters = async () => {
+    try {
+      setLoading(true);
+      const res = await fetchGoodsIncomesFilters({
+        wb_keys: currentWbKey
+      });
+      if (!res.detail) {
+        setFilters(res);
+      } else {
+        setError(res.detail);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getGoodsList = async (pagination, filters, sorter) => {
     try {
       setLoading(true);
       const res = await fetchGoodsIncomes({
         wb_keys: currentWbKey,
         limit: pagination?.pageSize,
-        offset: (pagination?.current - 1) * pagination?.pageSize || null
+        offset: (pagination?.current - 1) * pagination?.pageSize || null,
+        warehouse_name: filters?.warehouse_name
       });
       if (res.results) {
         setGoods(res.results);
@@ -100,6 +114,7 @@ const Delivery = ({ currentWbKey }) => {
 
   useEffect(() => {
     getGoodsList();
+    getGoodsListFilters();
   }, [currentWbKey]);
 
   useEffect(() => {
@@ -113,7 +128,12 @@ const Delivery = ({ currentWbKey }) => {
       },
       {
         title: names.warehouse_name,
-        dataIndex: 'warehouse_name'
+        dataIndex: 'warehouse_name',
+        sorter: true,
+        filterSearch: true,
+        filters: filters?.warehouse_name?.map((item) => {
+          return { text: item, value: item };
+        })
       },
       {
         title: names.quantity,
@@ -168,16 +188,16 @@ const Delivery = ({ currentWbKey }) => {
               width: 200
             }}
           >
-            {statuses.map((item, i) => (
-              <Option key={i} value={item.value}>
-                {item.name}
+            {Object.entries(filters?.status || []).map((item, i) => (
+              <Option key={i} value={item[0]}>
+                {item[1]}
               </Option>
             ))}
           </Select>
         )
       }
     ]);
-  }, []);
+  }, [filters]);
 
   const columnsDetail = [
     {

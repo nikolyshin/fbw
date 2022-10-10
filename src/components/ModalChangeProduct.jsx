@@ -1,6 +1,6 @@
 import { Alert, Button, Form, Input, Modal, Space, Spin } from 'antd';
 import moment from 'moment';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { fetchGoodsBackup } from '../api';
 
 const ModalChangeProduct = ({
@@ -13,9 +13,20 @@ const ModalChangeProduct = ({
   fields
 }) => {
   const [draft, setDraft] = useState(null);
-  const [draftDate, setDraftDate] = useState(null);
-  const [draftError, setDraftError] = useState(null);
+  const currentDraft = useRef([]);
   const [step, setStep] = useState(0);
+
+  const formItems = (array = [], step) => {
+    return array.map((item, i) => (
+      <Form.Item
+        key={i}
+        name={step === 0 ? item.name : item[0]}
+        label={step === 0 ? item.label || item.name : item[0]}
+      >
+        <Input />
+      </Form.Item>
+    ));
+  };
 
   const layout = {
     labelCol: {
@@ -30,10 +41,8 @@ const ModalChangeProduct = ({
   const getBackup = async () => {
     try {
       const res = await fetchGoodsBackup({ id });
-      if (res.backup_data) {
-        setDraft(res.backup_data);
-        setDraftError(res.description);
-        setDraftDate(res.run_dt);
+      if (res) {
+        setDraft(res);
       }
     } catch (error) {
       console.log(error);
@@ -71,30 +80,29 @@ const ModalChangeProduct = ({
           fields={
             step === 0
               ? fields
-              : Object.entries(draft).map((item) => {
+              : currentDraft.current.map((item) => {
                   return { name: item[0], value: item[1] };
                 })
           }
         >
-          {fields.map(({ name, label }, i) => (
-            <Form.Item key={i} name={name} label={label || name}>
-              <Input />
-            </Form.Item>
-          ))}
+          {formItems(step === 0 ? fields : currentDraft?.current, step)}
         </Form>
         <Space style={{ width: '100%' }} direction="vertical">
-          {!!draftDate && step === 1 && (
-            <>
+          {step === 0 &&
+            draft?.map((item, i) => (
               <Alert
-                message={moment(draftDate).format('YYYY-MM-DD')}
+                key={i}
+                message={item.result}
+                description={`${item.description} ${moment(item.run_dt).format(
+                  'hh.mm.ss/DD-MM-YYYY'
+                )}`}
                 type="info"
-                closable={false}
+                onClick={() => {
+                  currentDraft.current = Object.entries(item.backup_data);
+                  setStep(1);
+                }}
               />
-            </>
-          )}
-          {!!draftError && step === 1 && (
-            <Alert message={draftError} type="error" />
-          )}
+            ))}
           {step === 1 && (
             <Button
               type="primary"
@@ -107,17 +115,6 @@ const ModalChangeProduct = ({
             </Button>
           )}
         </Space>
-        {!!draft && step === 0 && (
-          <Button
-            type="primary"
-            htmlType="submit"
-            onClick={() => {
-              setStep(1);
-            }}
-          >
-            Показать драфт
-          </Button>
-        )}
       </Spin>
       {!!error && <Alert closable message={error} type="error" />}
     </Modal>

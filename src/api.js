@@ -116,6 +116,14 @@ export const fetchGoodsIncomes = (data) => {
     .then((response) => response.data);
 };
 
+export const fetchGoodsIncomesFilters = (data) => {
+  return client
+    .get(`/goods/incomes/filters`, {
+      params: data
+    })
+    .then((response) => response.data);
+};
+
 export const fetchGetGoodsIncomes = (id) => {
   return client.get(`/goods/incomes/${id}/`).then((response) => response.data);
 };
