@@ -3,7 +3,7 @@ import {
   fetchWarehousesCreateIncomesBackup,
   fetchWarehousesOrders
 } from '../api';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Spin, Table, Alert, InputNumber, Select } from 'antd';
 import moment from 'moment';
 import { resize } from './resize';
@@ -42,13 +42,14 @@ const Stats = ({
   const [warehouses, setWarehouses] = useState([]);
   const [columnsSelect, setColumnsSelect] = useState([]);
   const [goods, setGoods] = useState([]);
+  const inputRef = useRef([]);
 
-  const handlerCreateIncomes = async ({ e, record, item }) => {
+  const handlerCreateIncomes = async ({ value, record, item }) => {
     try {
       await fetchWarehousesCreateIncomesBackup({
         data: {
           item_id: record.id,
-          quantity: Number(e.target.value),
+          quantity: value,
           warehouse_id: item.id
         }
       });
@@ -63,11 +64,11 @@ const Stats = ({
         element.item_id === record.id && element.warehouse_id === item.id
     );
     if (index !== -1) {
-      items[index].quantity = Number(e.target.value);
+      items[index].quantity = value;
     } else {
       items.push({
         item_id: record.id,
-        quantity: e.target.value,
+        quantity: value,
         warehouse_id: item.id
       });
     }
@@ -130,7 +131,12 @@ const Stats = ({
 
   useEffect(() => {
     if (changeIncome) {
-      getOrders();
+      inputRef.current.forEach((input) => {
+        if (input) {
+          input.value = null;
+        }
+      });
+      setChangeIncome(false);
     }
   }, [changeIncome]);
 
@@ -233,13 +239,12 @@ const Stats = ({
               render: (_, record) => (
                 <InputNumber
                   min={0}
+                  defaultValue=""
+                  ref={(element) => inputRef.current.push(element)}
+                  controls={false}
                   bordered={false}
-                  // value={record[`fact_${item.id}`]}
-                  onBlur={(e) => {
-                    handlerCreateIncomes({ e, record, item });
-                  }}
-                  onPressEnter={(e) => {
-                    handlerCreateIncomes({ e, record, item });
+                  onChange={(value) => {
+                    handlerCreateIncomes({ value, record, item });
                   }}
                 />
               )
@@ -258,7 +263,7 @@ const Stats = ({
         };
       })
     ]);
-  }, [warehouses]);
+  }, [warehouses, goods]);
 
   return (
     <>

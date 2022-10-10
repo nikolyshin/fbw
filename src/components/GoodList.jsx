@@ -85,7 +85,6 @@ const GoodList = ({ currentWbKey }) => {
   };
 
   const getGoodsList = async (pagination, filters, sorter) => {
-    console.log(filters);
     let ordering;
     if (!!sorter) {
       ordering = sorter.order
@@ -103,7 +102,9 @@ const GoodList = ({ currentWbKey }) => {
         category: filters?.category,
         price: filters?.price,
         multiplicity: filters?.multiplicity,
-        discount: filters?.discount
+        stock: filters?.stock,
+        discount: filters?.discount,
+        discount_price: filters?.discount_price
       });
       if (res.results) {
         setGoods(res.results);
@@ -162,11 +163,13 @@ const GoodList = ({ currentWbKey }) => {
       {
         title: names.multiplicity,
         dataIndex: 'multiplicity',
-        filteredValue: [
-          filters?.multiplicity?.min_value || 0,
-          filters?.multiplicity?.max_value || 0
-        ],
-        filterDropdown: (props) => <FilterRange {...props} />,
+        filterDropdown: (props) => (
+          <FilterRange
+            {...props}
+            min={filters?.multiplicity?.min_value}
+            max={filters?.multiplicity?.max_value}
+          />
+        ),
         sorter: true,
         width: 100
       },
@@ -215,9 +218,13 @@ const GoodList = ({ currentWbKey }) => {
         title: names.stock,
         dataIndex: 'stock',
         filterSearch: true,
-        // filters: filters?.stock?.map((item) => {
-        //   return { text: item, value: item };
-        // }),
+        filterDropdown: (props) => (
+          <FilterRange
+            {...props}
+            min={filters?.stock?.min_value}
+            max={filters?.stock?.max_value}
+          />
+        ),
         sorter: true,
         width: 100
       },
@@ -226,30 +233,39 @@ const GoodList = ({ currentWbKey }) => {
         dataIndex: 'discount',
         sorter: true,
         width: 100,
-        filterSearch: true,
-        filters: filters?.discounts?.map((item) => {
-          return { text: item, value: item };
-        })
+        filterDropdown: (props) => (
+          <FilterRange
+            {...props}
+            min={filters?.discount?.min_value}
+            max={filters?.discount?.max_value}
+          />
+        )
       },
       {
         title: names.discount_price,
         dataIndex: 'discount_price',
         sorter: true,
-        width: 100,
-        filterSearch: true,
-        filters: filters?.discounts?.map((item) => {
-          return { text: item, value: item };
-        })
+        width: 120,
+        filterDropdown: (props) => (
+          <FilterRange
+            {...props}
+            min={filters?.discount_price?.min_value}
+            max={filters?.discount_price?.max_value}
+          />
+        )
       },
       {
         title: names.price,
         dataIndex: 'price',
         sorter: true,
         width: 100,
-        filterSearch: true,
-        filters: filters?.prices?.map((item) => {
-          return { text: item, value: item };
-        })
+        filterDropdown: (props) => (
+          <FilterRange
+            {...props}
+            min={filters?.price?.min_value}
+            max={filters?.price?.max_value}
+          />
+        )
       }
     ]);
   }, [filters]);
