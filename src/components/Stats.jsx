@@ -6,6 +6,8 @@ import {
 import React, { useEffect, useState } from 'react';
 import { Spin, Table, Alert, InputNumber, Select } from 'antd';
 import moment from 'moment';
+import { resize } from './resize';
+import ResizableTitle from './ResizableTitle';
 
 const { Option } = Select;
 
@@ -22,19 +24,24 @@ const names = {
   wb_id: 'wb_id'
 };
 
-const Stats = ({ currentWbKey, date, planIncomes }) => {
+const Stats = ({
+  currentWbKey,
+  date,
+  planIncomes,
+  changeIncome,
+  setChangeIncome
+}) => {
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 10
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [columnsBackground, setColumnsBackground] = useState([]);
   const [columns, setColumns] = useState([]);
   const [dataSource, setDataSource] = useState([]);
   const [warehouses, setWarehouses] = useState([]);
-  const [warehousesSelect, setWarehousesSelect] = useState([]);
-  const [warehousesOrders, setWarehousesOrders] = useState([]);
+  const [columnsSelect, setColumnsSelect] = useState([]);
+  const [goods, setGoods] = useState([]);
 
   const handlerCreateIncomes = async ({ e, record, item }) => {
     try {
@@ -80,7 +87,7 @@ const Stats = ({ currentWbKey, date, planIncomes }) => {
         date_to: moment(date[1]).format('YYYY-MM-DD')
       });
       if (!res?.detail) {
-        setWarehousesOrders(res?.results);
+        setGoods(res?.results);
         setPagination((prev) => {
           return {
             ...prev,
@@ -122,70 +129,23 @@ const Stats = ({ currentWbKey, date, planIncomes }) => {
   }, [currentWbKey, date, planIncomes]);
 
   useEffect(() => {
+    if (changeIncome) {
+      getOrders();
+    }
+  }, [changeIncome]);
+
+  useEffect(() => {
     getwarehouses();
   }, []);
 
   useEffect(() => {
-    setWarehousesSelect(warehouses);
-  }, [warehouses]);
+    setColumnsSelect(columns);
+  }, [columns]);
 
   useEffect(() => {
-    setColumnsBackground([
-      ...warehousesSelect.map((item) => {
-        return {
-          title: item.name,
-          children: [
-            {
-              title: 'Кол-во',
-              dataIndex: `count_${item.id}`,
-              width: 40
-            },
-            {
-              title: 'Прод.',
-              dataIndex: `sales_${item.id}`,
-              width: 40
-            },
-            {
-              title: 'План',
-              dataIndex: `plane_${item.id}`,
-              width: 40
-            },
-            {
-              title: 'Факт',
-              dataIndex: `fact_${item.id}`,
-              key: `fact_${item.id}`,
-              render: (_, record) => (
-                <InputNumber
-                  min={0}
-                  onBlur={(e) => {
-                    handlerCreateIncomes({ e, record, item });
-                  }}
-                  onPressEnter={(e) => {
-                    handlerCreateIncomes({ e, record, item });
-                  }}
-                />
-              )
-            },
-            {
-              title: 'На сборке',
-              dataIndex: `on_build_goods_${item.id}`,
-              width: 40
-            },
-            {
-              title: 'В пути',
-              dataIndex: `on_road_goods_${item.id}`,
-              width: 40
-            }
-          ]
-        };
-      })
-    ]);
-  }, [warehousesSelect]);
-
-  useEffect(() => {
-    if (!!warehousesOrders.length) {
+    if (!!goods.length) {
       const arr = [];
-      warehousesOrders.forEach((item) => {
+      goods.forEach((item) => {
         const obj = { ...item };
         item.stocks.forEach((el) => {
           obj[`sales_${el.warehouse_id}`] = el.orders;
@@ -199,7 +159,7 @@ const Stats = ({ currentWbKey, date, planIncomes }) => {
       });
       setDataSource(arr);
     }
-  }, [warehousesOrders]);
+  }, [goods]);
 
   useEffect(() => {
     setColumns([
@@ -207,46 +167,98 @@ const Stats = ({ currentWbKey, date, planIncomes }) => {
         title: names.category,
         dataIndex: 'category',
         fixed: 'left',
-        width: 120
+        width: 150
       },
       {
         title: names.subject,
         dataIndex: 'subject',
         fixed: 'left',
-        width: 100
+        width: 150
       },
       {
         title: names.brand,
         dataIndex: 'brand',
-        width: 100
+        width: 150
       },
       {
         title: names.article_1c,
         dataIndex: 'article_1c',
-        width: 100
+        width: 50
       },
       {
         title: names.barcode,
         dataIndex: 'barcode',
-        width: 100
+        width: 150
       },
       {
         title: names.stock,
         dataIndex: 'stock',
-        width: 100
+        width: 150
       },
       {
         title: names.wb_id,
         dataIndex: 'wb_id',
-        width: 100
+        width: 150
       },
       {
         title: names.wb_key,
         dataIndex: 'wb_key',
-        width: 100
-      }
+        width: 150
+      },
+      ...warehouses.map((item) => {
+        return {
+          title: item.name,
+          dataIndex: `warehouse_${item.id}`,
+          children: [
+            {
+              title: 'Кол-во',
+              dataIndex: `count_${item.id}`,
+              width: 50
+            },
+            {
+              title: 'Прод',
+              dataIndex: `sales_${item.id}`,
+              width: 60
+            },
+            {
+              title: 'План',
+              dataIndex: `plane_${item.id}`,
+              width: 60
+            },
+            {
+              title: 'Факт',
+              dataIndex: `fact_${item.id}`,
+              key: `fact_${item.id}`,
+              width: 70,
+              render: (_, record) => (
+                <InputNumber
+                  min={0}
+                  bordered={false}
+                  // value={record[`fact_${item.id}`]}
+                  onBlur={(e) => {
+                    handlerCreateIncomes({ e, record, item });
+                  }}
+                  onPressEnter={(e) => {
+                    handlerCreateIncomes({ e, record, item });
+                  }}
+                />
+              )
+            },
+            {
+              title: 'На сборке',
+              dataIndex: `on_build_goods_${item.id}`,
+              width: 50
+            },
+            {
+              title: 'В пути',
+              dataIndex: `on_road_goods_${item.id}`,
+              width: 50
+            }
+          ]
+        };
+      })
     ]);
-  }, []);
+  }, [warehouses]);
 
   return (
     <>
@@ -254,21 +266,21 @@ const Stats = ({ currentWbKey, date, planIncomes }) => {
         mode="multiple"
         allowClear
         showArrow
-        value={warehousesSelect.map((item) => item.id)}
-        placeholder="Выбрать склад"
+        value={columnsSelect.map((item) => item.dataIndex)}
+        placeholder="Выбрать колонку"
         style={{
           width: 600,
           marginBottom: '24px'
         }}
         onChange={(value) => {
-          setWarehousesSelect([
-            ...warehouses.filter((item) => value.includes(item.id))
+          setColumnsSelect([
+            ...columns.filter((item) => value.includes(item.dataIndex))
           ]);
         }}
       >
-        {warehouses.map((item) => (
-          <Option key={item.id} value={item.id}>
-            {item.name}
+        {columns.map((item) => (
+          <Option key={item.dataIndex} value={item.dataIndex}>
+            {item.title}
           </Option>
         ))}
       </Select>
@@ -277,11 +289,19 @@ const Stats = ({ currentWbKey, date, planIncomes }) => {
         <Table
           size="small"
           bordered
-          scroll={{ x: true }}
+          components={{
+            header: {
+              cell: ResizableTitle
+            }
+          }}
+          scroll={{ x: 0 }}
           sticky={{ offsetHeader: 140 }}
           pagination={pagination}
           onChange={getOrders}
-          columns={[...columns, ...columnsBackground]}
+          columns={resize({
+            columns: columnsSelect,
+            setColumns: setColumnsSelect
+          })}
           dataSource={dataSource}
         />
       </Spin>

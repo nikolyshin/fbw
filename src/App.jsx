@@ -13,6 +13,7 @@ import ModalLogout from './components/ModalLogout';
 import moment from 'moment';
 import Delivery from './components/Delivery';
 import Auth from './components/auth/Auth';
+import PageNotFound from './components/PageNotFound';
 
 const { Content, Footer, Sider, Header } = Layout;
 
@@ -22,6 +23,7 @@ const App = () => {
   const [currentWbKey, setCurrentWbKey] = useState([]);
   const [planIncomes, setPlanIncomes] = useState(1);
   const [createdIncomes, setCreatedIncomes] = useState([]);
+  const [changeIncome, setChangeIncome] = useState(false);
   const [date, setDate] = useState([moment(), moment()]);
   const [user, setUser] = useState(null);
   const [cookie] = useCookies(['token']);
@@ -139,6 +141,7 @@ const App = () => {
             setCurrentWbKey={setCurrentWbKey}
             planIncomes={planIncomes}
             setPlanIncomes={setPlanIncomes}
+            setChangeIncome={setChangeIncome}
             date={date}
             setDate={setDate}
             setCreatedIncomes={setCreatedIncomes}
@@ -163,7 +166,9 @@ const App = () => {
               element={
                 <Stats
                   date={date}
+                  changeIncome={changeIncome}
                   createdIncomes={createdIncomes}
+                  setChangeIncome={setChangeIncome}
                   planIncomes={planIncomes}
                   currentWbKey={currentWbKey}
                 />
@@ -174,6 +179,7 @@ const App = () => {
               path="/"
               element={<DashBoard currentWbKey={currentWbKey} date={date} />}
             />
+            <Route path="*" element={<PageNotFound />} />
           </Routes>
         </Content>
         <Footer

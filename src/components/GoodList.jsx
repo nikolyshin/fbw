@@ -8,7 +8,8 @@ import { Spin, Table, Alert, Divider, Input, Select } from 'antd';
 import ModalChangeProduct from './ModalChangeProduct';
 import ResizableTitle from './ResizableTitle';
 import { resize } from './resize';
-import { FilterRange } from './FilterRange';
+import FilterRange from './FilterRange';
+
 const { Option } = Select;
 
 const { Search } = Input;
@@ -84,6 +85,7 @@ const GoodList = ({ currentWbKey }) => {
   };
 
   const getGoodsList = async (pagination, filters, sorter) => {
+    console.log(filters);
     let ordering;
     if (!!sorter) {
       ordering = sorter.order
@@ -100,6 +102,7 @@ const GoodList = ({ currentWbKey }) => {
         offset: (pagination?.current - 1) * pagination?.pageSize || null,
         category: filters?.category,
         price: filters?.price,
+        multiplicity: filters?.multiplicity,
         discount: filters?.discount
       });
       if (res.results) {
@@ -159,7 +162,11 @@ const GoodList = ({ currentWbKey }) => {
       {
         title: names.multiplicity,
         dataIndex: 'multiplicity',
-        ...FilterRange('multiplicity'),
+        filteredValue: [
+          filters?.multiplicity?.min_value || 0,
+          filters?.multiplicity?.max_value || 0
+        ],
+        filterDropdown: (props) => <FilterRange {...props} />,
         sorter: true,
         width: 100
       },

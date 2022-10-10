@@ -18,6 +18,7 @@ const AppHeader = ({
   setCurrentWbKey,
   planIncomes,
   setPlanIncomes,
+  setChangeIncome,
   date,
   setDate
 }) => {
@@ -39,6 +40,7 @@ const AppHeader = ({
       if (res) {
         localStorage.removeItem('incomes');
         setIsModalSuccessVisible(true);
+        setChangeIncome(true);
       } else {
         setIsModalErrorVisible(true);
         setError(res?.detail);
