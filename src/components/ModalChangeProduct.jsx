@@ -80,29 +80,36 @@ const ModalChangeProduct = ({
           fields={
             step === 0
               ? fields
-              : currentDraft.current.map((item) => {
-                  return { name: item[0], value: item[1] };
-                })
+              : Object.entries(currentDraft?.current?.backup_data).map(
+                  (item) => {
+                    return { name: item[0], value: item[1] };
+                  }
+                )
           }
         >
-          {formItems(step === 0 ? fields : currentDraft?.current, step)}
+          {formItems(
+            step === 0
+              ? fields
+              : Object.entries(currentDraft?.current?.backup_data),
+            step
+          )}
         </Form>
         <Space style={{ width: '100%' }} direction="vertical">
           {step === 0 &&
             draft?.map((item, i) => (
               <Alert
                 key={i}
-                message={item.result}
-                description={`${item.description} ${moment(item.run_dt).format(
-                  'hh.mm.ss/DD-MM-YYYY'
-                )}`}
+                message={moment(item.run_dt).format('hh.mm.ss-DD-MM-YYYY')}
                 type="info"
                 onClick={() => {
-                  currentDraft.current = Object.entries(item.backup_data);
+                  currentDraft.current = item;
                   setStep(1);
                 }}
               />
             ))}
+          {step === 1 && (
+            <Alert message={currentDraft.current.description} type="warning" />
+          )}
           {step === 1 && (
             <Button
               type="primary"
