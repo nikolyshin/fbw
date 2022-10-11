@@ -8,6 +8,7 @@ import { Spin, Table, Alert, InputNumber, Select } from 'antd';
 import moment from 'moment';
 import { resize } from './resize';
 import ResizableTitle from './ResizableTitle';
+import { dateFormat } from './helpers';
 
 const { Option } = Select;
 
@@ -29,7 +30,6 @@ const Stats = ({
   date,
   planIncomes,
   changeIncome,
-  setChangeIncome
 }) => {
   const [pagination, setPagination] = useState({
     current: 1,
@@ -85,8 +85,8 @@ const Stats = ({
         offset: (pagination?.current - 1) * pagination?.pageSize || null,
         plan_period: planIncomes,
         limit: pagination?.pageSize,
-        date_from: moment(date[0]).format('YYYY-MM-DD'),
-        date_to: moment(date[1]).format('YYYY-MM-DD')
+        date_from: moment(date[0]).format(dateFormat),
+        date_to: moment(date[1]).format(dateFormat)
       });
       if (!res?.detail) {
         setGoods(res?.results);

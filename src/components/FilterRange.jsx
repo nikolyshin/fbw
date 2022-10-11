@@ -12,7 +12,6 @@ const FilterRange = ({
   const [value, setValue] = useState(selectedKeys);
 
   useEffect(() => {
-    console.log(selectedKeys);
     if (selectedKeys.length) {
       setValue(selectedKeys);
     } else {

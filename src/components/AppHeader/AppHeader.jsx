@@ -7,6 +7,7 @@ import { fetchWarehousesCreateIncomes } from '../../api';
 import { useState } from 'react';
 import ModalSuccess from '../ModalSuccess';
 import ModalError from '../ModalError';
+import { dateFormatReverse } from '../helpers';
 const { Option } = Select;
 
 const { RangePicker } = DatePicker;
@@ -22,7 +23,7 @@ const AppHeader = ({
   date,
   setDate
 }) => {
-  const dateFormat = 'DD-MM-YYYY';
+
   let router = useLocation();
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -63,10 +64,10 @@ const AppHeader = ({
       <div className="box">
         <RangePicker
           defaultValue={[
-            date ? moment(date[0], dateFormat) : null,
-            date ? moment(date[1], dateFormat) : null
+            date ? moment(date[0], dateFormatReverse) : null,
+            date ? moment(date[1], dateFormatReverse) : null
           ]}
-          format={dateFormat}
+          format={dateFormatReverse}
           onChange={setDate}
           placeholder={['Дата старта', 'Дата конца']}
         />

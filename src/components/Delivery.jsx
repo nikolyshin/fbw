@@ -8,6 +8,7 @@ import React, { useEffect, useState } from 'react';
 import { Spin, Table, Alert, Input, Select, DatePicker } from 'antd';
 import moment from 'moment';
 import FilterRangeDate from './FilterRangeDate';
+import { dateFormat, dateFormatReverse } from './helpers';
 const { Option } = Select;
 
 const names = {
@@ -18,8 +19,6 @@ const names = {
   date: 'Дата',
   status: 'Статус'
 };
-
-const dateFormat = 'DD-MM-YYYY';
 
 const Delivery = ({ currentWbKey }) => {
   const [loading, setLoading] = useState(false);
@@ -97,10 +96,10 @@ const Delivery = ({ currentWbKey }) => {
 
         //filters range
         date_from: filters?.date
-          ? moment(filters?.date[0]).format('YYYY-MM-DD')
+          ? moment(filters?.date[0]).format(dateFormat)
           : null,
         date_to: filters?.date
-          ? moment(filters?.date[1]).format('YYYY-MM-DD')
+          ? moment(filters?.date[1]).format(dateFormat)
           : null,
         offset: (pagination?.current - 1) * pagination?.pageSize || null
       });
@@ -133,6 +132,7 @@ const Delivery = ({ currentWbKey }) => {
     setColumns([
       {
         title: names.date,
+        width: 100,
         dataIndex: 'date',
         filterDropdown: (props) => (
           <FilterRangeDate
@@ -142,12 +142,13 @@ const Delivery = ({ currentWbKey }) => {
           />
         ),
         render: (date) => {
-          return <p>{date ? moment(date).format('YYYY-MM-DD') : null}</p>;
+          return <p>{date ? moment(date).format(dateFormatReverse) : null}</p>;
         }
       },
       {
         title: names.warehouse_name,
         dataIndex: 'warehouse_name',
+        width: 120,
         filterSearch: true,
         filters: filters?.warehouse_name?.map((item) => {
           return { text: item, value: item };
@@ -155,10 +156,12 @@ const Delivery = ({ currentWbKey }) => {
       },
       {
         title: names.quantity,
+        width: 70,
         dataIndex: 'quantity'
       },
       {
         title: names.number,
+        width: 150,
         dataIndex: 'number',
         render: (_, record) => (
           <Input
@@ -176,16 +179,17 @@ const Delivery = ({ currentWbKey }) => {
       {
         title: names.plan_date,
         dataIndex: 'plan_date',
+        width: 120,
         render: (_, record) => (
           <DatePicker
             defaultValue={
               record.plan_date ? moment(record.plan_date, dateFormat) : null
             }
-            format={dateFormat}
+            format={dateFormatReverse}
             onChange={(value) => {
               changeDetail({
                 id: record.id,
-                plan_date: moment(value).format('YYYY-MM-DD')
+                plan_date: value ? moment(value).format(dateFormat) : null
               });
             }}
             placeholder="Выберите время"
@@ -195,6 +199,7 @@ const Delivery = ({ currentWbKey }) => {
       {
         title: names.status,
         dataIndex: 'status',
+        width: 150,
         filterSearch: true,
         filters: Object.entries(filters?.status || []).map((item) => {
           return { text: item[1], value: item[0] };

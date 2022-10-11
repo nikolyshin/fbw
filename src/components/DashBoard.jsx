@@ -4,6 +4,7 @@ import { Spin, Table, Alert, Select } from 'antd';
 import moment from 'moment';
 import ResizableTitle from './ResizableTitle';
 import { resize } from './resize';
+import { dateFormat, dateFormatReverse } from './helpers';
 
 const { Option } = Select;
 
@@ -31,7 +32,7 @@ const DashBoard = ({ currentWbKey, date }) => {
       dates = [];
 
     while (now.isSameOrBefore(date[1])) {
-      dates.push(now.format('YYYY-MM-DD'));
+      dates.push(now.format(dateFormat));
       now.add(1, 'days');
     }
     return dates;
@@ -65,13 +66,13 @@ const DashBoard = ({ currentWbKey, date }) => {
     try {
       setLoading(true);
       const res = await fetchGoods({
-        date_from: moment(date[0]).format('YYYY-MM-DD'),
-        date_to: moment(date[1]).format('YYYY-MM-DD'),
+        date_from: moment(date[0]).format(dateFormat),
+        date_to: moment(date[1]).format(dateFormat),
         wb_keys: currentWbKey,
         ordering,
         limit: pagination?.pageSize,
         offset: (pagination?.current - 1) * pagination?.pageSize || null,
-        
+
         // filters
         category__in: filters?.category,
         wb_key__in: filters?.wb_key,
@@ -162,8 +163,8 @@ const DashBoard = ({ currentWbKey, date }) => {
       },
       ...arrDates.map((day) => {
         return {
-          title: moment(day).format('DD-MM-YYYY'),
-          dataIndex: moment(day).format('YYYY-MM-DD'),
+          title: moment(day).format(dateFormatReverse),
+          dataIndex: moment(day).format(dateFormatReverse),
           width: 100
         };
       })

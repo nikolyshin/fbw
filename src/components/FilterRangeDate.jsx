@@ -1,8 +1,8 @@
 import { Button, DatePicker, Space } from 'antd';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
+import { dateFormat, dateFormatReverse } from './helpers';
 const { RangePicker } = DatePicker;
-const dateFormat = 'YYYY-MM-DD';
 
 const FilterRangeDate = ({
   selectedKeys,
@@ -36,7 +36,7 @@ const FilterRangeDate = ({
               current > moment(max, dateFormat)
             );
           }}
-          format={dateFormat}
+          format={dateFormatReverse}
           onChange={setValue}
           placeholder={['Дата старта', 'Дата конца']}
         />
