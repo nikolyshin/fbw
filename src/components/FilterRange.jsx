@@ -1,13 +1,25 @@
 import { Button, InputNumber, Slider, Space } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const FilterRange = ({
+  selectedKeys,
   setSelectedKeys,
+  clearFilters,
   confirm,
   min,
   max
 }) => {
-  const [value, setValue] = useState([min, max]);
+  const [value, setValue] = useState(selectedKeys);
+
+  useEffect(() => {
+    console.log(selectedKeys);
+    if (selectedKeys.length) {
+      setValue(selectedKeys);
+    } else {
+      setValue([min, max]);
+    }
+  }, [selectedKeys]);
+
   return (
     <div
       style={{
@@ -59,7 +71,7 @@ const FilterRange = ({
         <Button
           size="small"
           onClick={() => {
-            setValue([min, max]);
+            clearFilters();
           }}
         >
           Очистить

@@ -7,6 +7,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import { Spin, Table, Alert, Input, Select, DatePicker } from 'antd';
 import moment from 'moment';
+import FilterRangeDate from './FilterRangeDate';
 const { Option } = Select;
 
 const names = {
@@ -89,6 +90,12 @@ const Delivery = ({ currentWbKey }) => {
       const res = await fetchGoodsIncomes({
         wb_keys: currentWbKey,
         limit: pagination?.pageSize,
+        date_from: filters?.date
+          ? moment(filters?.date[0]).format('YYYY-MM-DD')
+          : null,
+        date_to: filters?.date
+          ? moment(filters?.date[1]).format('YYYY-MM-DD')
+          : null,
         offset: (pagination?.current - 1) * pagination?.pageSize || null,
         warehouse_name: filters?.warehouse_name,
         status: filters?.status
@@ -123,6 +130,13 @@ const Delivery = ({ currentWbKey }) => {
       {
         title: names.date,
         dataIndex: 'date',
+        filterDropdown: (props) => (
+          <FilterRangeDate
+            {...props}
+            min={filters?.date?.min_value}
+            max={filters?.date?.max_value}
+          />
+        ),
         render: (date) => {
           return <p>{moment(date).format('YYYY-MM-DD')}</p>;
         }
