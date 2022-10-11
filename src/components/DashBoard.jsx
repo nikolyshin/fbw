@@ -4,7 +4,7 @@ import { Spin, Table, Alert, Select } from 'antd';
 import moment from 'moment';
 import ResizableTitle from './ResizableTitle';
 import { resize } from './resize';
-import FilterRange from './FilterRange';
+
 const { Option } = Select;
 
 const names = {

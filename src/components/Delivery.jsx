@@ -83,14 +83,15 @@ const Delivery = ({ currentWbKey }) => {
     }
   };
 
-  const getGoodsList = async (pagination, filters, sorter) => {
+  const getGoodsList = async (pagination, filters) => {
     try {
       setLoading(true);
       const res = await fetchGoodsIncomes({
         wb_keys: currentWbKey,
         limit: pagination?.pageSize,
         offset: (pagination?.current - 1) * pagination?.pageSize || null,
-        warehouse_name: filters?.warehouse_name
+        warehouse_name: filters?.warehouse_name,
+        status: filters?.status
       });
       if (res.results) {
         setGoods(res.results);
@@ -129,7 +130,6 @@ const Delivery = ({ currentWbKey }) => {
       {
         title: names.warehouse_name,
         dataIndex: 'warehouse_name',
-        sorter: true,
         filterSearch: true,
         filters: filters?.warehouse_name?.map((item) => {
           return { text: item, value: item };
@@ -177,6 +177,10 @@ const Delivery = ({ currentWbKey }) => {
       {
         title: names.status,
         dataIndex: 'status',
+        filterSearch: true,
+        filters: Object.entries(filters?.status || []).map((item) => {
+          return { text: item[1], value: item[0] };
+        }),
         render: (_, record) => (
           <Select
             value={record.status}

@@ -124,8 +124,12 @@ export const fetchGoodsIncomesFilters = (data) => {
     .then((response) => response.data);
 };
 
-export const fetchGetGoodsIncomes = (id) => {
-  return client.get(`/goods/incomes/${id}/`).then((response) => response.data);
+export const fetchGetGoodsIncomes = (id, data) => {
+  return client
+    .get(`/goods/incomes/${id}/`, {
+      params: data
+    })
+    .then((response) => response.data);
 };
 
 export const fetchSetStatus = (id, data) => {

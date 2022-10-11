@@ -100,11 +100,16 @@ const GoodList = ({ currentWbKey }) => {
         limit: pagination?.pageSize,
         offset: (pagination?.current - 1) * pagination?.pageSize || null,
         category: filters?.category,
-        price: filters?.price,
-        multiplicity: filters?.multiplicity,
-        stock: filters?.stock,
-        discount: filters?.discount,
-        discount_price: filters?.discount_price
+        brand: filters?.brand,
+        subject: filters?.subject,
+        article_wb: filters?.article_wb,
+        article_1c: filters?.article_1c,
+        barcode: filters?.barcode,
+        discount__range: filters?.discount,
+        discount_price__range: filters?.discount_price,
+        price__range: filters?.price,
+        multiplicity__range: filters?.multiplicity,
+        stock__range: filters?.stock
       });
       if (res.results) {
         setGoods(res.results);
