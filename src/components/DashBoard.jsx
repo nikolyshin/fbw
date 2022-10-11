@@ -71,9 +71,11 @@ const DashBoard = ({ currentWbKey, date }) => {
         ordering,
         limit: pagination?.pageSize,
         offset: (pagination?.current - 1) * pagination?.pageSize || null,
-        category: filters?.category,
-        wb_key: filters?.wb_key,
-        brand: filters?.brand
+        
+        // filters
+        category__in: filters?.category,
+        wb_key__in: filters?.wb_key,
+        brand__in: filters?.brand
       });
       if (res.results) {
         const arr = [];

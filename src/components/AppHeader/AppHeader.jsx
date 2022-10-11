@@ -74,6 +74,7 @@ const AppHeader = ({
           <div className="title">
             Планируем поставку на:{' '}
             <InputNumber
+              type="number"
               min={0}
               value={planIncomes}
               onBlur={(e) => {

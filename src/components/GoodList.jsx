@@ -95,11 +95,13 @@ const GoodList = ({ currentWbKey }) => {
       setLoading(true);
       const res = await fetchGoodsList({
         wb_keys: currentWbKey,
-        ordering,
         search,
         limit: pagination?.pageSize,
         offset: (pagination?.current - 1) * pagination?.pageSize || null,
+        //sort
+        ordering,
 
+        //filters
         category__in: filters?.category,
         brand__in: filters?.brand,
         subject__in: filters?.subject,
@@ -107,6 +109,7 @@ const GoodList = ({ currentWbKey }) => {
         article_1c__in: filters?.article_1c,
         barcode__in: filters?.barcode,
 
+        //filters range
         discount__range: filters?.discount,
         discount_price__range: filters?.discount_price,
         price__range: filters?.price,
@@ -252,7 +255,7 @@ const GoodList = ({ currentWbKey }) => {
         title: names.discount_price,
         dataIndex: 'discount_price',
         sorter: true,
-        width: 120,
+        width: 140,
         filterDropdown: (props) => (
           <FilterRange
             {...props}

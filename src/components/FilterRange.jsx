@@ -27,6 +27,7 @@ const FilterRange = ({
       }}
     >
       <InputNumber
+        type="number"
         min={min}
         max={max}
         value={value[0]}
@@ -42,6 +43,7 @@ const FilterRange = ({
       />
       {' - '}
       <InputNumber
+        type="number"
         min={min}
         max={max}
         value={value[1]}

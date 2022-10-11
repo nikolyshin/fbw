@@ -38,6 +38,7 @@ const Stats = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [columns, setColumns] = useState([]);
+  const [inputsValues, setInputsValues] = useState([]);
   const [dataSource, setDataSource] = useState([]);
   const [warehouses, setWarehouses] = useState([]);
   const [columnsSelect, setColumnsSelect] = useState([]);
@@ -129,15 +130,21 @@ const Stats = ({
     getOrders();
   }, [currentWbKey, date, planIncomes]);
 
+  // useEffect(() => {
+  //   if (changeIncome) {
+  //     inputRef.current.forEach((input) => {
+  //       if (input) {
+  //         input.value = null;
+  //       }
+  //     });
+  //     setChangeIncome(false);
+  //   }
+  // }, [changeIncome]);
+
   useEffect(() => {
-    if (changeIncome) {
-      inputRef.current.forEach((input) => {
-        if (input) {
-          input.value = null;
-        }
-      });
-      setChangeIncome(false);
-    }
+    let items = JSON.parse(localStorage.getItem('incomes')) || [];
+    setInputsValues(items);
+    console.log(items);
   }, [changeIncome]);
 
   useEffect(() => {
@@ -238,8 +245,15 @@ const Stats = ({
               width: 70,
               render: (_, record) => (
                 <InputNumber
+                  type="number"
                   min={0}
-                  defaultValue=""
+                  value={
+                    inputsValues.filter(
+                      (inputValue) =>
+                        inputValue.item_id === record.id &&
+                        inputValue.warehouse_id === item.id
+                    )[0]?.quantity
+                  }
                   ref={(element) => inputRef.current.push(element)}
                   controls={false}
                   bordered={false}
@@ -263,7 +277,7 @@ const Stats = ({
         };
       })
     ]);
-  }, [warehouses, goods]);
+  }, [warehouses, goods, inputsValues]);
 
   return (
     <>

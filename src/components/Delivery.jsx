@@ -90,15 +90,19 @@ const Delivery = ({ currentWbKey }) => {
       const res = await fetchGoodsIncomes({
         wb_keys: currentWbKey,
         limit: pagination?.pageSize,
+
+        //filters
+        warehouse_name__in: filters?.warehouse_name,
+        status__in: filters?.status,
+
+        //filters range
         date_from: filters?.date
           ? moment(filters?.date[0]).format('YYYY-MM-DD')
           : null,
         date_to: filters?.date
           ? moment(filters?.date[1]).format('YYYY-MM-DD')
           : null,
-        offset: (pagination?.current - 1) * pagination?.pageSize || null,
-        warehouse_name: filters?.warehouse_name,
-        status: filters?.status
+        offset: (pagination?.current - 1) * pagination?.pageSize || null
       });
       if (res.results) {
         setGoods(res.results);
