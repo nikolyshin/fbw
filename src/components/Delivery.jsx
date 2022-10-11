@@ -142,7 +142,7 @@ const Delivery = ({ currentWbKey }) => {
           />
         ),
         render: (date) => {
-          return <p>{moment(date).format('YYYY-MM-DD')}</p>;
+          return <p>{date ? moment(date).format('YYYY-MM-DD') : null}</p>;
         }
       },
       {
