@@ -1,12 +1,11 @@
 import { fetchGoods, fetchGoodsFilters } from '../api';
 import React, { useEffect, useMemo, useState } from 'react';
-import { Spin, Table, Alert, Select } from 'antd';
+import { Spin, Table, Alert } from 'antd';
 import moment from 'moment';
 import ResizableTitle from './ResizableTitle';
 import { resize } from './resize';
 import { dateFormat, dateFormatReverse, names } from './helpers';
-
-const { Option } = Select;
+import SelectColumns from './SelectColumns';
 
 const DashBoard = ({ currentWbKey, date }) => {
   const [loading, setLoading] = useState(false);
@@ -166,28 +165,11 @@ const DashBoard = ({ currentWbKey, date }) => {
 
   return (
     <>
-      <Select
-        mode="multiple"
-        allowClear
-        showArrow
-        value={columnsSelect.map((item) => item.title)}
-        placeholder="Выбрать колонку"
-        style={{
-          width: 600,
-          marginBottom: '24px'
-        }}
-        onChange={(value) => {
-          setColumnsSelect([
-            ...columns.filter((item) => value.includes(item.title))
-          ]);
-        }}
-      >
-        {columns.map((item) => (
-          <Option key={item.title} value={item.title}>
-            {item.title}
-          </Option>
-        ))}
-      </Select>
+      <SelectColumns
+        columnsAll={columns}
+        columnsSelect={columnsSelect}
+        setColumnsSelect={setColumnsSelect}
+      />
       <Spin spinning={loading}>
         <Table
           size="small"

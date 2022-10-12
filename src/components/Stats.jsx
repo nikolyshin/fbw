@@ -4,13 +4,12 @@ import {
   fetchWarehousesOrders
 } from '../api';
 import React, { useEffect, useRef, useState } from 'react';
-import { Spin, Table, Alert, InputNumber, Select } from 'antd';
+import { Spin, Table, Alert, InputNumber } from 'antd';
 import moment from 'moment';
 import { resize } from './resize';
 import ResizableTitle from './ResizableTitle';
 import { dateFormat, names } from './helpers';
-
-const { Option } = Select;
+import SelectColumns from './SelectColumns';
 
 const Stats = ({ currentWbKey, date, planIncomes, changeIncome }) => {
   const [pagination, setPagination] = useState({
@@ -111,17 +110,6 @@ const Stats = ({ currentWbKey, date, planIncomes, changeIncome }) => {
   useEffect(() => {
     getOrders();
   }, [currentWbKey, date, planIncomes]);
-
-  // useEffect(() => {
-  //   if (changeIncome) {
-  //     inputRef.current.forEach((input) => {
-  //       if (input) {
-  //         input.value = null;
-  //       }
-  //     });
-  //     setChangeIncome(false);
-  //   }
-  // }, [changeIncome]);
 
   useEffect(() => {
     let items = JSON.parse(localStorage.getItem('incomes')) || [];
@@ -263,29 +251,11 @@ const Stats = ({ currentWbKey, date, planIncomes, changeIncome }) => {
 
   return (
     <>
-      <Select
-        mode="multiple"
-        allowClear
-        showArrow
-        value={columnsSelect.map((item) => item.dataIndex)}
-        placeholder="Выбрать колонку"
-        style={{
-          width: 600,
-          marginBottom: '24px'
-        }}
-        onChange={(value) => {
-          setColumnsSelect([
-            ...columns.filter((item) => value.includes(item.dataIndex))
-          ]);
-        }}
-      >
-        {columns.map((item) => (
-          <Option key={item.dataIndex} value={item.dataIndex}>
-            {item.title}
-          </Option>
-        ))}
-      </Select>
-
+      <SelectColumns
+        columnsAll={columns}
+        columnsSelect={columnsSelect}
+        setColumnsSelect={setColumnsSelect}
+      />
       <Spin spinning={loading}>
         <Table
           size="small"

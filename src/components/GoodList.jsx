@@ -4,17 +4,15 @@ import {
   fetchGoodsListFilters
 } from '../api';
 import React, { useEffect, useState, useRef } from 'react';
-import { Spin, Table, Alert, Divider, Input, Select } from 'antd';
+import { Spin, Table, Alert, Divider, Input } from 'antd';
 import ModalChangeProduct from './ModalChangeProduct';
 import ResizableTitle from './ResizableTitle';
 import { resize } from './resize';
 import FilterRange from './FilterRange';
 import { names } from './helpers';
-
-const { Option } = Select;
+import SelectColumns from './SelectColumns';
 
 const { Search } = Input;
-
 
 const GoodList = ({ currentWbKey }) => {
   const [loading, setLoading] = useState(false);
@@ -281,28 +279,11 @@ const GoodList = ({ currentWbKey }) => {
       />
 
       <Divider />
-      <Select
-        mode="multiple"
-        allowClear
-        showArrow
-        value={columnsSelect.map((item) => item.title)}
-        placeholder="Выбрать склад"
-        style={{
-          width: 600,
-          marginBottom: '24px'
-        }}
-        onChange={(value) => {
-          setColumnsSelect([
-            ...columns.filter((item) => value.includes(item.title))
-          ]);
-        }}
-      >
-        {columns.map((item) => (
-          <Option key={item.title} value={item.title}>
-            {item.title}
-          </Option>
-        ))}
-      </Select>
+      <SelectColumns
+        columnsAll={columns}
+        columnsSelect={columnsSelect}
+        setColumnsSelect={setColumnsSelect}
+      />
       <Spin spinning={loading}>
         <Table
           size="small"
