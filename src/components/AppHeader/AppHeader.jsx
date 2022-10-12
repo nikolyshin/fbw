@@ -23,7 +23,6 @@ const AppHeader = ({
   date,
   setDate
 }) => {
-
   let router = useLocation();
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -56,9 +55,6 @@ const AppHeader = ({
   return (
     <div className={'wrapper'}>
       <div className="box">
-        <div>{`Текущая дата: ${dayjs(new Date()).format(
-          'DD.MM.YY HH.mm'
-        )}`}</div>
         <div>Последнее обновление</div>
       </div>
       <div className="box">

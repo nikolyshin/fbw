@@ -55,28 +55,28 @@ const App = () => {
 
   const menuItems = [
     {
-      label: 'Склад DashBoard',
+      label: 'Статистика',
       key: 'dashBoard',
       onClick: () => {
         navigate('/');
       }
     },
     {
-      label: 'Good List',
+      label: 'Товары',
       key: 'goodList',
       onClick: () => {
         navigate('/goodlist');
       }
     },
     {
-      label: 'Stats',
+      label: 'Планирование',
       key: 'stats',
       onClick: () => {
         navigate('/stats');
       }
     },
     {
-      label: 'Поставки',
+      label: 'Список поставок',
       key: 'delivery',
       onClick: () => {
         navigate('/delivery');

@@ -9,23 +9,12 @@ import ModalChangeProduct from './ModalChangeProduct';
 import ResizableTitle from './ResizableTitle';
 import { resize } from './resize';
 import FilterRange from './FilterRange';
+import { names } from './helpers';
 
 const { Option } = Select;
 
 const { Search } = Input;
-const names = {
-  category: 'Категории',
-  subject: 'Группа товара',
-  multiplicity: 'Кратность',
-  brand: 'Брэнд',
-  article_wb: 'Арт WB',
-  article_1c: 'Арт 1С',
-  barcode: 'БарКод',
-  stock: 'Остаток',
-  discount: 'discount',
-  price: 'Цена',
-  discount_price: 'discount_price'
-};
+
 
 const GoodList = ({ currentWbKey }) => {
   const [loading, setLoading] = useState(false);

@@ -8,17 +8,8 @@ import React, { useEffect, useState } from 'react';
 import { Spin, Table, Alert, Input, Select, DatePicker } from 'antd';
 import moment from 'moment';
 import FilterRangeDate from './FilterRangeDate';
-import { dateFormat, dateFormatReverse } from './helpers';
+import { dateFormat, dateFormatReverse, names } from './helpers';
 const { Option } = Select;
-
-const names = {
-  plan_date: 'Плановая дата',
-  number: 'Номер поставки',
-  quantity: 'Кол-во',
-  warehouse_name: 'Склад',
-  date: 'Дата',
-  status: 'Статус'
-};
 
 const Delivery = ({ currentWbKey }) => {
   const [loading, setLoading] = useState(false);

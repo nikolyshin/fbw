@@ -8,29 +8,11 @@ import { Spin, Table, Alert, InputNumber, Select } from 'antd';
 import moment from 'moment';
 import { resize } from './resize';
 import ResizableTitle from './ResizableTitle';
-import { dateFormat } from './helpers';
+import { dateFormat, names } from './helpers';
 
 const { Option } = Select;
 
-const names = {
-  category: 'Категории',
-  subject: 'Группа товара',
-  multiplicity: 'Кратность',
-  brand: 'Брэнд',
-  article_wb: 'Арт WB',
-  article_1c: 'Арт 1С',
-  barcode: 'БарКод',
-  stock: 'Остаток',
-  wb_key: 'Кабинет',
-  wb_id: 'wb_id'
-};
-
-const Stats = ({
-  currentWbKey,
-  date,
-  planIncomes,
-  changeIncome,
-}) => {
+const Stats = ({ currentWbKey, date, planIncomes, changeIncome }) => {
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 10

@@ -4,16 +4,9 @@ import { Spin, Table, Alert, Select } from 'antd';
 import moment from 'moment';
 import ResizableTitle from './ResizableTitle';
 import { resize } from './resize';
-import { dateFormat, dateFormatReverse } from './helpers';
+import { dateFormat, dateFormatReverse, names } from './helpers';
 
 const { Option } = Select;
-
-const names = {
-  category: 'Категории',
-  brand: 'Брэнд',
-  sales: 'Продаж',
-  wb_key: 'Кабинет'
-};
 
 const DashBoard = ({ currentWbKey, date }) => {
   const [loading, setLoading] = useState(false);
@@ -124,6 +117,16 @@ const DashBoard = ({ currentWbKey, date }) => {
   useEffect(() => {
     setColumns([
       {
+        title: names.wb_key,
+        dataIndex: 'wb_key',
+        width: 200,
+        sorter: true,
+        filterSearch: true,
+        filters: filters?.wb_keys?.map((item) => {
+          return { text: item, value: item };
+        })
+      },
+      {
         title: names.category,
         dataIndex: 'category',
         sorter: true,
@@ -133,13 +136,6 @@ const DashBoard = ({ currentWbKey, date }) => {
         filters: filters?.categories?.map((item) => {
           return { text: item, value: item };
         })
-      },
-      {
-        title: names.sales,
-        dataIndex: 'sales',
-        width: 200,
-        fixed: 'left',
-        sorter: true
       },
       {
         title: names.brand,
@@ -152,14 +148,11 @@ const DashBoard = ({ currentWbKey, date }) => {
         })
       },
       {
-        title: names.wb_key,
-        dataIndex: 'wb_key',
+        title: names.sales,
+        dataIndex: 'sales',
         width: 200,
-        sorter: true,
-        filterSearch: true,
-        filters: filters?.wb_keys?.map((item) => {
-          return { text: item, value: item };
-        })
+        fixed: 'left',
+        sorter: true
       },
       ...arrDates.map((day) => {
         return {
