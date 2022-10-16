@@ -5,6 +5,7 @@ export const names = {
   brand: 'Бренд',
   sales: 'Продажи',
   wb_key: 'Кабинет',
+  wb_key_name: 'Кабинет',
   plan_date: 'Плановая дата',
   number: 'Номер поставки',
   quantity: 'Кол-во',
@@ -20,5 +21,6 @@ export const names = {
   discount: 'discount',
   price: 'Цена',
   discount_price: 'discount_price',
-  wb_id: 'wb_id'
+  wb_id: 'wb_id',
+  date_close: "Факт дата"
 };

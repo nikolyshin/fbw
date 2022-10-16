@@ -5,10 +5,11 @@ import {
   fetchSetStatus
 } from '../api';
 import React, { useEffect, useState } from 'react';
-import { Spin, Table, Alert, Input, Select, DatePicker } from 'antd';
+import { Spin, Table, Alert, Input, Select, DatePicker, Button } from 'antd';
 import moment from 'moment';
 import FilterRangeDate from './FilterRangeDate';
 import { dateFormat, dateFormatReverse, names } from './helpers';
+import { writeFile } from 'xlsx';
 const { Option } = Select;
 
 const Delivery = ({ currentWbKey }) => {
@@ -40,10 +41,10 @@ const Delivery = ({ currentWbKey }) => {
     }
   };
 
-  const changeDetail = async ({ id, number, status, plan_date }) => {
+  const changeDetail = async ({ id, income_id, status, plan_date }) => {
     try {
       setLoading(true);
-      const res = await fetchSetStatus(id, { number, status, plan_date });
+      const res = await fetchSetStatus(id, { income_id, status, plan_date });
       if (res.incomes) {
         setDetail(res.incomes);
       } else {
@@ -151,16 +152,41 @@ const Delivery = ({ currentWbKey }) => {
         dataIndex: 'quantity'
       },
       {
-        title: names.number,
+        title: names.wb_key_name,
         width: 150,
-        dataIndex: 'number',
+        dataIndex: 'wb_key_name'
+      },
+      {
+        title: names.date_close,
+        width: 150,
+        dataIndex: 'date_close',
+        render: (_, record) => (
+          <DatePicker
+            defaultValue={
+              record.date_close ? moment(record.date_close, dateFormat) : null
+            }
+            format={dateFormatReverse}
+            onChange={(value) => {
+              changeDetail({
+                id: record.id,
+                date_close: value ? moment(value).format(dateFormat) : null
+              });
+            }}
+            placeholder="Выберите время"
+          />
+        )
+      },
+      {
+        title: names.income_id,
+        width: 150,
+        dataIndex: 'income_id',
         render: (_, record) => (
           <Input
-            placeholder={names.number}
-            defaultValue={record.number}
+            placeholder={names.income_id}
+            defaultValue={record.income_id}
             onPressEnter={(e) => {
               if (e.target.value) {
-                changeDetail({ id: record.id, number: e.target.value });
+                changeDetail({ id: record.id, income_id: e.target.value });
                 getDeatil(e.target.value);
               }
             }}
@@ -219,20 +245,40 @@ const Delivery = ({ currentWbKey }) => {
 
   const columnsDetail = [
     {
-      title: 'Арт',
-      dataIndex: 'article'
-    },
-    {
-      title: 'item_name',
-      dataIndex: 'item_name'
-    },
-    {
-      title: 'Кол-во',
-      dataIndex: 'quantity',
-      width: 100
+      title: () => {
+        return (
+          <Button
+            type="primary"
+            htmlType="submit"
+            onClick={() => {
+              console.log(detail);
+              writeFile(detail, 'Presidents.xlsx', {
+                compression: true
+              });
+            }}
+          >
+            Выгрузить в excel
+          </Button>
+        );
+      },
+
+      children: [
+        {
+          title: 'Арт',
+          dataIndex: 'article'
+        },
+        {
+          title: 'item_name',
+          dataIndex: 'item_name'
+        },
+        {
+          title: 'Кол-во',
+          dataIndex: 'quantity',
+          width: 100
+        }
+      ]
     }
   ];
-
   return (
     <>
       <div style={{ display: 'flex', gap: 16 }}>

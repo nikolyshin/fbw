@@ -11,7 +11,13 @@ import ResizableTitle from './ResizableTitle';
 import { dateFormat, names } from './helpers';
 import SelectColumns from './SelectColumns';
 
-const Stats = ({ currentWbKey, date, planIncomes, changeIncome }) => {
+const Stats = ({
+  currentWbKey,
+  date,
+  planIncomes,
+  changeIncome,
+  setChangeIncome
+}) => {
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 10
@@ -112,9 +118,12 @@ const Stats = ({ currentWbKey, date, planIncomes, changeIncome }) => {
   }, [currentWbKey, date, planIncomes]);
 
   useEffect(() => {
-    let items = JSON.parse(localStorage.getItem('incomes')) || [];
-    setInputsValues(items);
-    console.log(items);
+    if (changeIncome) {
+      console.log(changeIncome);
+      let items = JSON.parse(localStorage.getItem('incomes')) || [];
+      setInputsValues(items);
+      setChangeIncome(false);
+    }
   }, [changeIncome]);
 
   useEffect(() => {
@@ -145,6 +154,7 @@ const Stats = ({ currentWbKey, date, planIncomes, changeIncome }) => {
   }, [goods]);
 
   useEffect(() => {
+    console.log(inputsValues,'2222222')
     setColumns([
       {
         title: names.category,
@@ -179,8 +189,8 @@ const Stats = ({ currentWbKey, date, planIncomes, changeIncome }) => {
         width: 150
       },
       {
-        title: names.wb_id,
-        dataIndex: 'wb_id',
+        title: names.article_wb,
+        dataIndex: 'article_wb',
         width: 150
       },
       {

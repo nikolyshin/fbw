@@ -37,7 +37,7 @@ const AppHeader = ({
     try {
       setLoading(true);
       const res = await fetchWarehousesCreateIncomes(incomes);
-      if (res) {
+      if (res.length) {
         localStorage.removeItem('incomes');
         setIsModalSuccessVisible(true);
         setChangeIncome(true);
