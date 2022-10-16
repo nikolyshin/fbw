@@ -158,21 +158,16 @@ const Delivery = ({ currentWbKey }) => {
       },
       {
         title: names.date_close,
-        width: 150,
+        width: 200,
         dataIndex: 'date_close',
-        render: (_, record) => (
-          <DatePicker
-            defaultValue={
-              record.date_close ? moment(record.date_close, dateFormat) : null
-            }
-            format={dateFormatReverse}
-            onChange={(value) => {
-              changeDetail({
-                id: record.id,
-                date_close: value ? moment(value).format(dateFormat) : null
-              });
-            }}
-            placeholder="Выберите время"
+        render: (date) => {
+          return <p>{date ? moment(date).format(dateFormatReverse) : null}</p>;
+        },
+        filterDropdown: (props) => (
+          <FilterRangeDate
+            {...props}
+            min={filters?.date?.min_value}
+            max={filters?.date?.max_value}
           />
         )
       },
