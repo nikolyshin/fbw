@@ -18,7 +18,7 @@ import {
 import moment from 'moment';
 import FilterRangeDate from './FilterRangeDate';
 import { dateFormat, dateFormatReverse, names } from './helpers';
-import { read, utils, writeFile, writeFileXLSX } from 'xlsx';
+import { utils, writeFileXLSX } from 'xlsx';
 const { Option } = Select;
 
 const Delivery = ({ currentWbKey }) => {
@@ -65,7 +65,7 @@ const Delivery = ({ currentWbKey }) => {
         income_id,
         status,
         plan_date,
-        incomes: [{ id: productId, quantity }]
+        ...(quantity && { incomes: [{ id: productId, quantity }] })
       });
       if (res.incomes) {
         setDetail(res.incomes);

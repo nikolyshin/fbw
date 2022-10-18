@@ -134,7 +134,7 @@ export const fetchGetGoodsIncomes = (id, data) => {
 
 export const fetchSetStatus = (id, data) => {
   return client
-    .put(`/goods/incomes/${id}/`, data)
+    .patch(`/goods/incomes/${id}/`, data)
     .then((response) => response.data);
 };
 

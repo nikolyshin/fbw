@@ -2,6 +2,7 @@ import { Alert, Button, Form, Input, Modal, Space, Spin } from 'antd';
 import moment from 'moment';
 import React, { useEffect, useRef, useState } from 'react';
 import { fetchGoodsBackup } from '../api';
+import { names } from './helpers';
 
 const ModalChangeProduct = ({
   id,
@@ -21,9 +22,15 @@ const ModalChangeProduct = ({
       <Form.Item
         key={i}
         name={step === 0 ? item.name : item[0]}
-        label={step === 0 ? item.label || item.name : item[0]}
+        label={step === 0 ? names[item.name] || item.name : item[0]}
       >
-        <Input />
+        <Input
+          disabled={
+            !['Описание', 'Наименование', 'price', 'discount_price'].includes(
+              item.name
+            )
+          }
+        />
       </Form.Item>
     ));
   };

@@ -20,7 +20,7 @@ export const names = {
   stock: 'Остаток',
   discount: 'discount',
   price: 'Цена',
-  discount_price: 'discount_price',
+  discount_price: 'Размер скидки',
   wb_id: 'wb_id',
   date_close: 'Факт дата',
   item_name: 'item_name',

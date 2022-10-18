@@ -306,15 +306,26 @@ const GoodList = ({ currentWbKey }) => {
             return {
               onDoubleClick: () => {
                 idRef.current = record.id;
+                let arr = [];
+                Object.entries(record).forEach((item) => {
+                  if (item[0] === 'characteristics') {
+                    item[1].forEach((element) => {
+                      arr.push({
+                        name: Object.keys(element)[0],
+                        value: Object.values(element)[0]
+                      });
+                    });
+                  } else {
+                    arr.push({
+                      name: item[0],
+                      value: item[1]
+                    });
+                  }
+                });
+
                 setModalData({
                   visible: true,
-                  data: Object.entries(record).map((item) => {
-                    return {
-                      name: item[0],
-                      value: item[1],
-                      label: names[item[0]]
-                    };
-                  })
+                  data: arr
                 });
               }
             };
