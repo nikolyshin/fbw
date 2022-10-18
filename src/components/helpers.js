@@ -7,7 +7,7 @@ export const names = {
   wb_key: 'Кабинет',
   wb_key_name: 'Кабинет',
   plan_date: 'Плановая дата',
-  number: 'Номер поставки',
+  income_id: 'Номер поставки',
   quantity: 'Кол-во',
   warehouse_name: 'Склад',
   date: 'Дата',
@@ -22,5 +22,7 @@ export const names = {
   price: 'Цена',
   discount_price: 'discount_price',
   wb_id: 'wb_id',
-  date_close: "Факт дата"
+  date_close: 'Факт дата',
+  item_name: 'item_name',
+  article: 'article'
 };

@@ -4,16 +4,26 @@ import {
   fetchGoodsIncomesFilters,
   fetchSetStatus
 } from '../api';
-import React, { useEffect, useState } from 'react';
-import { Spin, Table, Alert, Input, Select, DatePicker, Button } from 'antd';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  Spin,
+  Table,
+  Alert,
+  Input,
+  Select,
+  DatePicker,
+  Button,
+  InputNumber
+} from 'antd';
 import moment from 'moment';
 import FilterRangeDate from './FilterRangeDate';
 import { dateFormat, dateFormatReverse, names } from './helpers';
-import { writeFile } from 'xlsx';
+import { read, utils, writeFile, writeFileXLSX } from 'xlsx';
 const { Option } = Select;
 
 const Delivery = ({ currentWbKey }) => {
   const [loading, setLoading] = useState(false);
+  const idRef = useRef(null);
   const [error, setError] = useState('');
   const [goods, setGoods] = useState([]);
   const [detail, setDetail] = useState([]);
@@ -41,10 +51,22 @@ const Delivery = ({ currentWbKey }) => {
     }
   };
 
-  const changeDetail = async ({ id, income_id, status, plan_date }) => {
+  const changeDetail = async ({
+    id,
+    income_id,
+    status,
+    plan_date,
+    quantity,
+    productId
+  }) => {
     try {
       setLoading(true);
-      const res = await fetchSetStatus(id, { income_id, status, plan_date });
+      const res = await fetchSetStatus(id || idRef.current, {
+        income_id,
+        status,
+        plan_date,
+        incomes: [{ id: productId, quantity }]
+      });
       if (res.incomes) {
         setDetail(res.incomes);
       } else {
@@ -182,7 +204,6 @@ const Delivery = ({ currentWbKey }) => {
             onPressEnter={(e) => {
               if (e.target.value) {
                 changeDetail({ id: record.id, income_id: e.target.value });
-                getDeatil(e.target.value);
               }
             }}
           />
@@ -246,10 +267,10 @@ const Delivery = ({ currentWbKey }) => {
             type="primary"
             htmlType="submit"
             onClick={() => {
-              console.log(detail);
-              writeFile(detail, 'Presidents.xlsx', {
-                compression: true
-              });
+              const ws = utils.json_to_sheet(detail);
+              const wb = utils.book_new();
+              utils.book_append_sheet(wb, ws, 'Data');
+              writeFileXLSX(wb, 'detail.xlsx');
             }}
           >
             Выгрузить в excel
@@ -259,17 +280,40 @@ const Delivery = ({ currentWbKey }) => {
 
       children: [
         {
-          title: 'Арт',
+          title: names.brand,
+          width: 70,
+          dataIndex: 'brand'
+        },
+        {
+          title: names.article,
           dataIndex: 'article'
         },
         {
-          title: 'item_name',
+          title: names.item_name,
           dataIndex: 'item_name'
         },
         {
-          title: 'Кол-во',
+          title: names.subject,
+          dataIndex: 'subject'
+        },
+        {
+          title: names.quantity,
           dataIndex: 'quantity',
-          width: 100
+          width: 100,
+          render: (_, record) => (
+            <InputNumber
+              placeholder="Введите количество"
+              value={record.quantity}
+              onPressEnter={(e) => {
+                if (e.target.value) {
+                  changeDetail({
+                    productId: record.id,
+                    quantity: e.target.value
+                  });
+                }
+              }}
+            />
+          )
         }
       ]
     }
@@ -287,6 +331,14 @@ const Delivery = ({ currentWbKey }) => {
             dataSource={goods}
             pagination={pagination}
             onChange={getGoodsList}
+            onRow={(record) => {
+              return {
+                onDoubleClick: () => {
+                  idRef.current = record.id;
+                  getDeatil(record.id);
+                }
+              };
+            }}
           />
         </Spin>
         <Spin spinning={loading}>

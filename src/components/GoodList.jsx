@@ -148,6 +148,16 @@ const GoodList = ({ currentWbKey }) => {
         width: 120
       },
       {
+        title: names.brand,
+        dataIndex: 'brand',
+        filterSearch: true,
+        filters: filters?.brands?.map((item) => {
+          return { text: item, value: item };
+        }),
+        sorter: true,
+        width: 100
+      },
+      {
         title: names.subject,
         dataIndex: 'subject',
         filterSearch: true,
@@ -171,16 +181,6 @@ const GoodList = ({ currentWbKey }) => {
         width: 100
       },
 
-      {
-        title: names.brand,
-        dataIndex: 'brand',
-        filterSearch: true,
-        filters: filters?.brands?.map((item) => {
-          return { text: item, value: item };
-        }),
-        sorter: true,
-        width: 100
-      },
       {
         title: names.article_wb,
         dataIndex: 'article_wb',
