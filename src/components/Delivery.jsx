@@ -267,7 +267,11 @@ const Delivery = ({ currentWbKey }) => {
             type="primary"
             htmlType="submit"
             onClick={() => {
-              const ws = utils.json_to_sheet(detail);
+              const filteredDetail = detail.map((item) => {
+                return { barcode: item.barcode, quantity: item.quantity };
+              });
+
+              const ws = utils.json_to_sheet(filteredDetail);
               const wb = utils.book_new();
               utils.book_append_sheet(wb, ws, 'Data');
               writeFileXLSX(wb, 'detail.xlsx');
