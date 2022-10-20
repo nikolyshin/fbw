@@ -270,10 +270,13 @@ const Delivery = ({ currentWbKey }) => {
               const filteredDetail = detail.map((item) => {
                 return { barcode: item.barcode, quantity: item.quantity };
               });
-
-              const ws = utils.json_to_sheet(filteredDetail);
               const wb = utils.book_new();
-              utils.book_append_sheet(wb, ws, 'Data');
+              const ws = utils.json_to_sheet(filteredDetail, {
+                origin: 'A2',
+                skipHeader: true
+              });
+              utils.sheet_add_aoa(ws, [['Баркод', 'Количество']]);
+              utils.book_append_sheet(wb, ws);
               writeFileXLSX(wb, 'detail.xlsx');
             }}
           >
