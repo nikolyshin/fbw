@@ -20,8 +20,10 @@ const Stats = ({
 }) => {
   const [pagination, setPagination] = useState({
     current: 1,
-    pageSize: 10
+    pageSize: 10,
+    showSizeChanger: true
   });
+  
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [columns, setColumns] = useState([]);
@@ -154,7 +156,7 @@ const Stats = ({
   }, [goods]);
 
   useEffect(() => {
-    console.log(inputsValues,'2222222')
+    console.log(inputsValues, '2222222');
     setColumns([
       {
         title: names.category,

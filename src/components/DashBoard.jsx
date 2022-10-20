@@ -16,7 +16,8 @@ const DashBoard = ({ currentWbKey, date }) => {
   const [columnsSelect, setColumnsSelect] = useState([]);
   const [pagination, setPagination] = useState({
     current: 1,
-    pageSize: 10
+    pageSize: 10,
+    showSizeChanger: true
   });
 
   const arrDates = useMemo(() => {

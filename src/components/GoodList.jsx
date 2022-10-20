@@ -29,7 +29,8 @@ const GoodList = ({ currentWbKey }) => {
   });
   const [pagination, setPagination] = useState({
     current: 1,
-    pageSize: 10
+    pageSize: 10,
+    showSizeChanger: true
   });
 
   const [columns, setColumns] = useState([]);
@@ -168,34 +169,20 @@ const GoodList = ({ currentWbKey }) => {
         width: 100
       },
       {
-        title: names.multiplicity,
-        dataIndex: 'multiplicity',
-        filterDropdown: (props) => (
-          <FilterRange
-            {...props}
-            min={filters?.multiplicity?.min_value}
-            max={filters?.multiplicity?.max_value}
-          />
-        ),
-        sorter: true,
-        width: 100
-      },
-
-      {
-        title: names.article_wb,
-        dataIndex: 'article_wb',
+        title: names.article_1c,
+        dataIndex: 'article_1c',
         filterSearch: true,
-        filters: filters?.articles_wb?.map((item) => {
+        filters: filters?.articles_1c?.map((item) => {
           return { text: item, value: item };
         }),
         sorter: true,
         width: 100
       },
       {
-        title: names.article_1c,
-        dataIndex: 'article_1c',
+        title: names.article_wb,
+        dataIndex: 'article_wb',
         filterSearch: true,
-        filters: filters?.articles_1c?.map((item) => {
+        filters: filters?.articles_wb?.map((item) => {
           return { text: item, value: item };
         }),
         sorter: true,
@@ -212,6 +199,20 @@ const GoodList = ({ currentWbKey }) => {
         width: 100
       },
       {
+        title: names.multiplicity,
+        dataIndex: 'multiplicity',
+        filterDropdown: (props) => (
+          <FilterRange
+            {...props}
+            min={filters?.multiplicity?.min_value}
+            max={filters?.multiplicity?.max_value}
+          />
+        ),
+        sorter: true,
+        width: 100
+      },
+
+      {
         title: names.stock,
         dataIndex: 'stock',
         filterSearch: true,
@@ -224,19 +225,6 @@ const GoodList = ({ currentWbKey }) => {
         ),
         sorter: true,
         width: 100
-      },
-      {
-        title: names.discount,
-        dataIndex: 'discount',
-        sorter: true,
-        width: 100,
-        filterDropdown: (props) => (
-          <FilterRange
-            {...props}
-            min={filters?.discount?.min_value}
-            max={filters?.discount?.max_value}
-          />
-        )
       },
       {
         title: names.discount_price,
@@ -261,6 +249,19 @@ const GoodList = ({ currentWbKey }) => {
             {...props}
             min={filters?.price?.min_value}
             max={filters?.price?.max_value}
+          />
+        )
+      },
+      {
+        title: names.discount,
+        dataIndex: 'discount',
+        sorter: true,
+        width: 100,
+        filterDropdown: (props) => (
+          <FilterRange
+            {...props}
+            min={filters?.discount?.min_value}
+            max={filters?.discount?.max_value}
           />
         )
       }

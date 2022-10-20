@@ -23,7 +23,7 @@ const { Option } = Select;
 
 const Delivery = ({ currentWbKey }) => {
   const [loading, setLoading] = useState(false);
-  const idRef = useRef(null);
+  const currentRow = useRef(null);
   const [error, setError] = useState('');
   const [goods, setGoods] = useState([]);
   const [detail, setDetail] = useState([]);
@@ -61,7 +61,7 @@ const Delivery = ({ currentWbKey }) => {
   }) => {
     try {
       setLoading(true);
-      const res = await fetchSetStatus(id || idRef.current, {
+      const res = await fetchSetStatus(id || currentRow.current.id, {
         income_id,
         status,
         plan_date,
@@ -334,7 +334,7 @@ const Delivery = ({ currentWbKey }) => {
             onRow={(record) => {
               return {
                 onDoubleClick: () => {
-                  idRef.current = record.id;
+                  currentRow.current = record;
                   getDeatil(record.id);
                 }
               };
