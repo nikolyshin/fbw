@@ -11,7 +11,8 @@ const ModalChangeProduct = ({
   visible,
   onCancel,
   onFinish,
-  fields
+  fields,
+  characteristics
 }) => {
   const [draft, setDraft] = useState(null);
   const currentDraft = useRef([]);
@@ -27,7 +28,7 @@ const ModalChangeProduct = ({
         <Input
           disabled={
             !['Описание', 'Наименование', 'price', 'discount_price'].includes(
-              item.name
+              item.name || item[0]
             )
           }
         />
@@ -37,13 +38,14 @@ const ModalChangeProduct = ({
 
   const layout = {
     labelCol: {
-      span: 5
+      span: 10
     },
     wrapperCol: {
-      span: 19
+      span: 20
     }
   };
   const [form] = Form.useForm();
+  const [form2] = Form.useForm();
 
   const getBackup = async () => {
     try {
@@ -73,7 +75,14 @@ const ModalChangeProduct = ({
         form
           .validateFields()
           .then((values) => {
-            onFinish(values);
+            form2
+              .validateFields()
+              .then((values2) => {
+                onFinish({ ...values, characteristics: values2 });
+              })
+              .catch((info) => {
+                console.log('Validate Failed:', info);
+              });
           })
           .catch((info) => {
             console.log('Validate Failed:', info);
@@ -99,6 +108,34 @@ const ModalChangeProduct = ({
               ? fields
               : Object.entries(currentDraft?.current?.backup_data),
             step
+          )}
+        </Form>
+
+        <Form
+          form={form2}
+          {...layout}
+          fields={
+            step === 0
+              ? characteristics
+              : Object.entries(
+                  currentDraft?.current?.backup_data.characteristics
+                ).map((item) => {
+                  return { name: item[0], value: item[1] };
+                })
+          }
+        >
+          <p style={{ fontSize: '24px', textAlign: 'center' }}>
+            Характеристики
+          </p>
+          {formItems(
+            step === 0
+              ? characteristics
+              : Object.entries(
+                  currentDraft?.current?.backup_data.characteristics
+                ).map((item) => {
+                  return { name: item[0], value: item[1] };
+                }),
+            0
           )}
         </Form>
         <Space style={{ width: '100%' }} direction="vertical">

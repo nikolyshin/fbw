@@ -39,7 +39,11 @@ const GoodList = ({ currentWbKey }) => {
   const onFinish = async (data) => {
     try {
       setLoadingEdit(true);
-      const res = await fetchEditProduct(idRef.current, data);
+      const res = await fetchEditProduct(idRef.current, {
+        price: data.price,
+        discount_price: data.discount_price,
+        characteristics: data.characteristics
+      });
       if (!res.detail) {
         setModalData((prev) => {
           return { ...prev, visible: false };
@@ -307,26 +311,21 @@ const GoodList = ({ currentWbKey }) => {
             return {
               onDoubleClick: () => {
                 idRef.current = record.id;
-                let arr = [];
-                Object.entries(record).forEach((item) => {
-                  if (item[0] === 'characteristics') {
-                    item[1].forEach((element) => {
-                      arr.push({
-                        name: Object.keys(element)[0],
-                        value: Object.values(element)[0]
-                      });
-                    });
-                  } else {
-                    arr.push({
-                      name: item[0],
-                      value: item[1]
-                    });
-                  }
-                });
-
                 setModalData({
                   visible: true,
-                  data: arr
+                  characteristics: record.characteristics.map((item) => {
+                    return {
+                      name: Object.keys(item)[0],
+                      value: Object.values(item)[0]
+                    };
+                  }),
+                  data: Object.entries(record).map((item) => {
+                    return {
+                      name: item[0],
+                      value: item[1],
+                      label: names[item[0]]
+                    };
+                  })
                 });
               }
             };
@@ -340,6 +339,7 @@ const GoodList = ({ currentWbKey }) => {
           visible={modalData.visible}
           loading={loadingEdit}
           error={errorEdit}
+          characteristics={modalData.characteristics}
           fields={modalData.data}
           onFinish={onFinish}
           onCancel={() => {

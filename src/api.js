@@ -65,7 +65,7 @@ export const fetchGoodsListFilters = (data) => {
 };
 
 export const fetchEditProduct = (id, data) => {
-  return client.put(`/goods/${id}/`, data).then((response) => response.data);
+  return client.patch(`/goods/${id}/`, data).then((response) => response.data);
 };
 
 export const fetchGoodsBackup = (id) => {

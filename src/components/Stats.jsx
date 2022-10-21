@@ -156,7 +156,6 @@ const Stats = ({
   }, [goods]);
 
   useEffect(() => {
-    console.log(inputsValues, '2222222');
     setColumns([
       {
         title: names.category,
