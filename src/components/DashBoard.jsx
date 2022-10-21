@@ -1,11 +1,12 @@
 import { fetchGoods, fetchGoodsFilters } from '../api';
 import React, { useEffect, useMemo, useState } from 'react';
-import { Spin, Table, Alert } from 'antd';
+import { Spin, Table } from 'antd';
 import moment from 'moment';
 import ResizableTitle from './ResizableTitle';
 import { resize } from './resize';
 import { dateFormat, dateFormatReverse, names } from './helpers';
 import SelectColumns from './SelectColumns';
+import ModalError from './ModalError';
 
 const DashBoard = ({ currentWbKey, date }) => {
   const [loading, setLoading] = useState(false);
@@ -192,7 +193,12 @@ const DashBoard = ({ currentWbKey, date }) => {
           dataSource={goods}
         />
       </Spin>
-      {!!error && <Alert closable message={error} type="error" />}
+      <ModalError
+        show={!!error}
+        setShow={setError}
+        title="Произошла ошибка"
+        subtitle={error}
+      />
     </>
   );
 };

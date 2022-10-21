@@ -4,12 +4,13 @@ import {
   fetchWarehousesOrders
 } from '../api';
 import React, { useEffect, useRef, useState } from 'react';
-import { Spin, Table, Alert, InputNumber } from 'antd';
+import { Spin, Table, InputNumber } from 'antd';
 import moment from 'moment';
 import { resize } from './resize';
 import ResizableTitle from './ResizableTitle';
 import { dateFormat, names } from './helpers';
 import SelectColumns from './SelectColumns';
+import ModalError from './ModalError';
 
 const Stats = ({
   currentWbKey,
@@ -23,7 +24,7 @@ const Stats = ({
     pageSize: 10,
     showSizeChanger: true
   });
-  
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [columns, setColumns] = useState([]);
@@ -287,7 +288,12 @@ const Stats = ({
           dataSource={dataSource}
         />
       </Spin>
-      {!!error && <Alert closable message={error} type="error" />}
+      <ModalError
+        show={!!error}
+        setShow={setError}
+        title="Произошла ошибка"
+        subtitle={error}
+      />
     </>
   );
 };

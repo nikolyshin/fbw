@@ -4,13 +4,14 @@ import {
   fetchGoodsListFilters
 } from '../api';
 import React, { useEffect, useState, useRef } from 'react';
-import { Spin, Table, Alert, Divider, Input } from 'antd';
+import { Spin, Table, Divider, Input } from 'antd';
 import ModalChangeProduct from './ModalChangeProduct';
 import ResizableTitle from './ResizableTitle';
 import { resize } from './resize';
 import FilterRange from './FilterRange';
 import { names } from './helpers';
 import SelectColumns from './SelectColumns';
+import ModalError from './ModalError';
 
 const { Search } = Input;
 
@@ -332,7 +333,12 @@ const GoodList = ({ currentWbKey }) => {
           }}
         />
       </Spin>
-      {!!error && <Alert closable message={error} type="error" />}
+      <ModalError
+        show={!!error}
+        setShow={setError}
+        title="Произошла ошибка"
+        subtitle={error}
+      />
       {modalData.visible && (
         <ModalChangeProduct
           id={idRef.current}

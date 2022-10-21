@@ -8,7 +8,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
   Spin,
   Table,
-  Alert,
   Input,
   Select,
   DatePicker,
@@ -19,6 +18,7 @@ import moment from 'moment';
 import FilterRangeDate from './FilterRangeDate';
 import { dateFormat, dateFormatReverse, names } from './helpers';
 import { utils, writeFileXLSX } from 'xlsx';
+import ModalError from './ModalError';
 const { Option } = Select;
 
 const Delivery = ({ currentWbKey }) => {
@@ -70,7 +70,7 @@ const Delivery = ({ currentWbKey }) => {
       if (res.incomes) {
         setDetail(res.incomes);
       } else {
-        setError(res.detail);
+        setError(res[0]);
       }
     } catch (error) {
       console.log(error);
@@ -362,7 +362,12 @@ const Delivery = ({ currentWbKey }) => {
           />
         </Spin>
       </div>
-      {!!error && <Alert closable message={error} type="error" />}
+      <ModalError
+        show={!!error}
+        setShow={setError}
+        title="Произошла ошибка"
+        subtitle={error}
+      />
     </>
   );
 };
