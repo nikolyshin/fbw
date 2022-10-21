@@ -180,7 +180,7 @@ const Delivery = ({ currentWbKey }) => {
       },
       {
         title: names.date_close,
-        width: 200,
+        width: 100,
         dataIndex: 'date_close',
         render: (date) => {
           return <p>{date ? moment(date).format(dateFormatReverse) : null}</p>;
@@ -212,7 +212,7 @@ const Delivery = ({ currentWbKey }) => {
       {
         title: names.plan_date,
         dataIndex: 'plan_date',
-        width: 120,
+        width: 150,
         render: (_, record) => (
           <DatePicker
             defaultValue={
@@ -232,20 +232,20 @@ const Delivery = ({ currentWbKey }) => {
       {
         title: names.status,
         dataIndex: 'status',
-        width: 150,
+        width: 220,
         filterSearch: true,
         filters: Object.entries(filters?.status || []).map((item) => {
           return { text: item[1], value: item[0] };
         }),
         render: (_, record) => (
           <Select
-            value={record.status}
+            defaultValue={record.status}
             placeholder="Выберите статус"
             onChange={(value) => {
               changeDetail({ id: record.id, status: value });
             }}
             style={{
-              width: 200
+              width: '100%'
             }}
           >
             {Object.entries(filters?.status || []).map((item, i) => (
@@ -288,19 +288,22 @@ const Delivery = ({ currentWbKey }) => {
       children: [
         {
           title: names.brand,
-          width: 70,
+          width: 100,
           dataIndex: 'brand'
         },
         {
           title: names.article,
+          width: 200,
           dataIndex: 'article'
         },
         {
           title: names.item_name,
+          width: 200,
           dataIndex: 'item_name'
         },
         {
           title: names.subject,
+          width: 150,
           dataIndex: 'subject'
         },
         {
@@ -325,6 +328,7 @@ const Delivery = ({ currentWbKey }) => {
       ]
     }
   ];
+
   return (
     <>
       <div style={{ display: 'flex', gap: 16 }}>
@@ -332,7 +336,6 @@ const Delivery = ({ currentWbKey }) => {
           <Table
             bordered
             size="small"
-            scroll={{ x: true }}
             sticky={{ offsetHeader: 140 }}
             columns={columns}
             dataSource={goods}
@@ -352,7 +355,6 @@ const Delivery = ({ currentWbKey }) => {
           <Table
             size="small"
             bordered
-            scroll={{ x: true }}
             columns={columnsDetail}
             dataSource={detail}
             pagination={false}

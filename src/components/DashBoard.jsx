@@ -154,8 +154,9 @@ const DashBoard = ({ currentWbKey, date }) => {
         fixed: 'left',
         sorter: true
       },
-      ...arrDates.map((day) => {
+      ...arrDates.map((day, i) => {
         return {
+          key: i,
           title: moment(day).format(dateFormatReverse),
           dataIndex: moment(day).format(dateFormatReverse),
           width: 100

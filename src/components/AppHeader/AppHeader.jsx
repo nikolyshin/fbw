@@ -3,8 +3,11 @@ import dayjs from 'dayjs';
 import './AppHeader.css';
 import moment from 'moment';
 import { useLocation } from 'react-router-dom';
-import { fetchWarehousesCreateIncomes } from '../../api';
-import { useState } from 'react';
+import {
+  fetchGetCompaniesLimits,
+  fetchWarehousesCreateIncomes
+} from '../../api';
+import { useEffect, useState } from 'react';
 import ModalSuccess from '../ModalSuccess';
 import ModalError from '../ModalError';
 import { dateFormatReverse } from '../helpers';
@@ -25,6 +28,7 @@ const AppHeader = ({
 }) => {
   let router = useLocation();
   const [error, setError] = useState(null);
+  const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isModalSuccessVisible, setIsModalSuccessVisible] = useState(false);
   const [isModalErrorVisible, setIsModalErrorVisible] = useState(false);
@@ -51,6 +55,26 @@ const AppHeader = ({
       setLoading(false);
     }
   };
+
+  const getCompanies = async () => {
+    try {
+      setLoading(true);
+      const res = await fetchGetCompaniesLimits();
+      if (res.length) {
+        setCompanies(res);
+      } else {
+        setError(res?.detail);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // useEffect(() => {
+  //   getCompanies();
+  // }, []);
 
   return (
     <div className={'wrapper'}>
@@ -92,8 +116,20 @@ const AppHeader = ({
       <div className="box">
         <div>Остатки на складе</div>
         <div className="progressWrapper">
-          {status.map((item, i) => (
-            <div key={i} className="progress"></div>
+          {companies.map((item, i) => (
+            <div key={i} className="progress">
+              <InputNumber
+                type="number"
+                min={0}
+                // value={item}
+                // onBlur={(e) => {
+                //   setPlanIncomes(e.target.value);
+                // }}
+                // onPressEnter={(e) => {
+                //   setPlanIncomes(e.target.value);
+                // }}
+              />
+            </div>
           ))}
         </div>
       </div>

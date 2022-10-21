@@ -155,3 +155,17 @@ export const fetchRegistration = (data) => {
     .post(`/users/registration`, data)
     .then((response) => response.data);
 };
+
+export const fetchGetCompaniesLimits = (data) => {
+  return client
+    .get(`/companies/limits`, {
+      params: data
+    })
+    .then((response) => response.data);
+};
+
+export const fetchSetCompaniesLimits = (data) => {
+  return client
+    .patch('/companies/limits', data)
+    .then((response) => response.data);
+};
