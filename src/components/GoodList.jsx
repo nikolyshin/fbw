@@ -144,6 +144,16 @@ const GoodList = ({ currentWbKey }) => {
   useEffect(() => {
     setColumns([
       {
+        title: names.wb_key_name,
+        dataIndex: 'wb_key_name',
+        filterSearch: true,
+        filters: filters?.wb_key_name?.map((item) => {
+          return { text: item, value: item };
+        }),
+        sorter: true,
+        width: 120
+      },
+      {
         title: names.category,
         dataIndex: 'category',
         filterSearch: true,

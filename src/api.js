@@ -169,3 +169,11 @@ export const fetchSetCompaniesLimits = (data) => {
     .patch('/companies/limits', data)
     .then((response) => response.data);
 };
+
+export const fetchGetDataImportStatus = (data) => {
+  return client
+    .get(`/wb_api/data_import_status`, {
+      params: data
+    })
+    .then((response) => response.data);
+};

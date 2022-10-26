@@ -5,6 +5,7 @@ import moment from 'moment';
 import { useLocation } from 'react-router-dom';
 import {
   fetchGetCompaniesLimits,
+  fetchGetDataImportStatus,
   fetchWarehousesCreateIncomes
 } from '../../api';
 import { useEffect, useState } from 'react';
@@ -32,6 +33,12 @@ const AppHeader = ({
   const [loading, setLoading] = useState(false);
   const [isModalSuccessVisible, setIsModalSuccessVisible] = useState(false);
   const [isModalErrorVisible, setIsModalErrorVisible] = useState(false);
+  const import_statuses = {
+    '/': 'SALES_IMPORT',
+    '/goodlist': 'GOODS_IMPORT',
+    '/stats': 'ORDERS_IMPORT',
+    '/delivery': 'INCOMES_IMPORT'
+  };
   const hideElements = () => {
     return !['/goodlist', '/', '/delivery'].includes(router.pathname);
   };
@@ -72,9 +79,33 @@ const AppHeader = ({
     }
   };
 
+  useEffect(() => {
+    getCompanies();
+  }, []);
+
   // useEffect(() => {
-  //   getCompanies();
-  // }, []);
+  //   getStatus({ type: import_statuses[router.pathname] });
+  // }, [router]);
+
+  const getStatus = async ({ type }) => {
+    console.log(type);
+    try {
+      setLoading(true);
+      const res = await fetchGetDataImportStatus({
+        type,
+        wb_keys: currentWbKey
+      });
+      if (res.length) {
+        setCompanies(res);
+      } else {
+        setError(res?.detail);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className={'wrapper'}>
