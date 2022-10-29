@@ -145,6 +145,7 @@ const Stats = ({
         item.stocks.forEach((el) => {
           obj[`sales_${el.warehouse_id}`] = el.orders;
           obj[`count_${el.warehouse_id}`] = el.quantity;
+          obj[`stock_color_${el.warehouse_id}`] = el.stock_color;
           obj[`plane_${el.warehouse_id}`] = el.incomes_plan;
           obj[`fact_${el.warehouse_id}`] = el.incomes;
           obj[`on_build_goods_${el.warehouse_id}`] = el.on_build_goods;
@@ -185,11 +186,7 @@ const Stats = ({
         dataIndex: 'barcode',
         width: 150
       },
-      {
-        title: names.stock,
-        dataIndex: 'stock',
-        width: 150
-      },
+
       {
         title: names.article_wb,
         dataIndex: 'article_wb',
@@ -200,6 +197,11 @@ const Stats = ({
         dataIndex: 'wb_key',
         width: 150
       },
+      {
+        title: names.stock,
+        dataIndex: 'stock',
+        width: 150
+      },
       ...warehouses.map((item) => {
         return {
           title: item.name,
@@ -208,7 +210,15 @@ const Stats = ({
             {
               title: 'Кол-во',
               dataIndex: `count_${item.id}`,
-              width: 50
+              width: 50,
+              render(text, record) {
+                return {
+                  props: {
+                    style: { background: record[`stock_color_${item.id}`] }
+                  },
+                  children: <div>{text}</div>
+                };
+              }
             },
             {
               title: 'Прод',

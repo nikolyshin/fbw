@@ -12,6 +12,7 @@ const SelectColumns = ({ columnsAll, columnsSelect, setColumnsSelect }) => {
       placeholder="Выбрать колонку"
       style={{
         width: '100%',
+        fontSize: '13px',
         marginBottom: '24px'
       }}
       onChange={(value) => {
@@ -21,7 +22,13 @@ const SelectColumns = ({ columnsAll, columnsSelect, setColumnsSelect }) => {
       }}
     >
       {columnsAll.map((item) => (
-        <Option key={item.dataIndex} value={item.dataIndex}>
+        <Option
+          style={{
+            fontSize: '13px'
+          }}
+          key={item.dataIndex}
+          value={item.dataIndex}
+        >
           {item.title}
         </Option>
       ))}

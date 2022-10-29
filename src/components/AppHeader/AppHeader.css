@@ -1,7 +1,7 @@
 .wrapper {
   height: 140px;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   padding: 24px;
   gap: 32px;
   width: 100%;
@@ -19,8 +19,11 @@
 }
 
 .progress {
-  width: 20px;
-  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
-  background-color: green;
+  color: white;
 }
