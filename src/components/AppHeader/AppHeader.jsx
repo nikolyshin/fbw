@@ -89,7 +89,9 @@ const AppHeader = ({
       setLoading(true);
       const res = await fetchSetCompaniesLimits(data);
       if (res) {
-        // setCompanies(res);
+        setCompanies((prev) => {
+          return { ...prev, ...res };
+        });
       } else {
         setError(res?.detail);
       }
@@ -170,12 +172,12 @@ const AppHeader = ({
               <InputNumber
                 type="number"
                 min={0}
-                onBlur={(e) => {
-                  sendCompanies({ first: e.target.value });
-                }}
-                onPressEnter={(e) => {
-                  sendCompanies({ first: e.target.value });
-                }}
+                // onBlur={(e) => {
+                //   sendCompanies({ first: e.target.value });
+                // }}
+                // onPressEnter={(e) => {
+                //   sendCompanies({ first: e.target.value });
+                // }}
               />
             }
             %
@@ -194,10 +196,10 @@ const AppHeader = ({
                     min={0}
                     defaultValue={companies[item]}
                     onBlur={(e) => {
-                      sendCompanies({ first: e.target.value });
+                      sendCompanies({ [item]: e.target.value });
                     }}
                     onPressEnter={(e) => {
-                      sendCompanies({ first: e.target.value });
+                      sendCompanies({ [item]: e.target.value });
                     }}
                   />
                 }
@@ -252,3 +254,4 @@ const AppHeader = ({
 };
 
 export default AppHeader;
+

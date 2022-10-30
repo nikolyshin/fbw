@@ -148,7 +148,7 @@ const GoodList = ({ currentWbKey }) => {
         title: names.wb_key_name,
         dataIndex: 'wb_key_name',
         filterSearch: true,
-        filters: filters?.wb_key_name?.map((item) => {
+        filters: filters?.wb_key_names?.map((item) => {
           return { text: item, value: item };
         }),
         sorter: true,
