@@ -16,7 +16,6 @@ import { dateFormatReverse } from '../helpers';
 const { Option } = Select;
 
 const { RangePicker } = DatePicker;
-const status = [0, 1, 2, 3, 4];
 
 const AppHeader = ({
   wbKeys = [],
@@ -33,6 +32,7 @@ const AppHeader = ({
   const [open, setOpen] = useState(false);
   const [companies, setCompanies] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState([]);
   const [isModalSuccessVisible, setIsModalSuccessVisible] = useState(false);
   const [isModalErrorVisible, setIsModalErrorVisible] = useState(false);
   const import_statuses = {
@@ -106,12 +106,11 @@ const AppHeader = ({
     getCompanies();
   }, []);
 
-  // useEffect(() => {
-  //   getStatus({ type: import_statuses[router.pathname] });
-  // }, [router]);
+  useEffect(() => {
+    getStatus({ type: import_statuses[router.pathname || '/'] });
+  }, [router, currentWbKey]);
 
   const getStatus = async ({ type }) => {
-    console.log(type);
     try {
       setLoading(true);
       const res = await fetchGetDataImportStatus({
@@ -119,7 +118,7 @@ const AppHeader = ({
         wb_keys: currentWbKey
       });
       if (res.length) {
-        setCompanies(res);
+        setStatus(res);
       } else {
         setError(res?.detail);
       }
@@ -133,7 +132,14 @@ const AppHeader = ({
   return (
     <div className={'wrapper'}>
       <div className="box">
-        <div>Последнее обновление</div>
+        <div>
+          Последнее обновление:{' '}
+          {status.map((item, i) => (
+            <div key={i}>
+              {item.wb_key} {moment(item.run_dt).format(dateFormatReverse)}
+            </div>
+          ))}
+        </div>
       </div>
       <div className="box">
         <RangePicker
@@ -254,4 +260,3 @@ const AppHeader = ({
 };
 
 export default AppHeader;
-

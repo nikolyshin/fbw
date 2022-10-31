@@ -101,7 +101,7 @@ const GoodList = ({ currentWbKey }) => {
         article_wb__in: filters?.article_wb,
         article_1c__in: filters?.article_1c,
         barcode__in: filters?.barcode,
-        wb_key_name__in: filters?.wb_key_name,
+        wb_key__in: filters?.wb_key_name,
 
         //filters range
         discount__range: filters?.discount,
