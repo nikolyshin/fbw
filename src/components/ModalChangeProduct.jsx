@@ -27,7 +27,7 @@ const ModalChangeProduct = ({
       >
         <Input
           disabled={
-            !['Описание', 'Наименование', 'price', 'discount_price'].includes(
+            !['Описание', 'Наименование', 'price', 'discount_price', 'multiplicity', 'discount'].includes(
               item.name || item[0]
             )
           }

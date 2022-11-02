@@ -7,7 +7,8 @@ import {
   fetchGetCompaniesLimits,
   fetchGetDataImportStatus,
   fetchSetCompaniesLimits,
-  fetchWarehousesCreateIncomes
+  fetchWarehousesCreateIncomes,
+  fetchGetCompaniesSurcharge
 } from '../../api';
 import { useEffect, useState } from 'react';
 import ModalSuccess from '../ModalSuccess';
@@ -136,7 +137,7 @@ const AppHeader = ({
           Последнее обновление:{' '}
           {status.map((item, i) => (
             <div key={i}>
-              {item.wb_key} {moment(item.run_dt).format(dateFormatReverse)}
+              {item.wb_key} {moment(item.run_dt).format(dateTimeFormat)}
             </div>
           ))}
         </div>
@@ -167,6 +168,7 @@ const AppHeader = ({
                 setPlanIncomes(e.target.value);
               }}
             />
+            &nbsp;дней
           </div>
         )}
       </div>
@@ -178,6 +180,7 @@ const AppHeader = ({
               <InputNumber
                 type="number"
                 min={0}
+                //value={fetchGetCompaniesSurcharge}
                 // onBlur={(e) => {
                 //   sendCompanies({ first: e.target.value });
                 // }}

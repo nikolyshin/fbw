@@ -145,6 +145,11 @@ const Delivery = ({ currentWbKey }) => {
   useEffect(() => {
     setColumns([
       {
+        title: names.wb_key_name,
+        width: 150,
+        dataIndex: 'wb_key_name'
+      },
+      {
         title: names.date,
         width: 100,
         dataIndex: 'date',
@@ -172,11 +177,6 @@ const Delivery = ({ currentWbKey }) => {
         title: names.quantity,
         width: 70,
         dataIndex: 'quantity'
-      },
-      {
-        title: names.wb_key_name,
-        width: 150,
-        dataIndex: 'wb_key_name'
       },
       {
         title: names.date_close,

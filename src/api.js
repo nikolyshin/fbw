@@ -177,3 +177,11 @@ export const fetchGetDataImportStatus = (data) => {
     })
     .then((response) => response.data);
 };
+
+export const fetchGetCompaniesSurcharge = (data) => {
+  return client
+    .get(`/companies/surcharge`, {
+      params: data
+    })
+    .then((response) => response.data);
+};

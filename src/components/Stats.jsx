@@ -160,6 +160,11 @@ const Stats = ({
   useEffect(() => {
     setColumns([
       {
+        title: names.wb_key,
+        dataIndex: 'wb_key',
+        width: 150
+      },
+      {
         title: names.category,
         dataIndex: 'category',
         fixed: 'left',
@@ -190,11 +195,6 @@ const Stats = ({
       {
         title: names.article_wb,
         dataIndex: 'article_wb',
-        width: 150
-      },
-      {
-        title: names.wb_key,
-        dataIndex: 'wb_key',
         width: 150
       },
       {

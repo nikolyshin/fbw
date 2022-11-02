@@ -175,6 +175,16 @@ const GoodList = ({ currentWbKey }) => {
         width: 100
       },
       {
+        title: names.name,
+        dataIndex: 'name',
+        /* filterSearch: true,
+        filters: filters?.brands?.map((item) => {
+          return { text: item, value: item };
+        }),
+        sorter: true, */
+        width: 100
+      },
+      {
         title: names.subject,
         dataIndex: 'subject',
         filterSearch: true,

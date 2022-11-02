@@ -1,7 +1,8 @@
 export const dateFormatReverse = 'DD-MM-YYYY';
+export const dateTimeFormat = 'DD-MM-YYYY HH:mm:ss';
 export const dateFormat = 'YYYY-MM-DD';
 export const names = {
-  category: 'Категории',
+  category: 'Категория',
   brand: 'Бренд',
   sales: 'Продажи',
   wb_key: 'Поставщиĸ',
@@ -13,16 +14,17 @@ export const names = {
   date: 'Дата',
   status: 'Статус',
   subject: 'Группа товара',
-  multiplicity: 'Кратность',
-  article_wb: 'Арт WB',
-  article_1c: 'Арт 1С',
+  multiplicity: 'Кратность поставки',
+  article_wb: 'Артикул WB',
+  article_1c: 'Артикул 1С',
   barcode: 'БарКод',
-  stock: 'Остаток',
+  stock: 'Текущий остаток',
   discount: 'Сĸидĸа',
-  price: 'Цена',
-  discount_price: 'Размер скидки',
+  price: 'Цена без скидки',
+  discount_price: 'Цена со скидкой',
   wb_id: 'wb_id',
   date_close: 'Факт дата',
   item_name: 'item_name',
-  article: 'article'
+  article: 'article',
+  name: 'Наименование'
 };
