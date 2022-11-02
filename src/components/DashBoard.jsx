@@ -123,6 +123,7 @@ const DashBoard = ({ currentWbKey, date }) => {
         width: 200,
         sorter: true,
         filterSearch: true,
+        fixed: 'left',
         filters: filters?.wb_keys?.map((item) => {
           return { text: item, value: item };
         })
@@ -144,6 +145,7 @@ const DashBoard = ({ currentWbKey, date }) => {
         width: 200,
         sorter: true,
         filterSearch: true,
+        fixed: 'left',
         filters: filters?.brands?.map((item) => {
           return { text: item, value: item };
         })

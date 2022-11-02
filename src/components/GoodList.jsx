@@ -296,15 +296,6 @@ const GoodList = ({ currentWbKey }) => {
 
   return (
     <>
-      <Search
-        style={{ width: '50%' }}
-        placeholder="Поиск"
-        loading={loading}
-        enterButton
-        allowClear
-        onSearch={setSearch}
-      />
-
       <Divider />
       <SelectColumns
         columnsAll={columns}
