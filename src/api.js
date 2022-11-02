@@ -185,3 +185,9 @@ export const fetchGetCompaniesSurcharge = (data) => {
     })
     .then((response) => response.data);
 };
+
+export const fetchPatchCompaniesSurcharge = (data) => {
+  return client
+    .patch('/companies/surcharge', data)
+    .then((response) => response.data);
+};

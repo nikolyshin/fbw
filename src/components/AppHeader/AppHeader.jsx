@@ -8,7 +8,8 @@ import {
   fetchGetDataImportStatus,
   fetchSetCompaniesLimits,
   fetchWarehousesCreateIncomes,
-  fetchGetCompaniesSurcharge
+  fetchGetCompaniesSurcharge,
+  fetchPatchCompaniesSurcharge
 } from '../../api';
 import { useEffect, useState } from 'react';
 import ModalSuccess from '../ModalSuccess';
@@ -104,11 +105,26 @@ const AppHeader = ({
     }
   };
 
-  const getSurcharge = async (data) => {
-    console.log(data);
+  const getSurcharge = async () => {
     try {
       setLoading(true);
-      const res = await fetchGetCompaniesSurcharge(data);
+      const res = await fetchGetCompaniesSurcharge();
+      if (res) {
+        setSurcharge(res.value);
+      } else {
+        setError(res?.detail);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const sendSurcharge = async (data) => {
+    try {
+      setLoading(true);
+      const res = await fetchPatchCompaniesSurcharge(data);
       if (res) {
         setSurcharge(res.value);
       } else {
@@ -196,7 +212,7 @@ const AppHeader = ({
           </div>
         )}
       </div>
-      {router.pathname === '/stats' && (
+      {router.pathname === '/stats' && surcharge !== null && (
         <div className="box">
           <div>
             Надбавка:{' '}
@@ -204,11 +220,10 @@ const AppHeader = ({
               <InputNumber
                 type="number"
                 min={0}
-                value={surcharge}
-                onChange={setSurcharge}
-                // onPressEnter={() => {
-                //   getSurcharge({ value: surcharge });
-                // }}
+                defaultValue={surcharge}
+                onPressEnter={(e) => {
+                  sendSurcharge({ value: e.target.value });
+                }}
               />
             }
             %
