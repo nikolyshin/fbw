@@ -342,11 +342,13 @@ const GoodList = ({ currentWbKey }) => {
                     };
                   }),
                   data: Object.entries(record).map((item) => {
-                    return {
-                      name: item[0],
-                      value: item[1],
-                      label: names[item[0]]
-                    };
+                    return (
+                      item[0] !== 'characteristics' && {
+                        name: item[0],
+                        value: item[1],
+                        label: names[item[0]]
+                      }
+                    );
                   })
                 });
               }

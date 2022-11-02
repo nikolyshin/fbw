@@ -3,6 +3,7 @@ import moment from 'moment';
 import React, { useEffect, useRef, useState } from 'react';
 import { fetchGoodsBackup } from '../api';
 import { names } from './helpers';
+const { TextArea } = Input;
 
 const ModalChangeProduct = ({
   id,
@@ -19,26 +20,42 @@ const ModalChangeProduct = ({
   const [step, setStep] = useState(0);
 
   const formItems = (array = [], step) => {
-    return array.map((item, i) => (
-      <Form.Item
-        key={i}
-        name={step === 0 ? item.name : item[0]}
-        label={step === 0 ? names[item.name] || item.name : item[0]}
-      >
-        <Input
-          disabled={
-            !['Описание', 'Наименование', 'price', 'discount_price', 'multiplicity', 'discount'].includes(
-              item.name || item[0]
-            )
-          }
-        />
-      </Form.Item>
-    ));
+    return array.map(
+      (item, i) =>
+        item && (
+          <Form.Item
+            key={i}
+            name={step === 0 ? item.name : item[0]}
+            label={step === 0 ? names[item.name] || item.name : item[0]}
+          >
+            {(item.name || item[0]) !== 'Описание' ? (
+              <Input
+                disabled={
+                  ![
+                    'Описание',
+                    'Наименование',
+                    'price',
+                    'discount_price',
+                    'multiplicity',
+                    'discount'
+                  ].includes(item.name || item[0])
+                }
+              />
+            ) : (
+              <TextArea
+                style={{
+                  height: 120
+                }}
+              />
+            )}
+          </Form.Item>
+        )
+    );
   };
 
   const layout = {
     labelCol: {
-      span: 10
+      span: 7
     },
     wrapperCol: {
       span: 20
@@ -66,6 +83,7 @@ const ModalChangeProduct = ({
 
   return (
     <Modal
+      width={'50%'}
       visible={visible}
       title={step === 0 ? 'Изменение товара' : 'Драфт товара'}
       okText={step === 0 ? 'Изменить' : 'Отправить повторно'}
