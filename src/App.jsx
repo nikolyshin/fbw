@@ -21,6 +21,7 @@ const App = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [currentWbKey, setCurrentWbKey] = useState([]);
+  const [surcharge, setSurcharge] = useState(null);
   const [planIncomes, setPlanIncomes] = useState(1);
   const [createdIncomes, setCreatedIncomes] = useState([]);
   const [changeIncome, setChangeIncome] = useState(false);
@@ -139,6 +140,8 @@ const App = () => {
             wbKeys={user?.wb_keys}
             currentWbKey={currentWbKey}
             setCurrentWbKey={setCurrentWbKey}
+            surcharge={surcharge}
+            setSurcharge={setSurcharge}
             planIncomes={planIncomes}
             setPlanIncomes={setPlanIncomes}
             setChangeIncome={setChangeIncome}
@@ -166,6 +169,7 @@ const App = () => {
               element={
                 <Stats
                   date={date}
+                  surcharge={surcharge}
                   changeIncome={changeIncome}
                   createdIncomes={createdIncomes}
                   setChangeIncome={setChangeIncome}

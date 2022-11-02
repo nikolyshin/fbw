@@ -13,7 +13,7 @@ import {
 import { useEffect, useState } from 'react';
 import ModalSuccess from '../ModalSuccess';
 import ModalError from '../ModalError';
-import { dateFormatReverse } from '../helpers';
+import { dateFormatReverse, dateTimeFormat } from '../helpers';
 const { Option } = Select;
 
 const { RangePicker } = DatePicker;
@@ -26,11 +26,12 @@ const AppHeader = ({
   setPlanIncomes,
   setChangeIncome,
   date,
-  setDate
+  setDate,
+  surcharge,
+  setSurcharge
 }) => {
   let router = useLocation();
   const [error, setError] = useState(null);
-  const [open, setOpen] = useState(false);
   const [companies, setCompanies] = useState(null);
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState([]);
@@ -103,9 +104,32 @@ const AppHeader = ({
     }
   };
 
+  const getSurcharge = async (data) => {
+    console.log(data);
+    try {
+      setLoading(true);
+      const res = await fetchGetCompaniesSurcharge(data);
+      if (res) {
+        setSurcharge(res.value);
+      } else {
+        setError(res?.detail);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     getCompanies();
   }, []);
+
+  useEffect(() => {
+    if (router.pathname === '/stats') {
+      getSurcharge();
+    }
+  }, [router]);
 
   useEffect(() => {
     getStatus({ type: import_statuses[router.pathname || '/'] });
@@ -172,7 +196,7 @@ const AppHeader = ({
           </div>
         )}
       </div>
-      {hideElements() && (
+      {router.pathname === '/stats' && (
         <div className="box">
           <div>
             Надбавка:{' '}
@@ -180,12 +204,10 @@ const AppHeader = ({
               <InputNumber
                 type="number"
                 min={0}
-                //value={fetchGetCompaniesSurcharge}
-                // onBlur={(e) => {
-                //   sendCompanies({ first: e.target.value });
-                // }}
-                // onPressEnter={(e) => {
-                //   sendCompanies({ first: e.target.value });
+                value={surcharge}
+                onChange={setSurcharge}
+                // onPressEnter={() => {
+                //   getSurcharge({ value: surcharge });
                 // }}
               />
             }

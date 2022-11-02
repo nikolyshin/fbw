@@ -15,6 +15,7 @@ import ModalError from './ModalError';
 const Stats = ({
   currentWbKey,
   date,
+  surcharge,
   planIncomes,
   changeIncome,
   setChangeIncome
@@ -118,7 +119,7 @@ const Stats = ({
 
   useEffect(() => {
     getOrders();
-  }, [currentWbKey, date, planIncomes]);
+  }, [currentWbKey, date, planIncomes, surcharge]);
 
   useEffect(() => {
     if (changeIncome) {

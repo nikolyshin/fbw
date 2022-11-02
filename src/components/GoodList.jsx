@@ -182,7 +182,7 @@ const GoodList = ({ currentWbKey }) => {
           return { text: item, value: item };
         }),
         sorter: true, */
-        width: 100
+        width: 120
       },
       {
         title: names.subject,
