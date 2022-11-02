@@ -163,6 +163,7 @@ const Stats = ({
       {
         title: names.wb_key,
         dataIndex: 'wb_key',
+        fixed: 'left',
         width: 150
       },
       {
