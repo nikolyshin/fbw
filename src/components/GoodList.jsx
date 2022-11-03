@@ -4,7 +4,7 @@ import {
   fetchGoodsListFilters
 } from '../api';
 import React, { useEffect, useState, useRef } from 'react';
-import { Spin, Table, Divider, Input } from 'antd';
+import { Spin, Table } from 'antd';
 import ModalChangeProduct from './ModalChangeProduct';
 import ResizableTitle from './ResizableTitle';
 import { resize } from './resize';
@@ -13,13 +13,10 @@ import { names } from './helpers';
 import SelectColumns from './SelectColumns';
 import ModalError from './ModalError';
 
-const { Search } = Input;
-
 const GoodList = ({ currentWbKey }) => {
   const [loading, setLoading] = useState(false);
   const [loadingEdit, setLoadingEdit] = useState(false);
   const [errorEdit, setErrorEdit] = useState(null);
-  const [search, setSearch] = useState(null);
   const [error, setError] = useState('');
   const [goods, setGoods] = useState([]);
   const [filters, setFilters] = useState({});
@@ -88,7 +85,6 @@ const GoodList = ({ currentWbKey }) => {
       setLoading(true);
       const res = await fetchGoodsList({
         wb_keys: currentWbKey,
-        search,
         limit: pagination?.pageSize,
         offset: (pagination?.current - 1) * pagination?.pageSize || null,
         //sort
@@ -136,7 +132,7 @@ const GoodList = ({ currentWbKey }) => {
 
   useEffect(() => {
     getGoodsList();
-  }, [currentWbKey, search]);
+  }, [currentWbKey]);
 
   useEffect(() => {
     setColumnsSelect(columns);
@@ -296,7 +292,6 @@ const GoodList = ({ currentWbKey }) => {
 
   return (
     <>
-      <Divider />
       <SelectColumns
         columnsAll={columns}
         columnsSelect={columnsSelect}
