@@ -55,7 +55,7 @@ const ModalChangeProduct = ({
 
   const layout = {
     labelCol: {
-      span: 7
+      span: 5
     },
     wrapperCol: {
       span: 20
@@ -83,7 +83,7 @@ const ModalChangeProduct = ({
 
   return (
     <Modal
-      width={'50%'}
+      width={'70%'}
       visible={visible}
       title={step === 0 ? 'Изменение товара' : 'Драфт товара'}
       okText={step === 0 ? 'Изменить' : 'Отправить повторно'}

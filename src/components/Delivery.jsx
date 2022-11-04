@@ -11,20 +11,19 @@ import {
   Input,
   Select,
   DatePicker,
-  Button,
-  InputNumber
 } from 'antd';
 import moment from 'moment';
 import FilterRangeDate from './FilterRangeDate';
 import { dateFormat, dateFormatReverse, names } from './helpers';
-import { utils, writeFileXLSX } from 'xlsx';
 import ModalError from './ModalError';
+import ModalDeliveryDetail from './ModalDeliveryDetail';
 const { Option } = Select;
 
 const Delivery = ({ currentWbKey }) => {
   const [loading, setLoading] = useState(false);
   const currentRow = useRef(null);
   const [error, setError] = useState('');
+  const [openModalDetail, setOpenModalDetail] = useState(false);
   const [goods, setGoods] = useState([]);
   const [detail, setDetail] = useState([]);
   const [columns, setColumns] = useState([]);
@@ -35,7 +34,7 @@ const Delivery = ({ currentWbKey }) => {
     showSizeChanger: true
   });
 
-  const getDeatil = async (id) => {
+  const getDetail = async (id) => {
     try {
       setLoading(true);
       const res = await fetchGetGoodsIncomes(id);
@@ -259,109 +258,35 @@ const Delivery = ({ currentWbKey }) => {
     ]);
   }, [filters]);
 
-  const columnsDetail = [
-    {
-      title: () => {
-        return (
-          <Button
-            type="primary"
-            htmlType="submit"
-            onClick={() => {
-              const filteredDetail = detail.map((item) => {
-                return { barcode: item.barcode, quantity: item.quantity };
-              });
-              const wb = utils.book_new();
-              const ws = utils.json_to_sheet(filteredDetail, {
-                origin: 'A2',
-                skipHeader: true
-              });
-              utils.sheet_add_aoa(ws, [['Баркод', 'Количество']]);
-              utils.book_append_sheet(wb, ws);
-              writeFileXLSX(wb, 'detail.xlsx');
-            }}
-          >
-            Выгрузить в excel
-          </Button>
-        );
-      },
-
-      children: [
-        {
-          title: names.brand,
-          width: 100,
-          dataIndex: 'brand'
-        },
-        {
-          title: names.article,
-          width: 200,
-          dataIndex: 'article'
-        },
-        {
-          title: names.item_name,
-          width: 200,
-          dataIndex: 'item_name'
-        },
-        {
-          title: names.subject,
-          width: 150,
-          dataIndex: 'subject'
-        },
-        {
-          title: names.quantity,
-          dataIndex: 'quantity',
-          width: 100,
-          render: (_, record) => (
-            <InputNumber
-              placeholder="Введите количество"
-              value={record.quantity}
-              onPressEnter={(e) => {
-                if (e.target.value) {
-                  changeDetail({
-                    productId: record.id,
-                    quantity: e.target.value
-                  });
-                }
-              }}
-            />
-          )
-        }
-      ]
-    }
-  ];
-
   return (
     <>
-      <div style={{ display: 'flex', gap: 16 }}>
-        <Spin spinning={loading}>
-          <Table
-            bordered
-            size="small"
-            sticky={{ offsetHeader: 140 }}
-            columns={columns}
-            dataSource={goods}
-            pagination={pagination}
-            onChange={getGoodsList}
-            onRow={(record) => {
-              return {
-                onDoubleClick: () => {
-                  currentRow.current = record;
-                  getDeatil(record.id);
-                }
-              };
-            }}
-          />
-        </Spin>
-        <Spin spinning={loading}>
-          <Table
-            size="small"
-            bordered
-            columns={columnsDetail}
-            dataSource={detail}
-            pagination={false}
-            sticky={{ offsetHeader: 140 }}
-          />
-        </Spin>
-      </div>
+      <Spin spinning={loading}>
+        <Table
+          bordered
+          size="small"
+          sticky={{ offsetHeader: 140 }}
+          columns={columns}
+          dataSource={goods}
+          pagination={pagination}
+          onChange={getGoodsList}
+          onRow={(record) => {
+            return {
+              onDoubleClick: () => {
+                currentRow.current = record;
+                getDetail(record.id);
+                setOpenModalDetail(true);
+              }
+            };
+          }}
+        />
+      </Spin>
+      <ModalDeliveryDetail
+        data={detail}
+        loading={loading}
+        show={openModalDetail}
+        changeDetail={changeDetail}
+        setShow={setOpenModalDetail}
+      />
       <ModalError
         show={!!error}
         setShow={setError}
