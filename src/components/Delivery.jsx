@@ -5,18 +5,15 @@ import {
   fetchSetStatus
 } from '../api';
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  Spin,
-  Table,
-  Input,
-  Select,
-  DatePicker,
-} from 'antd';
+import { Spin, Table, Input, Select, DatePicker } from 'antd';
 import moment from 'moment';
 import FilterRangeDate from './FilterRangeDate';
 import { dateFormat, dateFormatReverse, names } from './helpers';
 import ModalError from './ModalError';
 import ModalDeliveryDetail from './ModalDeliveryDetail';
+import SelectColumns from './SelectColumns';
+import ResizableTitle from './ResizableTitle';
+import { resize } from './resize';
 const { Option } = Select;
 
 const Delivery = ({ currentWbKey }) => {
@@ -27,6 +24,7 @@ const Delivery = ({ currentWbKey }) => {
   const [goods, setGoods] = useState([]);
   const [detail, setDetail] = useState([]);
   const [columns, setColumns] = useState([]);
+  const [columnsSelect, setColumnsSelect] = useState([]);
   const [filters, setFilters] = useState({});
   const [pagination, setPagination] = useState({
     current: 1,
@@ -140,6 +138,10 @@ const Delivery = ({ currentWbKey }) => {
     getGoodsList();
     getGoodsListFilters();
   }, [currentWbKey]);
+
+  useEffect(() => {
+    setColumnsSelect(columns);
+  }, [columns]);
 
   useEffect(() => {
     setColumns([
@@ -260,12 +262,26 @@ const Delivery = ({ currentWbKey }) => {
 
   return (
     <>
+      <SelectColumns
+        columnsAll={columns}
+        columnsSelect={columnsSelect}
+        setColumnsSelect={setColumnsSelect}
+      />
       <Spin spinning={loading}>
         <Table
           bordered
+          components={{
+            header: {
+              cell: ResizableTitle
+            }
+          }}
           size="small"
           sticky={{ offsetHeader: 140 }}
-          columns={columns}
+          columns={resize({
+            columns: columnsSelect,
+            setColumns: setColumnsSelect
+          })}
+          scroll={{ x: 0 }}
           dataSource={goods}
           pagination={pagination}
           onChange={getGoodsList}

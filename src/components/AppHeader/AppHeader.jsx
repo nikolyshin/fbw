@@ -15,6 +15,7 @@ import { useEffect, useState } from 'react';
 import ModalSuccess from '../ModalSuccess';
 import ModalError from '../ModalError';
 import { dateFormatReverse, dateTimeFormat } from '../helpers';
+import { ReactComponent as Arrow } from './arrow_right.svg';
 const { Option } = Select;
 
 const { RangePicker } = DatePicker;
@@ -147,9 +148,9 @@ const AppHeader = ({
     }
   }, [router]);
 
-  useEffect(() => {
-    getStatus({ type: import_statuses[router.pathname || '/'] });
-  }, [router, currentWbKey]);
+  // useEffect(() => {
+  //   getStatus({ type: import_statuses[router.pathname || '/'] });
+  // }, [router, currentWbKey]);
 
   const getStatus = async ({ type }) => {
     try {
@@ -188,6 +189,7 @@ const AppHeader = ({
             date ? moment(date[0], dateFormatReverse) : null,
             date ? moment(date[1], dateFormatReverse) : null
           ]}
+          separator={<Arrow className="asdgsd" />}
           size="small"
           style={{ width: '220px' }}
           format={dateFormatReverse}
@@ -207,11 +209,12 @@ const AppHeader = ({
               onPressEnter={(e) => {
                 setPlanIncomes(e.target.value);
               }}
-            />
-            &nbsp;дней
+            />{' '}
+            дней
           </div>
         )}
       </div>
+
       {router.pathname === '/stats' && surcharge !== null && (
         <div className="box">
           <div>

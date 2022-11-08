@@ -70,7 +70,8 @@ const DashBoard = ({ currentWbKey, date }) => {
         // filters
         category__in: filters?.category,
         wb_key__in: filters?.wb_key,
-        brand__in: filters?.brand
+        brand__in: filters?.brand,
+        subject__in: filters.subject
       });
       if (res.results) {
         const arr = [];
@@ -136,6 +137,17 @@ const DashBoard = ({ currentWbKey, date }) => {
         width: 200,
         fixed: 'left',
         filters: filters?.categories?.map((item) => {
+          return { text: item, value: item };
+        })
+      },
+      {
+        title: names.subject,
+        dataIndex: 'subject',
+        sorter: true,
+        filterSearch: true,
+        width: 200,
+        fixed: 'left',
+        filters: filters?.subjects?.map((item) => {
           return { text: item, value: item };
         })
       },

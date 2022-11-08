@@ -246,7 +246,15 @@ const GoodList = ({ currentWbKey }) => {
           />
         ),
         sorter: true,
-        width: 100
+        width: 100,
+        render(text, record) {
+          return {
+            props: {
+              style: { background: record.stock_color }
+            },
+            children: <div>{text}</div>
+          };
+        }
       },
       {
         title: names.discount_price,
