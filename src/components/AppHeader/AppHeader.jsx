@@ -148,9 +148,9 @@ const AppHeader = ({
     }
   }, [router]);
 
-  // useEffect(() => {
-  //   getStatus({ type: import_statuses[router.pathname || '/'] });
-  // }, [router, currentWbKey]);
+  useEffect(() => {
+    getStatus({ type: import_statuses[router.pathname || '/'] });
+  }, [router, currentWbKey]);
 
   const getStatus = async ({ type }) => {
     try {
@@ -175,12 +175,7 @@ const AppHeader = ({
     <div className={'wrapper'}>
       <div className="box">
         <div>
-          Последнее обновление:{' '}
-          {status.map((item, i) => (
-            <div key={i}>
-              {item.wb_key} {moment(item.run_dt).format(dateTimeFormat)}
-            </div>
-          ))}
+          Последнее обновление: {moment(status.run_dt).format(dateTimeFormat)}
         </div>
       </div>
       <div className="box">
