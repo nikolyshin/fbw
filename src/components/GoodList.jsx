@@ -39,6 +39,8 @@ const GoodList = ({ currentWbKey }) => {
       setLoadingEdit(true);
       const res = await fetchEditProduct(idRef.current, {
         price: data.price,
+        multiplicity: data.multiplicity,
+        discount: data.discount,
         discount_price: data.discount_price,
         characteristics: data.characteristics
       });
@@ -208,7 +210,16 @@ const GoodList = ({ currentWbKey }) => {
           return { text: item, value: item };
         }),
         sorter: true,
-        width: 100
+        width: 100,
+        render(text, record) {
+          return {
+            children: (
+              <a href={record.link} target="_blank" rel="noreferrer">
+                {text}
+              </a>
+            )
+          };
+        }
       },
       {
         title: names.barcode,
@@ -337,7 +348,12 @@ const GoodList = ({ currentWbKey }) => {
                   }),
                   data: Object.entries(record).map((item) => {
                     return (
-                      item[0] !== 'characteristics' && {
+                      ![
+                        'characteristics',
+                        'id',
+                        'link',
+                        'stock_color'
+                      ].includes(item[0]) && {
                         name: item[0],
                         value: item[1],
                         label: names[item[0]]

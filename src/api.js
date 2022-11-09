@@ -92,6 +92,14 @@ export const fetchWarehousesOrders = (data) => {
     .then((response) => response.data);
 };
 
+export const fetchWarehousesOrdersFilters = (data) => {
+  return client
+    .get(`/goods/warehouses/filters/`, {
+      params: data
+    })
+    .then((response) => response.data);
+};
+
 export const fetchWarehousesBackground = (data) => {
   return client
     .get(`/goods/warehouses/background/`, {

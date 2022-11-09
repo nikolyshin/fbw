@@ -71,7 +71,7 @@ const DashBoard = ({ currentWbKey, date }) => {
         category__in: filters?.category,
         wb_key__in: filters?.wb_key,
         brand__in: filters?.brand,
-        subject__in: filters.subject
+        subject__in: filters?.subject
       });
       if (res.results) {
         const arr = [];

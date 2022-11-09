@@ -2,7 +2,7 @@ import { Alert, Button, Form, Input, Modal, Space, Spin } from 'antd';
 import moment from 'moment';
 import React, { useEffect, useRef, useState } from 'react';
 import { fetchGoodsBackup } from '../api';
-import { names } from './helpers';
+import { dateTimeFormat, names } from './helpers';
 const { TextArea } = Input;
 
 const ModalChangeProduct = ({
@@ -16,17 +16,23 @@ const ModalChangeProduct = ({
   characteristics
 }) => {
   const [draft, setDraft] = useState(null);
+  const [showAll, setShowAll] = useState(false);
   const currentDraft = useRef([]);
   const [step, setStep] = useState(0);
 
   const formItems = (array = [], step) => {
     return array.map(
       (item, i) =>
-        item && (
+        item &&
+        !['characteristics', 'id', 'link', 'stock_color'].includes(item[0]) && (
           <Form.Item
             key={i}
             name={step === 0 ? item.name : item[0]}
-            label={step === 0 ? names[item.name] || item.name : item[0]}
+            label={
+              step === 0
+                ? names[item.name] || item.name
+                : names[item[0]] || item[0]
+            }
           >
             {(item.name || item[0]) !== 'Описание' ? (
               <Input
@@ -157,18 +163,30 @@ const ModalChangeProduct = ({
           )}
         </Form>
         <Space style={{ width: '100%' }} direction="vertical">
-          {step === 0 &&
-            draft?.map((item, i) => (
-              <Alert
-                key={i}
-                message={moment(item.run_dt).format('hh.mm.ss-DD-MM-YYYY')}
-                type="info"
+          {step === 0 && (
+            <>
+              {(showAll ? draft : draft?.splice(0, 3))?.map((item) => (
+                <Alert
+                  key={item.id}
+                  message={moment(item.run_dt).format(dateTimeFormat)}
+                  type="info"
+                  onClick={() => {
+                    currentDraft.current = item;
+                    setStep(1);
+                  }}
+                />
+              ))}
+              <Button
+                type="primary"
+                htmlType="submit"
                 onClick={() => {
-                  currentDraft.current = item;
-                  setStep(1);
+                  setShowAll((prev) => !prev);
                 }}
-              />
-            ))}
+              >
+                {showAll ? 'Скрыть' : 'Показать все'}
+              </Button>
+            </>
+          )}
           {step === 1 && (
             <Alert message={currentDraft.current.description} type="warning" />
           )}

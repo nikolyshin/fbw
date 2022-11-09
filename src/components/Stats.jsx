@@ -1,7 +1,8 @@
 import {
   fetchWarehouses,
   fetchWarehousesCreateIncomesBackup,
-  fetchWarehousesOrders
+  fetchWarehousesOrders,
+  fetchWarehousesOrdersFilters
 } from '../api';
 import React, { useEffect, useRef, useState } from 'react';
 import { Spin, Table, InputNumber } from 'antd';
@@ -34,6 +35,7 @@ const Stats = ({
   const [warehouses, setWarehouses] = useState([]);
   const [columnsSelect, setColumnsSelect] = useState([]);
   const [goods, setGoods] = useState([]);
+  const [filters, setFilters] = useState({});
   const inputRef = useRef([]);
 
   const handlerCreateIncomes = async ({ value, record, item }) => {
@@ -68,7 +70,7 @@ const Stats = ({
     localStorage.setItem('incomes', JSON.stringify(items));
   };
 
-  const getOrders = async (pagination) => {
+  const getOrders = async (pagination, filters) => {
     try {
       setLoading(true);
       const res = await fetchWarehousesOrders({
@@ -77,7 +79,16 @@ const Stats = ({
         plan_period: planIncomes,
         limit: pagination?.pageSize,
         date_from: moment(date[0]).format(dateFormat),
-        date_to: moment(date[1]).format(dateFormat)
+        date_to: moment(date[1]).format(dateFormat),
+
+        // filters
+        category__in: filters?.category,
+        wb_key__in: filters?.wb_key,
+        brand__in: filters?.brand,
+        subject__in: filters?.subject,
+        article_1c__in: filters?.article_1c,
+        article_wb__in: filters?.article_wb,
+        barcode__in: filters?.barcode
       });
       if (!res?.detail) {
         setGoods(res?.results);
@@ -91,6 +102,24 @@ const Stats = ({
         });
       } else {
         setError(res?.detail);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getwarehousesFilters = async () => {
+    try {
+      setLoading(true);
+      const res = await fetchWarehousesOrdersFilters({
+        wb_keys: currentWbKey
+      });
+      if (!res.detail) {
+        setFilters(res);
+      } else {
+        setError(res.detail);
       }
     } catch (error) {
       console.log(error);
@@ -122,8 +151,11 @@ const Stats = ({
   }, [currentWbKey, date, planIncomes, surcharge]);
 
   useEffect(() => {
+    getwarehousesFilters();
+  }, [currentWbKey]);
+
+  useEffect(() => {
     if (changeIncome) {
-      console.log(changeIncome);
       let items = JSON.parse(localStorage.getItem('incomes')) || [];
       setInputsValues(items);
       setChangeIncome(false);
@@ -164,32 +196,56 @@ const Stats = ({
         title: names.wb_key,
         dataIndex: 'wb_key',
         fixed: 'left',
-        width: 150
+        width: 150,
+        filterSearch: true,
+        filters: filters?.wb_key_names?.map((item) => {
+          return { text: item, value: item };
+        })
       },
       {
         title: names.category,
         dataIndex: 'category',
         fixed: 'left',
-        width: 150
+        width: 150,
+        filterSearch: true,
+        filters: filters?.categories?.map((item) => {
+          return { text: item, value: item };
+        })
       },
       {
         title: names.subject,
         dataIndex: 'subject',
         fixed: 'left',
-        width: 150
+        width: 150,
+        filterSearch: true,
+        filters: filters?.subjects?.map((item) => {
+          return { text: item, value: item };
+        })
       },
       {
         title: names.brand,
         dataIndex: 'brand',
+        filterSearch: true,
+        filters: filters?.brands?.map((item) => {
+          return { text: item, value: item };
+        }),
         width: 150
       },
       {
         title: names.article_1c,
         dataIndex: 'article_1c',
-        width: 50
+        filterSearch: true,
+        filters: filters?.articles_1c?.map((item) => {
+          return { text: item, value: item };
+        }),
+        width: 200
       },
       {
         title: names.barcode,
+        filterSearch: true,
+        filters: filters?.barcodes?.map((item) => {
+          return { text: item, value: item };
+        }),
         dataIndex: 'barcode',
         width: 150
       },
@@ -197,7 +253,20 @@ const Stats = ({
       {
         title: names.article_wb,
         dataIndex: 'article_wb',
-        width: 150
+        filterSearch: true,
+        filters: filters?.articles_wb?.map((item) => {
+          return { text: item, value: item };
+        }),
+        width: 150,
+        render(text, record) {
+          return {
+            children: (
+              <a href={record.link} target="_blank" rel="noreferrer">
+                {text}
+              </a>
+            )
+          };
+        }
       },
       {
         title: names.stock,
@@ -271,7 +340,7 @@ const Stats = ({
         };
       })
     ]);
-  }, [warehouses, goods, inputsValues]);
+  }, [filters, warehouses, goods, inputsValues]);
 
   return (
     <>
