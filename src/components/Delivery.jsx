@@ -5,7 +5,7 @@ import {
   fetchSetStatus
 } from '../api';
 import React, { useEffect, useRef, useState } from 'react';
-import { Spin, Table, Input, Select, DatePicker } from 'antd';
+import { Spin, Table, Select, DatePicker, InputNumber } from 'antd';
 import moment from 'moment';
 import FilterRangeDate from './FilterRangeDate';
 import { dateFormat, dateFormatReverse, names } from './helpers';
@@ -64,10 +64,12 @@ const Delivery = ({ currentWbKey }) => {
         plan_date,
         ...(quantity && { incomes: [{ id: productId, quantity }] })
       });
-      if (res.incomes) {
-        setDetail(res.incomes);
+      if (res.status === 200) {
+        setGoods((prev) => {
+          return prev.map((item) => (item.id === res.id ? res : item));
+        });
       } else {
-        setError(res[0]);
+        setError(...Object.values(res.data));
       }
     } catch (error) {
       console.log(error);
@@ -199,13 +201,13 @@ const Delivery = ({ currentWbKey }) => {
         width: 150,
         dataIndex: 'income_id',
         render: (_, record) => (
-          <Input
+          <InputNumber
+            type="number"
+            controls={false}
             placeholder={names.income_id}
             defaultValue={record.income_id}
             onPressEnter={(e) => {
-              if (e.target.value) {
-                changeDetail({ id: record.id, income_id: e.target.value });
-              }
+              changeDetail({ id: record.id, income_id: e.target?.value });
             }}
           />
         )
@@ -297,6 +299,7 @@ const Delivery = ({ currentWbKey }) => {
         />
       </Spin>
       <ModalDeliveryDetail
+        row={currentRow.current}
         data={detail}
         loading={loading}
         show={openModalDetail}

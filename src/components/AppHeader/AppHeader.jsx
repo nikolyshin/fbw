@@ -195,6 +195,7 @@ const AppHeader = ({
           <div className="title">
             Планируем поставку на:{' '}
             <InputNumber
+              controls={false}
               type="number"
               min={0}
               value={planIncomes}
@@ -216,6 +217,7 @@ const AppHeader = ({
             Надбавка:{' '}
             {
               <InputNumber
+                controls={false}
                 type="number"
                 min={0}
                 defaultValue={surcharge}
@@ -236,6 +238,7 @@ const AppHeader = ({
               <Popover
                 content={
                   <InputNumber
+                    controls={false}
                     type="number"
                     min={0}
                     defaultValue={companies[item]}

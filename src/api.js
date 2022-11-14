@@ -141,9 +141,9 @@ export const fetchGetGoodsIncomes = (id, data) => {
 };
 
 export const fetchSetStatus = (id, data) => {
-  return client
-    .patch(`/goods/incomes/${id}/`, data)
-    .then((response) => response.data);
+  return client.patch(`/goods/incomes/${id}/`, data).then((response) => {
+    return { data: response.data, status: response.status };
+  });
 };
 
 export const fetchWarehousesCreateIncomes = (data) => {

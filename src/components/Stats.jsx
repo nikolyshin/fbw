@@ -309,6 +309,7 @@ const Stats = ({
               render: (_, record) => (
                 <InputNumber
                   type="number"
+                  controls={false}
                   min={0}
                   value={
                     inputsValues.filter(
@@ -318,7 +319,6 @@ const Stats = ({
                     )[0]?.quantity
                   }
                   ref={(element) => inputRef.current.push(element)}
-                  controls={false}
                   bordered={false}
                   onChange={(value) => {
                     handlerCreateIncomes({ value, record, item });

@@ -1,13 +1,14 @@
-import { Button, InputNumber, Modal,  Spin, Table } from 'antd';
+import { Button, InputNumber, Modal, Spin, Table } from 'antd';
 import { names } from './helpers';
 import { utils, writeFileXLSX } from 'xlsx';
 
 const ModalDeliveryDetail = ({
+  row,
   show,
   setShow,
   data,
   changeDetail,
-  loading,
+  loading
 }) => {
   const handleOk = () => {
     setShow(false);
@@ -70,6 +71,9 @@ const ModalDeliveryDetail = ({
           width: 100,
           render: (_, record) => (
             <InputNumber
+              type="number"
+              controls={false}
+              disabled={row?.income_id || row?.status !== 'В пути на ВБ'}
               placeholder="Введите количество"
               value={record.quantity}
               onPressEnter={(e) => {
