@@ -2,7 +2,12 @@ import { Select } from 'antd';
 import React from 'react';
 const { Option } = Select;
 
-const SelectColumns = ({ columnsAll, columnsSelect, setColumnsSelect }) => {
+const SelectColumns = ({
+  type,
+  columnsAll,
+  columnsSelect,
+  setColumnsSelect
+}) => {
   return (
     <Select
       mode="multiple"
@@ -16,9 +21,9 @@ const SelectColumns = ({ columnsAll, columnsSelect, setColumnsSelect }) => {
         marginBottom: '24px'
       }}
       onChange={(value) => {
-        setColumnsSelect([
-          ...columnsAll.filter((item) => value.includes(item.dataIndex))
-        ]);
+        let items = columnsAll.filter((item) => value.includes(item.dataIndex));
+        localStorage.setItem(type, JSON.stringify(items));
+        setColumnsSelect(items);
       }}
     >
       {columnsAll.map((item) => (

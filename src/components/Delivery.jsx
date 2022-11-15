@@ -16,6 +16,8 @@ import ResizableTitle from './ResizableTitle';
 import { resize } from './resize';
 const { Option } = Select;
 
+const nameOfStoreColumns = 'deliveryColumns';
+
 const Delivery = ({ currentWbKey }) => {
   const [loading, setLoading] = useState(false);
   const currentRow = useRef(null);
@@ -24,7 +26,9 @@ const Delivery = ({ currentWbKey }) => {
   const [goods, setGoods] = useState([]);
   const [detail, setDetail] = useState([]);
   const [columns, setColumns] = useState([]);
-  const [columnsSelect, setColumnsSelect] = useState([]);
+  const [columnsSelect, setColumnsSelect] = useState(
+    JSON.parse(localStorage.getItem(nameOfStoreColumns)) || []
+  );
   const [filters, setFilters] = useState({});
   const [pagination, setPagination] = useState({
     current: 1,
@@ -142,7 +146,9 @@ const Delivery = ({ currentWbKey }) => {
   }, [currentWbKey]);
 
   useEffect(() => {
-    setColumnsSelect(columns);
+    if (!columnsSelect.length) {
+      setColumnsSelect(columns);
+    }
   }, [columns]);
 
   useEffect(() => {
@@ -265,6 +271,7 @@ const Delivery = ({ currentWbKey }) => {
   return (
     <>
       <SelectColumns
+        type={nameOfStoreColumns}
         columnsAll={columns}
         columnsSelect={columnsSelect}
         setColumnsSelect={setColumnsSelect}

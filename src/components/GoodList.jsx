@@ -13,6 +13,8 @@ import { names } from './helpers';
 import SelectColumns from './SelectColumns';
 import ModalError from './ModalError';
 
+const nameOfStoreColumns = 'goodsColumns';
+
 const GoodList = ({ currentWbKey }) => {
   const [loading, setLoading] = useState(false);
   const [loadingEdit, setLoadingEdit] = useState(false);
@@ -32,7 +34,9 @@ const GoodList = ({ currentWbKey }) => {
   });
 
   const [columns, setColumns] = useState([]);
-  const [columnsSelect, setColumnsSelect] = useState([]);
+  const [columnsSelect, setColumnsSelect] = useState(
+    JSON.parse(localStorage.getItem(nameOfStoreColumns)) || []
+  );
 
   const onFinish = async (data) => {
     try {
@@ -135,9 +139,10 @@ const GoodList = ({ currentWbKey }) => {
   useEffect(() => {
     getGoodsList();
   }, [currentWbKey]);
-
   useEffect(() => {
-    setColumnsSelect(columns);
+    if (!columnsSelect.length) {
+      setColumnsSelect(columns);
+    }
   }, [columns]);
 
   useEffect(() => {
@@ -312,6 +317,7 @@ const GoodList = ({ currentWbKey }) => {
   return (
     <>
       <SelectColumns
+        type={nameOfStoreColumns}
         columnsAll={columns}
         columnsSelect={columnsSelect}
         setColumnsSelect={setColumnsSelect}

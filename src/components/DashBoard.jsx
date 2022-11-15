@@ -8,13 +8,17 @@ import { dateFormat, dateFormatReverse, names } from './helpers';
 import SelectColumns from './SelectColumns';
 import ModalError from './ModalError';
 
+const nameOfStoreColumns = 'dashboardColumns';
+
 const DashBoard = ({ currentWbKey, date }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [goods, setGoods] = useState([]);
   const [filters, setFilters] = useState({});
   const [columns, setColumns] = useState([]);
-  const [columnsSelect, setColumnsSelect] = useState([]);
+  const [columnsSelect, setColumnsSelect] = useState(
+    JSON.parse(localStorage.getItem(nameOfStoreColumns)) || []
+  );
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 10,
@@ -113,7 +117,9 @@ const DashBoard = ({ currentWbKey, date }) => {
   }, [currentWbKey]);
 
   useEffect(() => {
-    setColumnsSelect(columns);
+    if (!columnsSelect.length) {
+      setColumnsSelect(columns);
+    }
   }, [columns]);
 
   useEffect(() => {
@@ -183,6 +189,7 @@ const DashBoard = ({ currentWbKey, date }) => {
   return (
     <>
       <SelectColumns
+        type={nameOfStoreColumns}
         columnsAll={columns}
         columnsSelect={columnsSelect}
         setColumnsSelect={setColumnsSelect}
