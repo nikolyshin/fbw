@@ -216,15 +216,15 @@ const GoodList = ({ currentWbKey }) => {
         }),
         sorter: true,
         width: 100,
-        render(text, record) {
-          return {
-            children: (
-              <a href={record.link} target="_blank" rel="noreferrer">
-                {text}
-              </a>
-            )
-          };
-        }
+        render: (text) => (
+          <a
+            href={`https://www.wildberries.ru/catalog/${text}/detail.aspx`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {text}
+          </a>
+        )
       },
       {
         title: names.barcode,
@@ -263,14 +263,7 @@ const GoodList = ({ currentWbKey }) => {
         ),
         sorter: true,
         width: 100,
-        render(text, record) {
-          return {
-            props: {
-              style: { background: record.stock_color }
-            },
-            children: <div>{text}</div>
-          };
-        }
+        onCell: (record) => ({ style: { background: record.stock_color } })
       },
       {
         title: names.discount_price,
