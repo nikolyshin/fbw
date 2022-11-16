@@ -258,15 +258,15 @@ const Stats = ({
           return { text: item, value: item };
         }),
         width: 150,
-        render(text, record) {
-          return {
-            children: (
-              <a href={record.link} target="_blank" rel="noreferrer">
-                {text}
-              </a>
-            )
-          };
-        }
+        render: (text) => (
+          <a
+            href={`https://www.wildberries.ru/catalog/${text}/detail.aspx`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {text}
+          </a>
+        )
       },
       {
         title: names.stock,
@@ -282,14 +282,9 @@ const Stats = ({
               title: 'Кол-во',
               dataIndex: `count_${item.id}`,
               width: 50,
-              render(text, record) {
-                return {
-                  props: {
-                    style: { background: record[`stock_color_${item.id}`] }
-                  },
-                  children: <div>{text}</div>
-                };
-              }
+              onCell: (record) => ({
+                style: { background: record[`stock_color_${item.id}`] }
+              })
             },
             {
               title: 'Прод',

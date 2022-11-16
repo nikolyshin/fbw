@@ -1,6 +1,7 @@
 import { Button, InputNumber, Modal, Spin, Table } from 'antd';
-import { names } from './helpers';
+import { dateFormatReverse, names } from './helpers';
 import { utils, writeFileXLSX } from 'xlsx';
+import moment from 'moment';
 
 const ModalDeliveryDetail = ({
   row,
@@ -36,7 +37,12 @@ const ModalDeliveryDetail = ({
               });
               utils.sheet_add_aoa(ws, [['Баркод', 'Количество']]);
               utils.book_append_sheet(wb, ws);
-              writeFileXLSX(wb, 'detail.xlsx');
+              const name = `${row.wb_key_name}_${
+                row.plan_date
+                  ? moment(row.plan_date).format(dateFormatReverse) + '_'
+                  : ''
+              }${row.warehouse_name}.xlsx`;
+              writeFileXLSX(wb, name);
             }}
           >
             Выгрузить в excel

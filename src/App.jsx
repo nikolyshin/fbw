@@ -14,6 +14,8 @@ import moment from 'moment';
 import Delivery from './components/Delivery';
 import Auth from './components/auth/Auth';
 import PageNotFound from './components/PageNotFound';
+// import 'moment/locale/ru';
+// moment.locale('ru');
 
 const { Content, Footer, Sider, Header } = Layout;
 

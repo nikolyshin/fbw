@@ -1,5 +1,4 @@
 import { Button, DatePicker, InputNumber, Popover, Select } from 'antd';
-import dayjs from 'dayjs';
 import './AppHeader.css';
 import moment from 'moment';
 import { useLocation } from 'react-router-dom';
@@ -234,8 +233,9 @@ const AppHeader = ({
         <div className="box">
           <div>Остатки на складе</div>
           <div className="progressWrapper">
-            {limits.map((item) => (
+            {limits.map((item, i) => (
               <Popover
+                key={i}
                 content={
                   <InputNumber
                     controls={false}
