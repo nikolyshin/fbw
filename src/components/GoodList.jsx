@@ -21,7 +21,7 @@ const GoodList = ({ currentWbKey }) => {
   const [errorEdit, setErrorEdit] = useState(null);
   const [error, setError] = useState('');
   const [goods, setGoods] = useState([]);
-  const [filters, setFilters] = useState({});
+  const [filters, setFilters] = useState(null);
   const idRef = useRef(null);
   const [modalData, setModalData] = useState({
     data: [],
@@ -139,6 +139,7 @@ const GoodList = ({ currentWbKey }) => {
   useEffect(() => {
     getGoodsList();
   }, [currentWbKey]);
+
   useEffect(() => {
     if (!columnsSelect.length) {
       setColumnsSelect(columns);
@@ -146,165 +147,167 @@ const GoodList = ({ currentWbKey }) => {
   }, [columns]);
 
   useEffect(() => {
-    setColumns([
-      {
-        title: names.wb_key_name,
-        dataIndex: 'wb_key_name',
-        filterSearch: true,
-        filters: filters?.wb_key_names?.map((item) => {
-          return { text: item, value: item };
-        }),
-        sorter: true,
-        width: 120
-      },
-      {
-        title: names.category,
-        dataIndex: 'category',
-        filterSearch: true,
-        filters: filters?.categories?.map((item) => {
-          return { text: item, value: item };
-        }),
-        sorter: true,
-        width: 120
-      },
-      {
-        title: names.brand,
-        dataIndex: 'brand',
-        filterSearch: true,
-        filters: filters?.brands?.map((item) => {
-          return { text: item, value: item };
-        }),
-        sorter: true,
-        width: 100
-      },
-      {
-        title: names.name,
-        dataIndex: 'name',
-        /* filterSearch: true,
+    if (filters) {
+      setColumns([
+        {
+          title: names.wb_key_name,
+          dataIndex: 'wb_key_name',
+          filterSearch: true,
+          filters: filters?.wb_key_names?.map((item) => {
+            return { text: item, value: item };
+          }),
+          sorter: true,
+          width: 120
+        },
+        {
+          title: names.category,
+          dataIndex: 'category',
+          filterSearch: true,
+          filters: filters?.categories?.map((item) => {
+            return { text: item, value: item };
+          }),
+          sorter: true,
+          width: 120
+        },
+        {
+          title: names.brand,
+          dataIndex: 'brand',
+          filterSearch: true,
+          filters: filters?.brands?.map((item) => {
+            return { text: item, value: item };
+          }),
+          sorter: true,
+          width: 100
+        },
+        {
+          title: names.name,
+          dataIndex: 'name',
+          /* filterSearch: true,
         filters: filters?.brands?.map((item) => {
           return { text: item, value: item };
         }),
         sorter: true, */
-        width: 120
-      },
-      {
-        title: names.subject,
-        dataIndex: 'subject',
-        filterSearch: true,
-        filters: filters?.subjects?.map((item) => {
-          return { text: item, value: item };
-        }),
-        sorter: true,
-        width: 100
-      },
-      {
-        title: names.article_1c,
-        dataIndex: 'article_1c',
-        filterSearch: true,
-        filters: filters?.articles_1c?.map((item) => {
-          return { text: item, value: item };
-        }),
-        sorter: true,
-        width: 100
-      },
-      {
-        title: names.article_wb,
-        dataIndex: 'article_wb',
-        filterSearch: true,
-        filters: filters?.articles_wb?.map((item) => {
-          return { text: item, value: item };
-        }),
-        sorter: true,
-        width: 100,
-        render: (text) => (
-          <a
-            href={`https://www.wildberries.ru/catalog/${text}/detail.aspx`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {text}
-          </a>
-        )
-      },
-      {
-        title: names.barcode,
-        dataIndex: 'barcode',
-        filterSearch: true,
-        filters: filters?.barcodes?.map((item) => {
-          return { text: item, value: item };
-        }),
-        sorter: true,
-        width: 100
-      },
-      {
-        title: names.multiplicity,
-        dataIndex: 'multiplicity',
-        filterDropdown: (props) => (
-          <FilterRange
-            {...props}
-            min={filters?.multiplicity?.min_value}
-            max={filters?.multiplicity?.max_value}
-          />
-        ),
-        sorter: true,
-        width: 100
-      },
+          width: 120
+        },
+        {
+          title: names.subject,
+          dataIndex: 'subject',
+          filterSearch: true,
+          filters: filters?.subjects?.map((item) => {
+            return { text: item, value: item };
+          }),
+          sorter: true,
+          width: 100
+        },
+        {
+          title: names.article_1c,
+          dataIndex: 'article_1c',
+          filterSearch: true,
+          filters: filters?.articles_1c?.map((item) => {
+            return { text: item, value: item };
+          }),
+          sorter: true,
+          width: 100
+        },
+        {
+          title: names.article_wb,
+          dataIndex: 'article_wb',
+          filterSearch: true,
+          filters: filters?.articles_wb?.map((item) => {
+            return { text: item, value: item };
+          }),
+          sorter: true,
+          width: 100,
+          render: (text) => (
+            <a
+              href={`https://www.wildberries.ru/catalog/${text}/detail.aspx`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {text}
+            </a>
+          )
+        },
+        {
+          title: names.barcode,
+          dataIndex: 'barcode',
+          filterSearch: true,
+          filters: filters?.barcodes?.map((item) => {
+            return { text: item, value: item };
+          }),
+          sorter: true,
+          width: 100
+        },
+        {
+          title: names.multiplicity,
+          dataIndex: 'multiplicity',
+          filterDropdown: (props) => (
+            <FilterRange
+              {...props}
+              min={filters?.multiplicity?.min_value}
+              max={filters?.multiplicity?.max_value}
+            />
+          ),
+          sorter: true,
+          width: 100
+        },
 
-      {
-        title: names.stock,
-        dataIndex: 'stock',
-        filterSearch: true,
-        filterDropdown: (props) => (
-          <FilterRange
-            {...props}
-            min={filters?.stock?.min_value}
-            max={filters?.stock?.max_value}
-          />
-        ),
-        sorter: true,
-        width: 100,
-        onCell: (record) => ({ style: { background: record.stock_color } })
-      },
-      {
-        title: names.discount_price,
-        dataIndex: 'discount_price',
-        sorter: true,
-        width: 140,
-        filterDropdown: (props) => (
-          <FilterRange
-            {...props}
-            min={filters?.discount_price?.min_value}
-            max={filters?.discount_price?.max_value}
-          />
-        )
-      },
-      {
-        title: names.price,
-        dataIndex: 'price',
-        sorter: true,
-        width: 100,
-        filterDropdown: (props) => (
-          <FilterRange
-            {...props}
-            min={filters?.price?.min_value}
-            max={filters?.price?.max_value}
-          />
-        )
-      },
-      {
-        title: names.discount,
-        dataIndex: 'discount',
-        sorter: true,
-        width: 100,
-        filterDropdown: (props) => (
-          <FilterRange
-            {...props}
-            min={filters?.discount?.min_value}
-            max={filters?.discount?.max_value}
-          />
-        )
-      }
-    ]);
+        {
+          title: names.stock,
+          dataIndex: 'stock',
+          filterSearch: true,
+          filterDropdown: (props) => (
+            <FilterRange
+              {...props}
+              min={filters?.stock?.min_value}
+              max={filters?.stock?.max_value}
+            />
+          ),
+          sorter: true,
+          width: 100,
+          onCell: (record) => ({ style: { background: record.stock_color } })
+        },
+        {
+          title: names.discount_price,
+          dataIndex: 'discount_price',
+          sorter: true,
+          width: 140,
+          filterDropdown: (props) => (
+            <FilterRange
+              {...props}
+              min={filters?.discount_price?.min_value}
+              max={filters?.discount_price?.max_value}
+            />
+          )
+        },
+        {
+          title: names.price,
+          dataIndex: 'price',
+          sorter: true,
+          width: 100,
+          filterDropdown: (props) => (
+            <FilterRange
+              {...props}
+              min={filters?.price?.min_value}
+              max={filters?.price?.max_value}
+            />
+          )
+        },
+        {
+          title: names.discount,
+          dataIndex: 'discount',
+          sorter: true,
+          width: 100,
+          filterDropdown: (props) => (
+            <FilterRange
+              {...props}
+              min={filters?.discount?.min_value}
+              max={filters?.discount?.max_value}
+            />
+          )
+        }
+      ]);
+    }
   }, [filters]);
 
   return (

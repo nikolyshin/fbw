@@ -14,7 +14,7 @@ const DashBoard = ({ currentWbKey, date }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [goods, setGoods] = useState([]);
-  const [filters, setFilters] = useState({});
+  const [filters, setFilters] = useState(null);
   const [columns, setColumns] = useState([]);
   const [columnsSelect, setColumnsSelect] = useState(
     JSON.parse(localStorage.getItem(nameOfStoreColumns)) || []
@@ -123,67 +123,69 @@ const DashBoard = ({ currentWbKey, date }) => {
   }, [columns]);
 
   useEffect(() => {
-    setColumns([
-      {
-        title: names.wb_key,
-        dataIndex: 'wb_key',
-        width: 200,
-        sorter: true,
-        filterSearch: true,
-        fixed: 'left',
-        filters: filters?.wb_keys?.map((item) => {
-          return { text: item, value: item };
+    if (filters) {
+      setColumns([
+        {
+          title: names.wb_key,
+          dataIndex: 'wb_key',
+          width: 200,
+          sorter: true,
+          filterSearch: true,
+          fixed: 'left',
+          filters: filters?.wb_keys?.map((item) => {
+            return { text: item, value: item };
+          })
+        },
+        {
+          title: names.category,
+          dataIndex: 'category',
+          sorter: true,
+          filterSearch: true,
+          width: 200,
+          fixed: 'left',
+          filters: filters?.categories?.map((item) => {
+            return { text: item, value: item };
+          })
+        },
+        {
+          title: names.subject,
+          dataIndex: 'subject',
+          sorter: true,
+          filterSearch: true,
+          width: 200,
+          fixed: 'left',
+          filters: filters?.subjects?.map((item) => {
+            return { text: item, value: item };
+          })
+        },
+        {
+          title: names.brand,
+          dataIndex: 'brand',
+          width: 200,
+          sorter: true,
+          filterSearch: true,
+          fixed: 'left',
+          filters: filters?.brands?.map((item) => {
+            return { text: item, value: item };
+          })
+        },
+        {
+          title: names.sales,
+          dataIndex: 'sales',
+          width: 200,
+          fixed: 'left',
+          sorter: true
+        },
+        ...arrDates.map((day, i) => {
+          return {
+            key: i,
+            title: moment(day).format(dateFormatReverse),
+            dataIndex: moment(day).format(dateFormatReverse),
+            width: 100
+          };
         })
-      },
-      {
-        title: names.category,
-        dataIndex: 'category',
-        sorter: true,
-        filterSearch: true,
-        width: 200,
-        fixed: 'left',
-        filters: filters?.categories?.map((item) => {
-          return { text: item, value: item };
-        })
-      },
-      {
-        title: names.subject,
-        dataIndex: 'subject',
-        sorter: true,
-        filterSearch: true,
-        width: 200,
-        fixed: 'left',
-        filters: filters?.subjects?.map((item) => {
-          return { text: item, value: item };
-        })
-      },
-      {
-        title: names.brand,
-        dataIndex: 'brand',
-        width: 200,
-        sorter: true,
-        filterSearch: true,
-        fixed: 'left',
-        filters: filters?.brands?.map((item) => {
-          return { text: item, value: item };
-        })
-      },
-      {
-        title: names.sales,
-        dataIndex: 'sales',
-        width: 200,
-        fixed: 'left',
-        sorter: true
-      },
-      ...arrDates.map((day, i) => {
-        return {
-          key: i,
-          title: moment(day).format(dateFormatReverse),
-          dataIndex: moment(day).format(dateFormatReverse),
-          width: 100
-        };
-      })
-    ]);
+      ]);
+    }
   }, [filters, arrDates]);
 
   return (

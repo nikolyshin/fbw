@@ -14,8 +14,8 @@ import moment from 'moment';
 import Delivery from './components/Delivery';
 import Auth from './components/auth/Auth';
 import PageNotFound from './components/PageNotFound';
-// import 'moment/locale/ru';
-// moment.locale('ru');
+import 'moment/locale/ru';
+moment.locale('ru');
 
 const { Content, Footer, Sider, Header } = Layout;
 
@@ -99,20 +99,20 @@ const App = () => {
 
   return (
     <Layout
+      hasSider
       style={{
         minHeight: '100vh'
       }}
     >
       <ModalLogout show={isModalVisible} setShow={setIsModalVisible} />
       <Sider
+        collapsible
         style={{
           overflow: 'auto',
           height: '100vh',
-          position: 'fixed',
-          left: 0,
+          position: 'sticky',
           top: 0,
-          bottom: 0,
-          zIndex: 10
+          left: 0
         }}
       >
         <div className="company">
@@ -131,12 +131,7 @@ const App = () => {
         />
       </Sider>
 
-      <Layout
-        style={{
-          marginLeft: '200px'
-        }}
-        className="site-layout"
-      >
+      <Layout className="site-layout">
         <Header>
           <AppHeader
             wbKeys={user?.wb_keys}
