@@ -132,6 +132,7 @@ const Stats = ({
     try {
       setLoading(true);
       const res = await fetchWarehouses({
+        plan_period: planIncomes,
         wb_keys: currentWbKey
       });
       if (!res.detail) {
@@ -152,7 +153,7 @@ const Stats = ({
 
   useEffect(() => {
     getwarehousesFilters();
-  }, [currentWbKey]);
+  }, [currentWbKey, planIncomes]);
 
   useEffect(() => {
     if (changeIncome) {
