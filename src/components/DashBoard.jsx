@@ -180,7 +180,7 @@ const DashBoard = ({ currentWbKey, date }) => {
           return {
             key: i,
             title: moment(day).format(dateFormatReverse),
-            dataIndex: moment(day).format(dateFormatReverse),
+            dataIndex: moment(day).format(dateFormat),
             width: 100
           };
         })
