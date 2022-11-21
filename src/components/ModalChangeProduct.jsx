@@ -141,11 +141,14 @@ const ModalChangeProduct = ({
           fields={
             step === 0
               ? characteristics
-              : Object.entries(
-                  currentDraft?.current?.backup_data.characteristics
-                ).map((item) => {
-                  return { name: item[0], value: item[1] };
-                })
+              : currentDraft?.current?.backup_data?.characteristics?.map(
+                  (item) => {
+                    return {
+                      name: Object.keys(item)[0],
+                      value: Object.values(item)[0]
+                    };
+                  }
+                )
           }
         >
           <p style={{ fontSize: '24px', textAlign: 'center' }}>
@@ -154,11 +157,14 @@ const ModalChangeProduct = ({
           {formItems(
             step === 0
               ? characteristics
-              : Object.entries(
-                  currentDraft?.current?.backup_data.characteristics
-                ).map((item) => {
-                  return { name: item[0], value: item[1] };
-                }),
+              : currentDraft?.current?.backup_data?.characteristics?.map(
+                  (item) => {
+                    return {
+                      name: Object.keys(item)[0],
+                      value: Object.values(item)[0]
+                    };
+                  }
+                ),
             0
           )}
         </Form>
