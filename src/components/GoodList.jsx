@@ -4,7 +4,7 @@ import {
   fetchGoodsListFilters
 } from '../api';
 import React, { useEffect, useState, useRef } from 'react';
-import { Spin, Table } from 'antd';
+import { Table } from 'antd';
 import ModalChangeProduct from './ModalChangeProduct';
 import ResizableTitle from './ResizableTitle';
 import { resize } from './resize';
@@ -318,56 +318,54 @@ const GoodList = ({ currentWbKey }) => {
         columnsSelect={columnsSelect}
         setColumnsSelect={setColumnsSelect}
       />
-      <Spin spinning={loading}>
-        <Table
-          size="small"
-          bordered
-          components={{
-            header: {
-              cell: ResizableTitle
+
+      <Table
+        loading={loading}
+        size="small"
+        bordered
+        components={{
+          header: {
+            cell: ResizableTitle
+          }
+        }}
+        columns={resize({
+          columns: columnsSelect,
+          setColumns: setColumnsSelect
+        })}
+        scroll={{ x: 0 }}
+        dataSource={goods}
+        sticky={{ offsetHeader: 140 }}
+        pagination={pagination}
+        onChange={getGoodsList}
+        onRow={(record) => {
+          return {
+            onDoubleClick: () => {
+              idRef.current = record.id;
+              setModalData({
+                visible: true,
+                characteristics: record.characteristics.map((item) => {
+                  return {
+                    name: Object.keys(item)[0],
+                    value: Object.values(item)[0]
+                  };
+                }),
+                data: Object.entries(record).map((item) => {
+                  return (
+                    !['characteristics', 'id', 'link', 'stock_color'].includes(
+                      item[0]
+                    ) && {
+                      name: item[0],
+                      value: item[1],
+                      label: names[item[0]]
+                    }
+                  );
+                })
+              });
             }
-          }}
-          columns={resize({
-            columns: columnsSelect,
-            setColumns: setColumnsSelect
-          })}
-          scroll={{ x: 0 }}
-          dataSource={goods}
-          sticky={{ offsetHeader: 140 }}
-          pagination={pagination}
-          onChange={getGoodsList}
-          onRow={(record) => {
-            return {
-              onDoubleClick: () => {
-                idRef.current = record.id;
-                setModalData({
-                  visible: true,
-                  characteristics: record.characteristics.map((item) => {
-                    return {
-                      name: Object.keys(item)[0],
-                      value: Object.values(item)[0]
-                    };
-                  }),
-                  data: Object.entries(record).map((item) => {
-                    return (
-                      ![
-                        'characteristics',
-                        'id',
-                        'link',
-                        'stock_color'
-                      ].includes(item[0]) && {
-                        name: item[0],
-                        value: item[1],
-                        label: names[item[0]]
-                      }
-                    );
-                  })
-                });
-              }
-            };
-          }}
-        />
-      </Spin>
+          };
+        }}
+      />
+
       <ModalError
         show={!!error}
         setShow={setError}

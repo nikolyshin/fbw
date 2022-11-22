@@ -1,6 +1,6 @@
 import { fetchGoods, fetchGoodsFilters } from '../api';
 import React, { useEffect, useMemo, useState } from 'react';
-import { Spin, Table } from 'antd';
+import { Table } from 'antd';
 import moment from 'moment';
 import ResizableTitle from './ResizableTitle';
 import { resize } from './resize';
@@ -196,26 +196,27 @@ const DashBoard = ({ currentWbKey, date }) => {
         columnsSelect={columnsSelect}
         setColumnsSelect={setColumnsSelect}
       />
-      <Spin spinning={loading}>
-        <Table
-          size="small"
-          scroll={{ x: 0 }}
-          bordered
-          components={{
-            header: {
-              cell: ResizableTitle
-            }
-          }}
-          pagination={pagination}
-          sticky={{ offsetHeader: 140 }}
-          columns={resize({
-            columns: columnsSelect,
-            setColumns: setColumnsSelect
-          })}
-          onChange={getList}
-          dataSource={goods}
-        />
-      </Spin>
+
+      <Table
+        loading={loading}
+        size="small"
+        scroll={{ x: 0 }}
+        bordered
+        components={{
+          header: {
+            cell: ResizableTitle
+          }
+        }}
+        pagination={pagination}
+        sticky={{ offsetHeader: 140 }}
+        columns={resize({
+          columns: columnsSelect,
+          setColumns: setColumnsSelect
+        })}
+        onChange={getList}
+        dataSource={goods}
+      />
+
       <ModalError
         show={!!error}
         setShow={setError}

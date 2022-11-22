@@ -5,7 +5,7 @@ import {
   fetchSetStatus
 } from '../api';
 import React, { useEffect, useRef, useState } from 'react';
-import { Spin, Table, Select, DatePicker, InputNumber } from 'antd';
+import { Table, Select, DatePicker, InputNumber } from 'antd';
 import moment from 'moment';
 import FilterRangeDate from './FilterRangeDate';
 import { dateFormat, dateFormatReverse, names } from './helpers';
@@ -282,35 +282,36 @@ const Delivery = ({ currentWbKey }) => {
         columnsSelect={columnsSelect}
         setColumnsSelect={setColumnsSelect}
       />
-      <Spin spinning={loading}>
-        <Table
-          bordered
-          components={{
-            header: {
-              cell: ResizableTitle
+
+      <Table
+        loading={loading}
+        bordered
+        components={{
+          header: {
+            cell: ResizableTitle
+          }
+        }}
+        size="small"
+        sticky={{ offsetHeader: 140 }}
+        columns={resize({
+          columns: columnsSelect,
+          setColumns: setColumnsSelect
+        })}
+        scroll={{ x: 0 }}
+        dataSource={goods}
+        pagination={pagination}
+        onChange={getGoodsList}
+        onRow={(record) => {
+          return {
+            onDoubleClick: () => {
+              currentRow.current = record;
+              getDetail(record.id);
+              setOpenModalDetail(true);
             }
-          }}
-          size="small"
-          sticky={{ offsetHeader: 140 }}
-          columns={resize({
-            columns: columnsSelect,
-            setColumns: setColumnsSelect
-          })}
-          scroll={{ x: 0 }}
-          dataSource={goods}
-          pagination={pagination}
-          onChange={getGoodsList}
-          onRow={(record) => {
-            return {
-              onDoubleClick: () => {
-                currentRow.current = record;
-                getDetail(record.id);
-                setOpenModalDetail(true);
-              }
-            };
-          }}
-        />
-      </Spin>
+          };
+        }}
+      />
+
       <ModalDeliveryDetail
         row={currentRow.current}
         data={detail}

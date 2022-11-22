@@ -1,4 +1,4 @@
-import { Button, InputNumber, Modal, Spin, Table } from 'antd';
+import { Button, InputNumber, Modal, Table } from 'antd';
 import { dateFormatReverse, names } from './helpers';
 import { utils, writeFileXLSX } from 'xlsx';
 import moment from 'moment';
@@ -106,16 +106,15 @@ const ModalDeliveryDetail = ({
         onOk={handleOk}
         onCancel={handleCancel}
       >
-        <Spin spinning={loading}>
-          <Table
-            size="small"
-            bordered
-            columns={columns}
-            dataSource={data}
-            pagination={false}
-            // sticky={{ offsetHeader: 140 }}
-          />
-        </Spin>
+        <Table
+          loading={loading}
+          size="small"
+          bordered
+          columns={columns}
+          dataSource={data}
+          pagination={false}
+          // sticky={{ offsetHeader: 140 }}
+        />
       </Modal>
     </>
   );

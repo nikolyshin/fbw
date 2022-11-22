@@ -5,7 +5,7 @@ import {
   fetchWarehousesOrdersFilters
 } from '../api';
 import React, { useEffect, useRef, useState } from 'react';
-import { Spin, Table, InputNumber } from 'antd';
+import { Table, InputNumber } from 'antd';
 import moment from 'moment';
 import { resize } from './resize';
 import ResizableTitle from './ResizableTitle';
@@ -345,26 +345,27 @@ const Stats = ({
         columnsSelect={columnsSelect}
         setColumnsSelect={setColumnsSelect}
       />
-      <Spin spinning={loading}>
-        <Table
-          size="small"
-          bordered
-          components={{
-            header: {
-              cell: ResizableTitle
-            }
-          }}
-          scroll={{ x: 0 }}
-          sticky={{ offsetHeader: 140 }}
-          pagination={pagination}
-          onChange={getOrders}
-          columns={resize({
-            columns: columnsSelect,
-            setColumns: setColumnsSelect
-          })}
-          dataSource={dataSource}
-        />
-      </Spin>
+
+      <Table
+        loading={loading}
+        size="small"
+        bordered
+        components={{
+          header: {
+            cell: ResizableTitle
+          }
+        }}
+        scroll={{ x: 0 }}
+        sticky={{ offsetHeader: 140 }}
+        pagination={pagination}
+        onChange={getOrders}
+        columns={resize({
+          columns: columnsSelect,
+          setColumns: setColumnsSelect
+        })}
+        dataSource={dataSource}
+      />
+
       <ModalError
         show={!!error}
         setShow={setError}
