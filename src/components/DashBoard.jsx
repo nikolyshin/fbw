@@ -15,6 +15,8 @@ const DashBoard = ({ currentWbKey, date }) => {
   const [error, setError] = useState('');
   const [goods, setGoods] = useState([]);
   const [filters, setFilters] = useState(null);
+  const [currentFilters, setCurrentFilters] = useState(null);
+  const [currentOrdering, setCurrentOrdering] = useState(null);
   const [columns, setColumns] = useState([]);
   const [columnsSelect, setColumnsSelect] = useState(
     JSON.parse(localStorage.getItem(nameOfStoreColumns)) || []
@@ -54,28 +56,34 @@ const DashBoard = ({ currentWbKey, date }) => {
     }
   };
 
-  const getList = async (pagination, filters, sorter) => {
+  const setCurrentData = async (pagination, filters, sorter) => {
     let ordering;
     if (!!sorter) {
       ordering = sorter.order
         ? `${sorter.order === 'ascend' ? '' : '-'}${sorter.field}`
         : null;
     }
+    setCurrentOrdering(ordering);
+    setCurrentFilters(filters);
+    setPagination(pagination);
+  };
+
+  const getList = async () => {
     try {
       setLoading(true);
       const res = await fetchGoods({
         date_from: moment(date[0]).format(dateFormat),
         date_to: moment(date[1]).format(dateFormat),
         wb_keys: currentWbKey,
-        ordering,
+        ordering: currentOrdering,
         limit: pagination?.pageSize,
         offset: (pagination?.current - 1) * pagination?.pageSize || null,
 
         // filters
-        category__in: filters?.category,
-        wb_key__in: filters?.wb_key,
-        brand__in: filters?.brand,
-        subject__in: filters?.subject
+        category__in: currentFilters?.category,
+        wb_key__in: currentFilters?.wb_key,
+        brand__in: currentFilters?.brand,
+        subject__in: currentFilters?.subject
       });
       if (res.results) {
         const arr = [];
@@ -110,7 +118,14 @@ const DashBoard = ({ currentWbKey, date }) => {
     if (date) {
       getList();
     }
-  }, [currentWbKey, date]);
+  }, [
+    currentWbKey,
+    date,
+    currentFilters,
+    currentOrdering,
+    pagination.current,
+    pagination.pageSize
+  ]);
 
   useEffect(() => {
     getListFilters();
@@ -213,7 +228,7 @@ const DashBoard = ({ currentWbKey, date }) => {
           columns: columnsSelect,
           setColumns: setColumnsSelect
         })}
-        onChange={getList}
+        onChange={setCurrentData}
         dataSource={goods}
       />
 

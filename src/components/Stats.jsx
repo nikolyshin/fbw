@@ -24,6 +24,8 @@ const Stats = ({
   changeIncome,
   setChangeIncome
 }) => {
+  const [currentFilters, setCurrentFilters] = useState(null);
+  const [currentOrdering, setCurrentOrdering] = useState(null);
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 10,
@@ -79,7 +81,19 @@ const Stats = ({
     localStorage.setItem('incomes', JSON.stringify(items));
   };
 
-  const getOrders = async (pagination, filters) => {
+  const setCurrentData = async (pagination, filters, sorter) => {
+    let ordering;
+    if (!!sorter) {
+      ordering = sorter.order
+        ? `${sorter.order === 'ascend' ? '' : '-'}${sorter.field}`
+        : null;
+    }
+    setCurrentOrdering(ordering);
+    setCurrentFilters(filters);
+    setPagination(pagination);
+  };
+
+  const getOrders = async () => {
     try {
       setLoading(true);
       const res = await fetchWarehousesOrders({
@@ -91,13 +105,13 @@ const Stats = ({
         date_to: moment(date[1]).format(dateFormat),
 
         // filters
-        category__in: filters?.category,
-        wb_key__in: filters?.wb_key,
-        brand__in: filters?.brand,
-        subject__in: filters?.subject,
-        article_1c__in: filters?.article_1c,
-        article_wb__in: filters?.article_wb,
-        barcode__in: filters?.barcode
+        category__in: currentFilters?.category,
+        wb_key__in: currentFilters?.wb_key,
+        brand__in: currentFilters?.brand,
+        subject__in: currentFilters?.subject,
+        article_1c__in: currentFilters?.article_1c,
+        article_wb__in: currentFilters?.article_wb,
+        barcode__in: currentFilters?.barcode
       });
       if (!res?.detail) {
         setGoods(res?.results);
@@ -159,7 +173,16 @@ const Stats = ({
 
   useEffect(() => {
     getOrders();
-  }, [currentWbKey, date, planIncomes, surcharge]);
+  }, [
+    currentWbKey,
+    date,
+    planIncomes,
+    surcharge,
+    currentFilters,
+    currentOrdering,
+    pagination.current,
+    pagination.pageSize
+  ]);
 
   useEffect(() => {
     getFilters();
@@ -389,7 +412,7 @@ const Stats = ({
         scroll={{ x: 0 }}
         sticky={{ offsetHeader: 140 }}
         pagination={pagination}
-        onChange={getOrders}
+        onChange={setCurrentData}
         columns={[...columnsSelectOrders, ...columnsSelectWh]}
         // columns={resize({
         //   columns: columnsSelectOrders,

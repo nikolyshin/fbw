@@ -27,6 +27,8 @@ const GoodList = ({ currentWbKey }) => {
     data: [],
     visible: false
   });
+  const [currentFilters, setCurrentFilters] = useState(null);
+  const [currentOrdering, setCurrentOrdering] = useState(null);
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 10,
@@ -80,37 +82,44 @@ const GoodList = ({ currentWbKey }) => {
     }
   };
 
-  const getGoodsList = async (pagination, filters, sorter) => {
+  const setCurrentData = async (pagination, filters, sorter) => {
     let ordering;
     if (!!sorter) {
       ordering = sorter.order
         ? `${sorter.order === 'ascend' ? '' : '-'}${sorter.field}`
         : null;
     }
+    setCurrentOrdering(ordering);
+    setCurrentFilters(filters);
+    setPagination(pagination);
+  };
+
+  const getGoodsList = async () => {
     try {
       setLoading(true);
       const res = await fetchGoodsList({
         wb_keys: currentWbKey,
         limit: pagination?.pageSize,
         offset: (pagination?.current - 1) * pagination?.pageSize || null,
+
         //sort
-        ordering,
+        ordering: currentOrdering,
 
         //filters
-        category__in: filters?.category,
-        brand__in: filters?.brand,
-        subject__in: filters?.subject,
-        article_wb__in: filters?.article_wb,
-        article_1c__in: filters?.article_1c,
-        barcode__in: filters?.barcode,
-        wb_key__in: filters?.wb_key_name,
+        category__in: currentFilters?.category,
+        brand__in: currentFilters?.brand,
+        subject__in: currentFilters?.subject,
+        article_wb__in: currentFilters?.article_wb,
+        article_1c__in: currentFilters?.article_1c,
+        barcode__in: currentFilters?.barcode,
+        wb_key__in: currentFilters?.wb_key_name,
 
         //filters range
-        discount__range: filters?.discount,
-        discount_price__range: filters?.discount_price,
-        price__range: filters?.price,
-        multiplicity__range: filters?.multiplicity,
-        stock__range: filters?.stock
+        discount__range: currentFilters?.discount,
+        discount_price__range: currentFilters?.discount_price,
+        price__range: currentFilters?.price,
+        multiplicity__range: currentFilters?.multiplicity,
+        stock__range: currentFilters?.stock
       });
       if (res.results) {
         setGoods(res.results);
@@ -138,7 +147,13 @@ const GoodList = ({ currentWbKey }) => {
 
   useEffect(() => {
     getGoodsList();
-  }, [currentWbKey]);
+  }, [
+    currentWbKey,
+    currentFilters,
+    currentOrdering,
+    pagination.current,
+    pagination.pageSize
+  ]);
 
   useEffect(() => {
     if (!columnsSelect.length) {
@@ -336,7 +351,7 @@ const GoodList = ({ currentWbKey }) => {
         dataSource={goods}
         sticky={{ offsetHeader: 140 }}
         pagination={pagination}
-        onChange={getGoodsList}
+        onChange={setCurrentData}
         onRow={(record) => {
           return {
             onDoubleClick: () => {

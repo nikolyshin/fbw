@@ -30,6 +30,8 @@ const Delivery = ({ currentWbKey }) => {
     JSON.parse(localStorage.getItem(nameOfStoreColumns)) || []
   );
   const [filters, setFilters] = useState(null);
+  const [currentFilters, setCurrentFilters] = useState(null);
+  const [currentOrdering, setCurrentOrdering] = useState(null);
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 10,
@@ -100,7 +102,19 @@ const Delivery = ({ currentWbKey }) => {
     }
   };
 
-  const getGoodsList = async (pagination, filters) => {
+  const setCurrentData = async (pagination, filters, sorter) => {
+    let ordering;
+    if (!!sorter) {
+      ordering = sorter.order
+        ? `${sorter.order === 'ascend' ? '' : '-'}${sorter.field}`
+        : null;
+    }
+    setCurrentOrdering(ordering);
+    setCurrentFilters(filters);
+    setPagination(pagination);
+  };
+
+  const getGoodsList = async () => {
     try {
       setLoading(true);
       const res = await fetchGoodsIncomes({
@@ -108,15 +122,15 @@ const Delivery = ({ currentWbKey }) => {
         limit: pagination?.pageSize,
 
         //filters
-        warehouse_name__in: filters?.warehouse_name,
-        status__in: filters?.status,
+        warehouse_name__in: currentFilters?.warehouse_name,
+        status__in: currentFilters?.status,
 
         //filters range
-        date_from: filters?.date
-          ? moment(filters?.date[0]).format(dateFormat)
+        date_from: currentFilters?.date
+          ? moment(currentFilters?.date[0]).format(dateFormat)
           : null,
-        date_to: filters?.date
-          ? moment(filters?.date[1]).format(dateFormat)
+        date_to: currentFilters?.date
+          ? moment(currentFilters?.date[1]).format(dateFormat)
           : null,
         offset: (pagination?.current - 1) * pagination?.pageSize || null
       });
@@ -141,9 +155,18 @@ const Delivery = ({ currentWbKey }) => {
   };
 
   useEffect(() => {
-    getGoodsList();
     getGoodsListFilters();
   }, [currentWbKey]);
+
+  useEffect(() => {
+    getGoodsList();
+  }, [
+    currentWbKey,
+    currentFilters,
+    currentOrdering,
+    pagination.current,
+    pagination.pageSize
+  ]);
 
   useEffect(() => {
     if (!columnsSelect.length) {
@@ -300,7 +323,7 @@ const Delivery = ({ currentWbKey }) => {
         scroll={{ x: 0 }}
         dataSource={goods}
         pagination={pagination}
-        onChange={getGoodsList}
+        onChange={setCurrentData}
         onRow={(record) => {
           return {
             onDoubleClick: () => {
