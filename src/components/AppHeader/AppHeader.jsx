@@ -174,25 +174,28 @@ const AppHeader = ({
     <div className={'wrapper'}>
       <div className="box">
         <div>
-          Последнее обновление: {moment(status.run_dt).format(dateTimeFormat)}
+          <b>Последнее обновление:</b> {moment(status.run_dt).format(dateTimeFormat)}
         </div>
-      </div>
-      <div className="box">
-        <RangePicker
-          defaultValue={[
-            date ? moment(date[0], dateFormatReverse) : null,
-            date ? moment(date[1], dateFormatReverse) : null
-          ]}
-          separator={<Arrow className="asdgsd" />}
-          size="small"
-          style={{ width: '220px' }}
-          format={dateFormatReverse}
-          onChange={setDate}
-          placeholder={['Дата старта', 'Дата конца']}
-        />
+        {router.pathname === '/stats' && surcharge !== null && (
+          <div>
+            <b>Надбавка:</b>{' '}
+            {
+              <InputNumber
+                controls={false}
+                type="number"
+                min={0}
+                defaultValue={surcharge}
+                onPressEnter={(e) => {
+                  sendSurcharge({ value: e.target.value });
+                }}
+              />
+            }
+            {' '}%
+          </div>
+        )}
         {hideElements() && (
           <div className="title">
-            Планируем поставку на:{' '}
+            <b>Планируем поставку на:</b>{' '}
             <InputNumber
               controls={false}
               type="number"
@@ -209,29 +212,25 @@ const AppHeader = ({
           </div>
         )}
       </div>
-
-      {router.pathname === '/stats' && surcharge !== null && (
-        <div className="box">
-          <div>
-            Надбавка:{' '}
-            {
-              <InputNumber
-                controls={false}
-                type="number"
-                min={0}
-                defaultValue={surcharge}
-                onPressEnter={(e) => {
-                  sendSurcharge({ value: e.target.value });
-                }}
-              />
-            }
-            %
-          </div>
-        </div>
-      )}
+      <div className="box">
+        <b>Период анализа</b>
+        <RangePicker
+          defaultValue={[
+            date ? moment(date[0], dateFormatReverse) : null,
+            date ? moment(date[1], dateFormatReverse) : null
+          ]}
+          separator={<Arrow className="asdgsd" />}
+          size="small"
+          style={{ width: '220px' }}
+          format={dateFormatReverse}
+          onChange={setDate}
+          placeholder={['Дата старта', 'Дата конца']}
+        />
+        
+      </div>
       {companies && (
         <div className="box">
-          <div>Остатки на складе</div>
+          <div><b>Остатки на складе</b></div>
           <div className="progressWrapper">
             {limits.map((item, i) => (
               <Popover
@@ -264,6 +263,7 @@ const AppHeader = ({
         </div>
       )}
       <div className="box">
+        <b>Список поставщиков</b>
         <Select
           mode="multiple"
           showArrow

@@ -1,3 +1,7 @@
+.wrapper{
+  justify-content: space-between !important;
+}
+
 .site-layout .site-layout-background .company {
   background: #fff;
 }
@@ -10,7 +14,7 @@
   padding: 0;
   line-height: normal !important;
   background-color: #d9d9d9;
-  width: 100%;
+  width: calc(100% - 200px);
 }
 
 .company {
@@ -20,15 +24,51 @@
 
 .ant-table {
   font-size: 12px !important;
+  color: black;
 }
 
 .ant-picker-range-separator {
   display: flex;
-  padding: 0 8px 0 0;
+  padding: 0 2px 0 0;
 }
 
 .ant-table-cell {
   padding: 2px !important;
+  padding-left: 6px !important;
+  border-color: #e2e3e3 !important;
+}
+
+th.ant-table-cell {
+  padding: 6px !important;
+  border-color: #e2e3e3 !important;
+}
+
+.ant-table-thead > tr > th,
+.ant-table-thead th.ant-table-column-sort{
+  background: #609FF8;
+  font-weight: 700;
+  color: white;
+}
+.ant-table-thead th.ant-table-column-has-sorters.ant-table-cell-fix-left:hover, 
+.ant-table-thead th.ant-table-column-has-sorters.ant-table-cell-fix-right:hover,
+.ant-table-thead th.ant-table-column-has-sorters:hover{
+  background: #78acf6;
+}
+
+.ant-table-filter-trigger,
+.ant-table-column-sorter{
+  color: white;
+}
+
+.ant-table-filter-trigger:hover,
+.ant-table-column-sorters:hover .ant-table-column-sorter {
+    color: rgba(0, 0, 0, 0.45);
+    background: rgba(0, 0, 0, 0.04);
+}
+
+.ant-table-filter-trigger.active,
+.ant-table-column-sorter-up.active, .ant-table-column-sorter-down.active{
+  color: #0069ca;
 }
 
 .react-resizable {
