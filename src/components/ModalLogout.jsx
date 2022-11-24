@@ -7,6 +7,7 @@ const ModalLogout = ({ show, setShow }) => {
 
   const handleOk = () => {
     setShow(false);
+    localStorage.clear();
     removeCookie('token');
   };
 

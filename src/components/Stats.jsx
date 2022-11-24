@@ -1,8 +1,8 @@
 import {
+  fetchOrdersFilters,
   fetchWarehouses,
   fetchWarehousesCreateIncomesBackup,
-  fetchWarehousesOrders,
-  fetchWarehousesOrdersFilters
+  fetchWarehousesOrders
 } from '../api';
 import React, { useEffect, useRef, useState } from 'react';
 import { Table, InputNumber } from 'antd';
@@ -110,10 +110,10 @@ const Stats = ({
     }
   };
 
-  const getwarehousesFilters = async () => {
+  const getFilters = async () => {
     try {
       setLoading(true);
-      const res = await fetchWarehousesOrdersFilters({
+      const res = await fetchOrdersFilters({
         wb_keys: currentWbKey
       });
       if (!res.detail) {
@@ -128,11 +128,12 @@ const Stats = ({
     }
   };
 
-  const getwarehouses = async () => {
+  const getWarehouses = async () => {
     try {
       setLoading(true);
       const res = await fetchWarehouses({
-        plan_period: planIncomes,
+        date_from: moment(date[0]).format(dateFormat),
+        date_to: moment(date[1]).format(dateFormat),
         wb_keys: currentWbKey
       });
       if (!res.detail) {
@@ -152,8 +153,8 @@ const Stats = ({
   }, [currentWbKey, date, planIncomes, surcharge]);
 
   useEffect(() => {
-    getwarehousesFilters();
-  }, [currentWbKey, planIncomes]);
+    getFilters();
+  }, [currentWbKey]);
 
   useEffect(() => {
     if (changeIncome) {
@@ -164,8 +165,8 @@ const Stats = ({
   }, [changeIncome]);
 
   useEffect(() => {
-    getwarehouses();
-  }, []);
+    getWarehouses();
+  }, [date]);
 
   useEffect(() => {
     setColumnsSelect(columns);

@@ -92,7 +92,7 @@ export const fetchWarehousesOrders = (data) => {
     .then((response) => response.data);
 };
 
-export const fetchWarehousesOrdersFilters = (data) => {
+export const fetchOrdersFilters = (data) => {
   return client
     .get(`/goods/warehouses/filters/`, {
       params: data
