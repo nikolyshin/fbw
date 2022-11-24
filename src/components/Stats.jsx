@@ -13,6 +13,9 @@ import { dateFormat, names } from './helpers';
 import SelectColumns from './SelectColumns';
 import ModalError from './ModalError';
 
+const nameOfStoreColumnsOrders = 'statsColumnsOrders';
+const nameOfStoreColumnsWhs = 'statsColumnsWhs';
+
 const Stats = ({
   currentWbKey,
   date,
@@ -29,11 +32,17 @@ const Stats = ({
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [columns, setColumns] = useState([]);
+  const [columnsOrders, setColumnsOrders] = useState([]);
+  const [columnsWh, setColumnsWh] = useState([]);
   const [inputsValues, setInputsValues] = useState([]);
   const [dataSource, setDataSource] = useState([]);
   const [warehouses, setWarehouses] = useState([]);
-  const [columnsSelect, setColumnsSelect] = useState([]);
+  const [columnsSelectOrders, setColumnsSelectOrders] = useState(
+    JSON.parse(localStorage.getItem(nameOfStoreColumnsOrders)) || []
+  );
+  const [columnsSelectWh, setColumnsSelectWh] = useState(
+    JSON.parse(localStorage.getItem(nameOfStoreColumnsWhs)) || []
+  );
   const [goods, setGoods] = useState([]);
   const [filters, setFilters] = useState({});
   const inputRef = useRef([]);
@@ -169,10 +178,6 @@ const Stats = ({
   }, [date]);
 
   useEffect(() => {
-    setColumnsSelect(columns);
-  }, [columns]);
-
-  useEffect(() => {
     if (!!goods.length) {
       const arr = [];
       goods.forEach((item) => {
@@ -193,7 +198,7 @@ const Stats = ({
   }, [goods]);
 
   useEffect(() => {
-    setColumns([
+    setColumnsOrders([
       {
         title: names.wb_key,
         dataIndex: 'wb_key',
@@ -274,7 +279,12 @@ const Stats = ({
         title: names.stock,
         dataIndex: 'stock',
         width: 150
-      },
+      }
+    ]);
+  }, [filters, goods]);
+
+  useEffect(() => {
+    setColumnsWh([
       ...warehouses.map((item) => {
         return {
           title: item.name,
@@ -337,36 +347,54 @@ const Stats = ({
         };
       })
     ]);
-  }, [filters, warehouses, goods, inputsValues]);
+  }, [warehouses, inputsValues]);
+
+  useEffect(() => {
+    if (!columnsSelectOrders.length) {
+      setColumnsSelectOrders(columnsOrders);
+    }
+  }, [columnsOrders]);
+
+  useEffect(() => {
+    if (!columnsSelectWh.length) {
+      setColumnsSelectWh(columnsWh);
+    }
+  }, [columnsWh]);
 
   return (
     <>
       <SelectColumns
-        columnsAll={columns}
-        columnsSelect={columnsSelect}
-        setColumnsSelect={setColumnsSelect}
+        type={nameOfStoreColumnsOrders}
+        columnsAll={columnsOrders}
+        columnsSelect={columnsSelectOrders}
+        setColumnsSelect={setColumnsSelectOrders}
       />
-
+      <SelectColumns
+        type={nameOfStoreColumnsWhs}
+        columnsAll={columnsWh}
+        columnsSelect={columnsSelectWh}
+        setColumnsSelect={setColumnsSelectWh}
+      />
       <Table
         loading={loading}
         size="small"
         bordered
-        components={{
-          header: {
-            cell: ResizableTitle
-          }
-        }}
+        // components={{
+        //   header: {
+        //     cell: ResizableTitle
+        //   }
+        // }}
         scroll={{ x: 0 }}
         sticky={{ offsetHeader: 140 }}
         pagination={pagination}
         onChange={getOrders}
-        columns={resize({
-          columns: columnsSelect,
-          setColumns: setColumnsSelect
-        })}
+        columns={[...columnsSelectOrders, ...columnsSelectWh]}
+        // columns={resize({
+        //   columns: columnsSelectOrders,
+        //   setColumns: setColumnsSelectOrders
+        // })}
         dataSource={dataSource}
       />
-
       <ModalError
         show={!!error}
         setShow={setError}
