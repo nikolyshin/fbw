@@ -174,7 +174,8 @@ const AppHeader = ({
     <div className={'wrapper'}>
       <div className="box">
         <div>
-          <b>Последнее обновление:</b> {moment(status.run_dt).format(dateTimeFormat)}
+          <b>Последнее обновление:</b>{' '}
+          {moment(status.run_dt).format(dateTimeFormat)}
         </div>
         {router.pathname === '/stats' && surcharge !== null && (
           <div>
@@ -189,8 +190,8 @@ const AppHeader = ({
                   sendSurcharge({ value: e.target.value });
                 }}
               />
-            }
-            {' '}%
+            }{' '}
+            %
           </div>
         )}
         {hideElements() && (
@@ -226,11 +227,10 @@ const AppHeader = ({
           onChange={setDate}
           placeholder={['Дата старта', 'Дата конца']}
         />
-        
       </div>
       {companies && (
         <div className="box">
-          <div><b>Остатки на складе</b></div>
+          <b>Остатки на складе</b>
           <div className="progressWrapper">
             {limits.map((item, i) => (
               <Popover
