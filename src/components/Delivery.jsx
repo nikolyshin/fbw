@@ -120,6 +120,8 @@ const Delivery = ({ currentWbKey }) => {
       const res = await fetchGoodsIncomes({
         wb_keys: currentWbKey,
         limit: pagination?.pageSize,
+        //sort
+        ordering: currentOrdering,
 
         //filters
         warehouse_name__in: currentFilters?.warehouse_name,

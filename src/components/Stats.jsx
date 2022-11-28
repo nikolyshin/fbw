@@ -104,6 +104,9 @@ const Stats = ({
         date_from: moment(date[0]).format(dateFormat),
         date_to: moment(date[1]).format(dateFormat),
 
+        //sort
+        ordering: currentOrdering,
+
         // filters
         category__in: currentFilters?.category,
         wb_key__in: currentFilters?.wb_key,
@@ -137,7 +140,9 @@ const Stats = ({
     try {
       setLoading(true);
       const res = await fetchOrdersFilters({
-        wb_keys: currentWbKey
+        wb_keys: currentWbKey,
+        date_from: moment(date[0]).format(dateFormat),
+        date_to: moment(date[1]).format(dateFormat)
       });
       if (!res.detail) {
         setFilters(res);
@@ -186,7 +191,7 @@ const Stats = ({
 
   useEffect(() => {
     getFilters();
-  }, [currentWbKey]);
+  }, [currentWbKey, date]);
 
   useEffect(() => {
     if (changeIncome) {
@@ -228,6 +233,7 @@ const Stats = ({
           dataIndex: 'wb_key',
           fixed: 'left',
           width: 150,
+          sorter: true,
           filterSearch: true,
           filters: filters?.wb_key_names?.map((item) => {
             return { text: item, value: item };
@@ -237,6 +243,7 @@ const Stats = ({
           title: names.category,
           dataIndex: 'category',
           fixed: 'left',
+          sorter: true,
           width: 150,
           filterSearch: true,
           filters: filters?.categories?.map((item) => {
@@ -247,6 +254,7 @@ const Stats = ({
           title: names.subject,
           dataIndex: 'subject',
           fixed: 'left',
+          sorter: true,
           width: 150,
           filterSearch: true,
           filters: filters?.subjects?.map((item) => {
@@ -256,6 +264,7 @@ const Stats = ({
         {
           title: names.brand,
           dataIndex: 'brand',
+          sorter: true,
           filterSearch: true,
           filters: filters?.brands?.map((item) => {
             return { text: item, value: item };
@@ -265,6 +274,7 @@ const Stats = ({
         {
           title: names.article_1c,
           dataIndex: 'article_1c',
+          sorter: true,
           filterSearch: true,
           filters: filters?.articles_1c?.map((item) => {
             return { text: item, value: item };
@@ -274,6 +284,7 @@ const Stats = ({
         {
           title: names.barcode,
           filterSearch: true,
+          sorter: true,
           filters: filters?.barcodes?.map((item) => {
             return { text: item, value: item };
           }),
@@ -285,6 +296,7 @@ const Stats = ({
           title: names.article_wb,
           dataIndex: 'article_wb',
           filterSearch: true,
+          sorter: true,
           filters: filters?.articles_wb?.map((item) => {
             return { text: item, value: item };
           }),
@@ -302,6 +314,7 @@ const Stats = ({
         {
           title: names.stock,
           dataIndex: 'stock',
+          sorter: true,
           width: 150
         }
       ]);
