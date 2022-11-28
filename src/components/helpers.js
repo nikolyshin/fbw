@@ -26,5 +26,6 @@ export const names = {
   date_close: 'Факт дата',
   item_name: 'item_name',
   article: 'article',
-  name: 'Наименование'
+  name: 'Наименование',
+  orders: 'Заказы'
 };

@@ -316,6 +316,12 @@ const Stats = ({
           dataIndex: 'stock',
           sorter: true,
           width: 150
+        },
+        {
+          title: names.orders,
+          dataIndex: 'orders',
+          sorter: true,
+          width: 150
         }
       ]);
     }
