@@ -149,7 +149,9 @@ export const fetchSetStatus = (id, data) => {
 export const fetchWarehousesCreateIncomes = (data) => {
   return client
     .post(`/goods/warehouses/create_incomes/`, data)
-    .then((response) => response.data);
+    .then((response) => {
+      return { data: response.data, status: response.status };
+    });
 };
 
 export const fetchWarehousesCreateIncomesBackup = (data) => {
@@ -195,7 +197,7 @@ export const fetchGetCompaniesSurcharge = (data) => {
 };
 
 export const fetchPatchCompaniesSurcharge = (data) => {
-  return client
-    .patch('/companies/surcharge', data)
-    .then((response) => response.data);
+  return client.patch('/companies/surcharge', data).then((response) => {
+    return { data: response.data, status: response.status };
+  });
 };

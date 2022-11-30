@@ -79,7 +79,9 @@ const ModalDeliveryDetail = ({
             <InputNumber
               type="number"
               controls={false}
-              disabled={row?.income_id || row?.status !== 'В пути на ВБ'}
+              disabled={
+                row?.income_id || row?.status !== 'Заказано у поставщика'
+              }
               placeholder="Введите количество"
               value={record.quantity}
               onPressEnter={(e) => {

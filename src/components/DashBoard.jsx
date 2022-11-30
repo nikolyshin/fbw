@@ -206,6 +206,7 @@ const DashBoard = ({ currentWbKey, date }) => {
   return (
     <>
       <SelectColumns
+        loading={loading}
         type={nameOfStoreColumns}
         columnsAll={columns}
         columnsSelect={columnsSelect}

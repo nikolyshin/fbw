@@ -72,7 +72,9 @@ const Delivery = ({ currentWbKey }) => {
       });
       if (res.status === 200) {
         setGoods((prev) => {
-          return prev.map((item) => (item.id === res.id ? res : item));
+          return prev.map((item) =>
+            item.id === res.data?.id ? res.data : item
+          );
         });
       } else {
         setError(...Object.values(res.data));
@@ -155,6 +157,10 @@ const Delivery = ({ currentWbKey }) => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    console.log(goods);
+  }, [goods]);
 
   useEffect(() => {
     getGoodsListFilters();
@@ -302,6 +308,7 @@ const Delivery = ({ currentWbKey }) => {
   return (
     <>
       <SelectColumns
+        loading={loading}
         type={nameOfStoreColumns}
         columnsAll={columns}
         columnsSelect={columnsSelect}

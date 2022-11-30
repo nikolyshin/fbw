@@ -350,13 +350,19 @@ const Stats = ({
             {
               title: 'План',
               dataIndex: `plane_${item.id}`,
-              width: 60
+              width: 60,
+              onCell: () => ({
+                style: { background: '#fff3cc' }
+              })
             },
             {
               title: 'Факт',
               dataIndex: `fact_${item.id}`,
               key: `fact_${item.id}`,
               width: 70,
+              onCell: () => ({
+                style: { background: '#d9ead3' }
+              }),
               render: (_, record) => (
                 <InputNumber
                   type="number"
@@ -408,12 +414,14 @@ const Stats = ({
   return (
     <>
       <SelectColumns
+        loading={loading}
         type={nameOfStoreColumnsOrders}
         columnsAll={columnsOrders}
         columnsSelect={columnsSelectOrders}
         setColumnsSelect={setColumnsSelectOrders}
       />
       <SelectColumns
+        loading={loading}
         type={nameOfStoreColumnsWhs}
         columnsAll={columnsWh}
         columnsSelect={columnsSelectWh}

@@ -279,8 +279,8 @@ const GoodList = ({ currentWbKey }) => {
             />
           ),
           sorter: true,
-          width: 100,
-          onCell: (record) => ({ style: { background: record.stock_color } })
+          width: 100
+          // onCell: (record) => ({ style: { background: record.stock_color } })
         },
         {
           title: names.discount_price,
@@ -328,6 +328,7 @@ const GoodList = ({ currentWbKey }) => {
   return (
     <>
       <SelectColumns
+        loading={loading}
         type={nameOfStoreColumns}
         columnsAll={columns}
         columnsSelect={columnsSelect}

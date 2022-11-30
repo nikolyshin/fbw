@@ -6,11 +6,13 @@ const SelectColumns = ({
   type,
   columnsAll,
   columnsSelect,
-  setColumnsSelect
+  setColumnsSelect,
+  loading
 }) => {
   return (
     <Select
       mode="multiple"
+      loading={loading}
       allowClear
       showArrow
       value={columnsSelect.map((item) => item.dataIndex)}
@@ -21,11 +23,38 @@ const SelectColumns = ({
         marginBottom: '24px'
       }}
       onChange={(value) => {
-        let items = columnsAll.filter((item) => value.includes(item.dataIndex));
-        localStorage.setItem(type, JSON.stringify(items));
-        setColumnsSelect(items);
+        if (value.includes('all')) {
+          localStorage.setItem(type, JSON.stringify(columnsAll));
+          setColumnsSelect(columnsAll);
+        } else if (value.includes('none')) {
+          localStorage.setItem(type, JSON.stringify([]));
+          setColumnsSelect([]);
+        } else {
+          let items = columnsAll.filter((item) =>
+            value.includes(item.dataIndex)
+          );
+          localStorage.setItem(type, JSON.stringify(items));
+          setColumnsSelect(items);
+        }
       }}
     >
+      <Option
+        style={{
+          fontSize: '13px'
+        }}
+        value="all"
+      >
+        Выбрать все
+      </Option>
+      <Option
+        style={{
+          fontSize: '13px'
+        }}
+        value="none"
+      >
+        Снять все
+      </Option>
+
       {columnsAll.map((item) => (
         <Option
           style={{

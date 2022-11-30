@@ -37,7 +37,6 @@ const AppHeader = ({
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState([]);
   const [isModalSuccessVisible, setIsModalSuccessVisible] = useState(false);
-  const [isModalErrorVisible, setIsModalErrorVisible] = useState(false);
   const import_statuses = {
     '/': 'SALES_IMPORT',
     '/goodlist': 'GOODS_IMPORT',
@@ -56,13 +55,12 @@ const AppHeader = ({
     try {
       setLoading(true);
       const res = await fetchWarehousesCreateIncomes(incomes);
-      if (res.length) {
+      if (res.status === 201) {
         localStorage.removeItem('incomes');
         setIsModalSuccessVisible(true);
         setChangeIncome(true);
       } else {
-        setIsModalErrorVisible(true);
-        setError(res?.detail);
+        setError(true);
       }
     } catch (error) {
       console.log(error);
@@ -125,10 +123,10 @@ const AppHeader = ({
     try {
       setLoading(true);
       const res = await fetchPatchCompaniesSurcharge(data);
-      if (res) {
+      if (res.status === 200) {
         setSurcharge(res.value);
       } else {
-        setError(res?.detail);
+        setError(res.data?.value[0]);
       }
     } catch (error) {
       console.log(error);
@@ -186,6 +184,9 @@ const AppHeader = ({
                 type="number"
                 min={0}
                 defaultValue={surcharge}
+                onBlur={(e) => {
+                  sendSurcharge({ value: e.target.value });
+                }}
                 onPressEnter={(e) => {
                   sendSurcharge({ value: e.target.value });
                 }}
@@ -291,9 +292,10 @@ const AppHeader = ({
           title="Отгрузка успешно создана"
         />
         <ModalError
-          show={isModalErrorVisible}
-          setShow={setIsModalErrorVisible}
+          show={error}
+          setShow={() => setError(null)}
           title="Произошла ошибка"
+          subtitle={error}
         />
       </div>
     </div>
