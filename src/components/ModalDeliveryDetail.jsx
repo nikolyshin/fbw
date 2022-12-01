@@ -83,8 +83,16 @@ const ModalDeliveryDetail = ({
                 row?.income_id || row?.status !== 'Заказано у поставщика'
               }
               placeholder="Введите количество"
-              value={record.quantity}
+              defaultValue={record.quantity}
               onPressEnter={(e) => {
+                if (e.target.value) {
+                  changeDetail({
+                    productId: record.id,
+                    quantity: e.target.value
+                  });
+                }
+              }}
+              onBlur={(e) => {
                 if (e.target.value) {
                   changeDetail({
                     productId: record.id,
@@ -115,7 +123,6 @@ const ModalDeliveryDetail = ({
           columns={columns}
           dataSource={data}
           pagination={false}
-          // sticky={{ offsetHeader: 140 }}
         />
       </Modal>
     </>

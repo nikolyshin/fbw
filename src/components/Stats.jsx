@@ -228,105 +228,109 @@ const Stats = ({
   }, [goods]);
 
   useEffect(() => {
+    setColumnsOrders([
+      {
+        title: names.wb_key,
+        dataIndex: 'wb_key',
+        fixed: 'left',
+        width: 150,
+        sorter: true,
+        filterSearch: true,
+        filters: filters?.wb_key_names?.map((item) => {
+          return { text: item, value: item };
+        })
+      },
+      {
+        title: names.category,
+        dataIndex: 'category',
+        fixed: 'left',
+        sorter: true,
+        width: 150,
+        filterSearch: true,
+        filters: filters?.categories?.map((item) => {
+          return { text: item, value: item };
+        })
+      },
+      {
+        title: names.subject,
+        dataIndex: 'subject',
+        fixed: 'left',
+        sorter: true,
+        width: 150,
+        filterSearch: true,
+        filters: filters?.subjects?.map((item) => {
+          return { text: item, value: item };
+        })
+      },
+      {
+        title: names.brand,
+        dataIndex: 'brand',
+        sorter: true,
+        filterSearch: true,
+        filters: filters?.brands?.map((item) => {
+          return { text: item, value: item };
+        }),
+        width: 150
+      },
+      {
+        title: names.article_1c,
+        dataIndex: 'article_1c',
+        sorter: true,
+        filterSearch: true,
+        filters: filters?.articles_1c?.map((item) => {
+          return { text: item, value: item };
+        }),
+        width: 200
+      },
+      {
+        title: names.barcode,
+        filterSearch: true,
+        sorter: true,
+        filters: filters?.barcodes?.map((item) => {
+          return { text: item, value: item };
+        }),
+        dataIndex: 'barcode',
+        width: 150
+      },
 
-      setColumnsOrders([
-        {
-          title: names.wb_key,
-          dataIndex: 'wb_key',
-          fixed: 'left',
-          width: 150,
-          sorter: true,
-          filterSearch: true,
-          filters: filters?.wb_key_names?.map((item) => {
-            return { text: item, value: item };
-          })
-        },
-        {
-          title: names.category,
-          dataIndex: 'category',
-          fixed: 'left',
-          sorter: true,
-          width: 150,
-          filterSearch: true,
-          filters: filters?.categories?.map((item) => {
-            return { text: item, value: item };
-          })
-        },
-        {
-          title: names.subject,
-          dataIndex: 'subject',
-          fixed: 'left',
-          sorter: true,
-          width: 150,
-          filterSearch: true,
-          filters: filters?.subjects?.map((item) => {
-            return { text: item, value: item };
-          })
-        },
-        {
-          title: names.brand,
-          dataIndex: 'brand',
-          sorter: true,
-          filterSearch: true,
-          filters: filters?.brands?.map((item) => {
-            return { text: item, value: item };
-          }),
-          width: 150
-        },
-        {
-          title: names.article_1c,
-          dataIndex: 'article_1c',
-          sorter: true,
-          filterSearch: true,
-          filters: filters?.articles_1c?.map((item) => {
-            return { text: item, value: item };
-          }),
-          width: 200
-        },
-        {
-          title: names.barcode,
-          filterSearch: true,
-          sorter: true,
-          filters: filters?.barcodes?.map((item) => {
-            return { text: item, value: item };
-          }),
-          dataIndex: 'barcode',
-          width: 150
-        },
-
-        {
-          title: names.article_wb,
-          dataIndex: 'article_wb',
-          filterSearch: true,
-          sorter: true,
-          filters: filters?.articles_wb?.map((item) => {
-            return { text: item, value: item };
-          }),
-          width: 150,
-          render: (text) => (
-            <a
-              href={`https://www.wildberries.ru/catalog/${text}/detail.aspx`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {text}
-            </a>
-          )
-        },
-        {
-          title: names.stock,
-          dataIndex: 'stock',
-          sorter: true,
-          width: 150
-        },
-        {
-          title: names.orders,
-          dataIndex: 'orders',
-          sorter: true,
-          width: 150
-        }
-      ]);
-    
+      {
+        title: names.article_wb,
+        dataIndex: 'article_wb',
+        filterSearch: true,
+        sorter: true,
+        filters: filters?.articles_wb?.map((item) => {
+          return { text: item, value: item };
+        }),
+        width: 150,
+        render: (text) => (
+          <a
+            href={`https://www.wildberries.ru/catalog/${text}/detail.aspx`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {text}
+          </a>
+        )
+      },
+      {
+        title: names.stock_fbo,
+        dataIndex: 'stock_fbo',
+        sorter: true,
+        width: 100
+      },
+      {
+        title: names.stock_fbs,
+        dataIndex: 'stock_fbs',
+        sorter: true,
+        width: 100
+      },
+      {
+        title: names.orders,
+        dataIndex: 'orders',
+        sorter: true,
+        width: 150
+      }
+    ]);
   }, [filters, goods]);
 
   useEffect(() => {
@@ -341,7 +345,10 @@ const Stats = ({
               dataIndex: `count_${item.id}`,
               width: 50,
               onCell: (record) => ({
-                style: { background: record[`stock_color_${item.id}`] }
+                style: {
+                  background: record[`stock_color_${item.id}`],
+                  borderLeft: '4px solid'
+                }
               })
             },
             {
