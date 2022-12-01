@@ -43,7 +43,9 @@ const ModalChangeProduct = ({
                     'price',
                     'discount_price',
                     'multiplicity',
-                    'discount'
+                    'discount',
+                    'stock_fbo',
+                    'stock_fbs'
                   ].includes(item.name || item[0])
                 }
               />

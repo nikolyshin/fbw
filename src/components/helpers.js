@@ -27,5 +27,7 @@ export const names = {
   item_name: 'item_name',
   article: 'article',
   name: 'Наименование',
-  orders: 'Заказы'
+  orders: 'Заказы',
+  stock_fbo: 'FBO',
+  stock_fbs: 'FBS'
 };

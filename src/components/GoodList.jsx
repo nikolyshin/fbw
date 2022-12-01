@@ -266,21 +266,33 @@ const GoodList = ({ currentWbKey }) => {
           sorter: true,
           width: 100
         },
-
         {
-          title: names.stock,
-          dataIndex: 'stock',
+          title: names.stock_fbo,
+          dataIndex: 'stock_fbo',
           filterSearch: true,
           filterDropdown: (props) => (
             <FilterRange
               {...props}
-              min={filters?.stock?.min_value}
-              max={filters?.stock?.max_value}
+              min={filters?.stock_fbo?.min_value}
+              max={filters?.stock_fbo?.max_value}
             />
           ),
           sorter: true,
           width: 100
-          // onCell: (record) => ({ style: { background: record.stock_color } })
+        },
+        {
+          title: names.stock_fbs,
+          dataIndex: 'stock_fbs',
+          filterSearch: true,
+          filterDropdown: (props) => (
+            <FilterRange
+              {...props}
+              min={filters?.stock_fbs?.min_value}
+              max={filters?.stock_fbs?.max_value}
+            />
+          ),
+          sorter: true,
+          width: 100
         },
         {
           title: names.discount_price,
