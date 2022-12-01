@@ -40,10 +40,12 @@ const Stats = ({
   const [dataSource, setDataSource] = useState([]);
   const [warehouses, setWarehouses] = useState([]);
   const [columnsSelectOrders, setColumnsSelectOrders] = useState(
-    JSON.parse(localStorage.getItem(nameOfStoreColumnsOrders)) || []
+    []
+    // JSON.parse(localStorage.getItem(nameOfStoreColumnsOrders)) || []
   );
   const [columnsSelectWh, setColumnsSelectWh] = useState(
-    JSON.parse(localStorage.getItem(nameOfStoreColumnsWhs)) || []
+    []
+    // JSON.parse(localStorage.getItem(nameOfStoreColumnsWhs)) || []
   );
   const [goods, setGoods] = useState([]);
   const [filters, setFilters] = useState(null);
@@ -226,7 +228,7 @@ const Stats = ({
   }, [goods]);
 
   useEffect(() => {
-    if (filters) {
+
       setColumnsOrders([
         {
           title: names.wb_key,
@@ -324,7 +326,7 @@ const Stats = ({
           width: 150
         }
       ]);
-    }
+    
   }, [filters, goods]);
 
   useEffect(() => {
@@ -400,15 +402,11 @@ const Stats = ({
   }, [warehouses, inputsValues]);
 
   useEffect(() => {
-    if (!columnsSelectOrders.length) {
-      setColumnsSelectOrders(columnsOrders);
-    }
+    setColumnsSelectOrders(columnsOrders);
   }, [columnsOrders]);
 
   useEffect(() => {
-    if (!columnsSelectWh.length) {
-      setColumnsSelectWh(columnsWh);
-    }
+    setColumnsSelectWh(columnsWh);
   }, [columnsWh]);
 
   return (
