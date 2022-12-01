@@ -15,7 +15,7 @@ const ModalChangeProduct = ({
   fields,
   characteristics
 }) => {
-  const [draft, setDraft] = useState(null);
+  const [draft, setDraft] = useState([]);
   const [showAll, setShowAll] = useState(false);
   const currentDraft = useRef([]);
   const [step, setStep] = useState(0);
@@ -43,9 +43,7 @@ const ModalChangeProduct = ({
                     'price',
                     'discount_price',
                     'multiplicity',
-                    'discount',
-                    'stock_fbo',
-                    'stock_fbs'
+                    'discount'
                   ].includes(item.name || item[0])
                 }
               />
@@ -75,8 +73,10 @@ const ModalChangeProduct = ({
   const getBackup = async () => {
     try {
       const res = await fetchGoodsBackup({ id });
-      if (res) {
-        setDraft(res);
+      if (res.status === 200) {
+        setDraft(res.data);
+      } else {
+        console.log(...Object.values(res.data));
       }
     } catch (error) {
       console.log(error);
@@ -104,7 +104,14 @@ const ModalChangeProduct = ({
             form2
               .validateFields()
               .then((values2) => {
-                onFinish({ ...values, characteristics: values2 });
+                onFinish({
+                  ...values,
+                  characteristics: Object.entries(values2).map((item) => {
+                    let obj = {};
+                    obj[item[0]] = item[1];
+                    return obj;
+                  })
+                });
               })
               .catch((info) => {
                 console.log('Validate Failed:', info);
@@ -173,29 +180,39 @@ const ModalChangeProduct = ({
         <Space style={{ width: '100%' }} direction="vertical">
           {step === 0 && (
             <>
-              {(showAll ? draft : draft?.splice(0, 3))?.map((item) => (
-                <Alert
-                  key={item.id}
-                  message={moment(item.run_dt).format(dateTimeFormat)}
-                  type="info"
-                  onClick={() => {
-                    currentDraft.current = item;
-                    setStep(1);
-                  }}
-                />
-              ))}
+              {showAll
+                ? draft?.map((item) => (
+                    <Alert
+                      key={item.id}
+                      message={moment(item.run_dt).format(dateTimeFormat)}
+                      type="info"
+                      onClick={() => {
+                        currentDraft.current = item;
+                        setStep(1);
+                      }}
+                    />
+                  ))
+                : draft?.slice(0, 3).map((item) => (
+                    <Alert
+                      key={item.id}
+                      message={moment(item.run_dt).format(dateTimeFormat)}
+                      type="info"
+                      onClick={() => {
+                        currentDraft.current = item;
+                        setStep(1);
+                      }}
+                    />
+                  ))}
               <Button
                 type="primary"
                 htmlType="submit"
-                onClick={() => {
-                  setShowAll((prev) => !prev);
-                }}
+                onClick={() => setShowAll((prev) => !prev)}
               >
                 {showAll ? 'Скрыть' : 'Показать все'}
               </Button>
             </>
           )}
-          {step === 1 && (
+          {step === 1 && currentDraft.current.description && (
             <Alert message={currentDraft.current.description} type="warning" />
           )}
           {step === 1 && (

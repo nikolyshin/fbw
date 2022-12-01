@@ -50,12 +50,17 @@ const GoodList = ({ currentWbKey }) => {
         discount_price: data.discount_price,
         characteristics: data.characteristics
       });
-      if (!res.detail) {
+      if (res.status === 200) {
         setModalData((prev) => {
           return { ...prev, visible: false };
         });
+        setGoods((prev) => {
+          return prev.map((item) =>
+            item.id === res.data?.id ? res.data : item
+          );
+        });
       } else {
-        setErrorEdit(res.detail);
+        setErrorEdit(...Object.values(res.data));
       }
     } catch (error) {
       console.log(error);

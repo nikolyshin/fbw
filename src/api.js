@@ -65,7 +65,9 @@ export const fetchGoodsListFilters = (data) => {
 };
 
 export const fetchEditProduct = (id, data) => {
-  return client.patch(`/goods/${id}/`, data).then((response) => response.data);
+  return client.patch(`/goods/${id}/`, data).then((response) => {
+    return { data: response.data, status: response.status };
+  });
 };
 
 export const fetchGoodsBackup = (id) => {
@@ -73,7 +75,9 @@ export const fetchGoodsBackup = (id) => {
     .get(`/goods/${id.id}/backups/`, {
       params: id
     })
-    .then((response) => response.data);
+    .then((response) => {
+      return { data: response.data, status: response.status };
+    });
 };
 
 export const fetchUsers = (data) => {
