@@ -17,6 +17,7 @@ import { resize } from './resize';
 const { Option } = Select;
 
 const nameOfStoreColumns = 'deliveryColumns';
+const paginationSave = 'deliveryPagination';
 
 const Delivery = ({ currentWbKey }) => {
   const [loading, setLoading] = useState(false);
@@ -32,11 +33,13 @@ const Delivery = ({ currentWbKey }) => {
   const [filters, setFilters] = useState(null);
   const [currentFilters, setCurrentFilters] = useState(null);
   const [currentOrdering, setCurrentOrdering] = useState(null);
-  const [pagination, setPagination] = useState({
-    current: 1,
-    pageSize: 10,
-    showSizeChanger: true
-  });
+  const [pagination, setPagination] = useState(
+    JSON.parse(localStorage.getItem(paginationSave)) || {
+      current: 1,
+      pageSize: 10,
+      showSizeChanger: true
+    }
+  );
 
   const getDetail = async (id) => {
     try {
@@ -114,6 +117,7 @@ const Delivery = ({ currentWbKey }) => {
     setCurrentOrdering(ordering);
     setCurrentFilters(filters);
     setPagination(pagination);
+    localStorage.setItem(paginationSave, JSON.stringify(pagination));
   };
 
   const getGoodsList = async () => {

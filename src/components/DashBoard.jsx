@@ -9,6 +9,7 @@ import SelectColumns from './SelectColumns';
 import ModalError from './ModalError';
 
 const nameOfStoreColumns = 'dashboardColumns';
+const paginationSave = 'dashboardPagination';
 
 const DashBoard = ({ currentWbKey, date }) => {
   const [loading, setLoading] = useState(false);
@@ -19,11 +20,13 @@ const DashBoard = ({ currentWbKey, date }) => {
   const [currentOrdering, setCurrentOrdering] = useState(null);
   const [columns, setColumns] = useState([]);
   const [columnsSelect, setColumnsSelect] = useState([]);
-  const [pagination, setPagination] = useState({
-    current: 1,
-    pageSize: 10,
-    showSizeChanger: true
-  });
+  const [pagination, setPagination] = useState(
+    JSON.parse(localStorage.getItem(paginationSave)) || {
+      current: 1,
+      pageSize: 10,
+      showSizeChanger: true
+    }
+  );
 
   const arrDates = useMemo(() => {
     var now = date[0].clone(),
@@ -64,6 +67,7 @@ const DashBoard = ({ currentWbKey, date }) => {
     setCurrentOrdering(ordering);
     setCurrentFilters(filters);
     setPagination(pagination);
+    localStorage.setItem(paginationSave, JSON.stringify(pagination));
   };
 
   const getList = async () => {

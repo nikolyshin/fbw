@@ -12,9 +12,11 @@ import ResizableTitle from './ResizableTitle';
 import { dateFormat, names } from './helpers';
 import SelectColumns from './SelectColumns';
 import ModalError from './ModalError';
+import FilterRange from './FilterRange';
 
 const nameOfStoreColumnsOrders = 'statsColumnsOrders';
 const nameOfStoreColumnsWhs = 'statsColumnsWhs';
+const paginationSave = 'statsPagination';
 
 const Stats = ({
   currentWbKey,
@@ -26,11 +28,13 @@ const Stats = ({
 }) => {
   const [currentFilters, setCurrentFilters] = useState(null);
   const [currentOrdering, setCurrentOrdering] = useState(null);
-  const [pagination, setPagination] = useState({
-    current: 1,
-    pageSize: 10,
-    showSizeChanger: true
-  });
+  const [pagination, setPagination] = useState(
+    JSON.parse(localStorage.getItem(paginationSave)) || {
+      current: 1,
+      pageSize: 10,
+      showSizeChanger: true
+    }
+  );
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -93,6 +97,7 @@ const Stats = ({
     setCurrentOrdering(ordering);
     setCurrentFilters(filters);
     setPagination(pagination);
+    localStorage.setItem(paginationSave, JSON.stringify(pagination));
   };
 
   const getOrders = async () => {
@@ -116,7 +121,9 @@ const Stats = ({
         subject__in: currentFilters?.subject,
         article_1c__in: currentFilters?.article_1c,
         article_wb__in: currentFilters?.article_wb,
-        barcode__in: currentFilters?.barcode
+        barcode__in: currentFilters?.barcode,
+        stock_fbo__range: currentFilters?.stock_fbo,
+        stock_fbs__range: currentFilters?.stock_fbs
       });
       if (!res?.detail) {
         setGoods(res?.results);
@@ -315,12 +322,26 @@ const Stats = ({
       {
         title: names.stock_fbo,
         dataIndex: 'stock_fbo',
+        filterDropdown: (props) => (
+          <FilterRange
+            {...props}
+            min={filters?.stock_fbo?.min_value}
+            max={filters?.stock_fbo?.max_value}
+          />
+        ),
         sorter: true,
         width: 100
       },
       {
         title: names.stock_fbs,
         dataIndex: 'stock_fbs',
+        filterDropdown: (props) => (
+          <FilterRange
+            {...props}
+            min={filters?.stock_fbs?.min_value}
+            max={filters?.stock_fbs?.max_value}
+          />
+        ),
         sorter: true,
         width: 100
       },

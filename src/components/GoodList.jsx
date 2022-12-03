@@ -14,6 +14,7 @@ import SelectColumns from './SelectColumns';
 import ModalError from './ModalError';
 
 const nameOfStoreColumns = 'goodsColumns';
+const paginationSave = 'goodsPagination';
 
 const GoodList = ({ currentWbKey }) => {
   const [loading, setLoading] = useState(false);
@@ -29,11 +30,13 @@ const GoodList = ({ currentWbKey }) => {
   });
   const [currentFilters, setCurrentFilters] = useState(null);
   const [currentOrdering, setCurrentOrdering] = useState(null);
-  const [pagination, setPagination] = useState({
-    current: 1,
-    pageSize: 10,
-    showSizeChanger: true
-  });
+  const [pagination, setPagination] = useState(
+    JSON.parse(localStorage.getItem(paginationSave)) || {
+      current: 1,
+      pageSize: 10,
+      showSizeChanger: true
+    }
+  );
 
   const [columns, setColumns] = useState([]);
   const [columnsSelect, setColumnsSelect] = useState(
@@ -97,6 +100,7 @@ const GoodList = ({ currentWbKey }) => {
     setCurrentOrdering(ordering);
     setCurrentFilters(filters);
     setPagination(pagination);
+    localStorage.setItem(paginationSave, JSON.stringify(pagination));
   };
 
   const getGoodsList = async () => {
@@ -124,7 +128,8 @@ const GoodList = ({ currentWbKey }) => {
         discount_price__range: currentFilters?.discount_price,
         price__range: currentFilters?.price,
         multiplicity__range: currentFilters?.multiplicity,
-        stock__range: currentFilters?.stock
+        stock_fbo__range: currentFilters?.stock_fbo,
+        stock_fbs__range: currentFilters?.stock_fbs
       });
       if (res.results) {
         setGoods(res.results);
