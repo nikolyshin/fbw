@@ -16,21 +16,19 @@ import ResizableTitle from './ResizableTitle';
 import { resize } from './resize';
 const { Option } = Select;
 
-const nameOfStoreColumns = 'deliveryColumns';
 const paginationSave = 'deliveryPagination';
 const filtersSave = 'deliveryFilters';
 
 const Delivery = ({ currentWbKey }) => {
   const [loading, setLoading] = useState(false);
+  const [loadingFilters, setLoadingFilters] = useState(false);
   const currentRow = useRef(null);
   const [error, setError] = useState('');
   const [openModalDetail, setOpenModalDetail] = useState(false);
   const [goods, setGoods] = useState([]);
   const [detail, setDetail] = useState([]);
   const [columns, setColumns] = useState([]);
-  const [columnsSelect, setColumnsSelect] = useState(
-    JSON.parse(localStorage.getItem(nameOfStoreColumns)) || []
-  );
+  const [columnsSelect, setColumnsSelect] = useState([]);
   const [filters, setFilters] = useState(null);
   const [currentFilters, setCurrentFilters] = useState(
     JSON.parse(localStorage.getItem(filtersSave)) || []
@@ -94,7 +92,7 @@ const Delivery = ({ currentWbKey }) => {
 
   const getGoodsListFilters = async () => {
     try {
-      setLoading(true);
+      setLoadingFilters(true);
       const res = await fetchGoodsIncomesFilters({
         wb_keys: currentWbKey
       });
@@ -106,7 +104,7 @@ const Delivery = ({ currentWbKey }) => {
     } catch (error) {
       console.log(error);
     } finally {
-      setLoading(false);
+      setLoadingFilters(false);
     }
   };
 
@@ -185,150 +183,141 @@ const Delivery = ({ currentWbKey }) => {
   ]);
 
   useEffect(() => {
-    if (!columnsSelect.length) {
-      setColumnsSelect(columns);
-    }
+    setColumnsSelect(columns);
   }, [columns]);
 
   useEffect(() => {
-    if (filters) {
-      setColumns([
-        {
-          title: names.wb_key_name,
-          width: 150,
-          dataIndex: 'wb_key_name'
-        },
-        {
-          title: names.date,
-          width: 100,
-          dataIndex: 'date',
-          filteredValue: currentFilters.date,
-          filterDropdown: (props) => (
-            <FilterRangeDate
-              {...props}
-              min={filters?.date?.min_value}
-              max={filters?.date?.max_value}
-            />
-          ),
-          render: (date) => {
-            return (
-              <p>{date ? moment(date).format(dateFormatReverse) : null}</p>
-            );
-          }
-        },
-        {
-          title: names.warehouse_name,
-          dataIndex: 'warehouse_name',
-          width: 120,
-          filterSearch: true,
-          filteredValue: currentFilters.warehouse_name,
-          filters: filters?.warehouse_name?.map((item) => {
-            return { text: item, value: item };
-          })
-        },
-        {
-          title: names.quantity,
-          width: 70,
-          dataIndex: 'quantity'
-        },
-        {
-          title: names.date_close,
-          width: 100,
-          dataIndex: 'date_close',
-          filteredValue: currentFilters.date_close,
-          render: (date) => {
-            return (
-              <p>{date ? moment(date).format(dateFormatReverse) : null}</p>
-            );
-          },
-          filterDropdown: (props) => (
-            <FilterRangeDate
-              {...props}
-              min={filters?.date?.min_value}
-              max={filters?.date?.max_value}
-            />
-          )
-        },
-        {
-          title: names.income_id,
-          width: 150,
-          dataIndex: 'income_id',
-          render: (_, record) => (
-            <InputNumber
-              type="number"
-              controls={false}
-              placeholder={names.income_id}
-              defaultValue={record.income_id}
-              onPressEnter={(e) => {
-                changeDetail({ id: record.id, income_id: e.target?.value });
-              }}
-            />
-          )
-        },
-        {
-          title: names.plan_date,
-          dataIndex: 'plan_date',
-          width: 150,
-          render: (_, record) => (
-            <DatePicker
-              defaultValue={
-                record.plan_date ? moment(record.plan_date, dateFormat) : null
-              }
-              format={dateFormatReverse}
-              onChange={(value) => {
-                changeDetail({
-                  id: record.id,
-                  plan_date: value ? moment(value).format(dateFormat) : null
-                });
-              }}
-              placeholder="Выберите время"
-            />
-          )
-        },
-        {
-          title: names.status,
-          dataIndex: 'status',
-          width: 220,
-          filterSearch: true,
-          filteredValue: currentFilters.status,
-          filters: Object.entries(filters?.status || []).map((item) => {
-            return { text: item[1], value: item[0] };
-          }),
-          render: (_, record) => (
-            <Select
-              defaultValue={record.status}
-              placeholder="Выберите статус"
-              onChange={(value) => {
-                changeDetail({ id: record.id, status: value });
-              }}
-              style={{
-                width: '100%'
-              }}
-            >
-              {Object.entries(filters?.status || []).map((item, i) => (
-                <Option key={i} value={item[0]}>
-                  {item[1]}
-                </Option>
-              ))}
-            </Select>
-          )
+    setColumns([
+      {
+        title: names.wb_key_name,
+        width: 150,
+        dataIndex: 'wb_key_name'
+      },
+      {
+        title: names.date,
+        width: 100,
+        dataIndex: 'date',
+        filteredValue: currentFilters.date,
+        filterDropdown: (props) => (
+          <FilterRangeDate
+            {...props}
+            min={filters?.date?.min_value}
+            max={filters?.date?.max_value}
+          />
+        ),
+        render: (date) => {
+          return <p>{date ? moment(date).format(dateFormatReverse) : null}</p>;
         }
-      ]);
-    }
+      },
+      {
+        title: names.warehouse_name,
+        dataIndex: 'warehouse_name',
+        width: 120,
+        filterSearch: true,
+        filteredValue: currentFilters.warehouse_name,
+        filters: filters?.warehouse_name?.map((item) => {
+          return { text: item, value: item };
+        })
+      },
+      {
+        title: names.quantity,
+        width: 70,
+        dataIndex: 'quantity'
+      },
+      {
+        title: names.date_close,
+        width: 100,
+        dataIndex: 'date_close',
+        filteredValue: currentFilters.date_close,
+        render: (date) => {
+          return <p>{date ? moment(date).format(dateFormatReverse) : null}</p>;
+        },
+        filterDropdown: (props) => (
+          <FilterRangeDate
+            {...props}
+            min={filters?.date?.min_value}
+            max={filters?.date?.max_value}
+          />
+        )
+      },
+      {
+        title: names.income_id,
+        width: 150,
+        dataIndex: 'income_id',
+        render: (_, record) => (
+          <InputNumber
+            type="number"
+            controls={false}
+            placeholder={names.income_id}
+            defaultValue={record.income_id}
+            onPressEnter={(e) => {
+              changeDetail({ id: record.id, income_id: e.target?.value });
+            }}
+          />
+        )
+      },
+      {
+        title: names.plan_date,
+        dataIndex: 'plan_date',
+        width: 150,
+        render: (_, record) => (
+          <DatePicker
+            defaultValue={
+              record.plan_date ? moment(record.plan_date, dateFormat) : null
+            }
+            format={dateFormatReverse}
+            onChange={(value) => {
+              changeDetail({
+                id: record.id,
+                plan_date: value ? moment(value).format(dateFormat) : null
+              });
+            }}
+            placeholder="Выберите время"
+          />
+        )
+      },
+      {
+        title: names.status,
+        dataIndex: 'status',
+        width: 220,
+        filterSearch: true,
+        filteredValue: currentFilters.status,
+        filters: Object.entries(filters?.status || []).map((item) => {
+          return { text: item[1], value: item[0] };
+        }),
+        render: (_, record) => (
+          <Select
+            defaultValue={record.status}
+            placeholder="Выберите статус"
+            onChange={(value) => {
+              changeDetail({ id: record.id, status: value });
+            }}
+            style={{
+              width: '100%'
+            }}
+          >
+            {Object.entries(filters?.status || []).map((item, i) => (
+              <Option key={i} value={item[0]}>
+                {item[1]}
+              </Option>
+            ))}
+          </Select>
+        )
+      }
+    ]);
   }, [filters, currentFilters]);
 
   return (
     <>
       <SelectColumns
-        loading={loading}
-        type={nameOfStoreColumns}
+        loading={loading || loadingFilters}
         columnsAll={columns}
         columnsSelect={columnsSelect}
         setColumnsSelect={setColumnsSelect}
       />
 
       <Table
-        loading={loading}
+        loading={loading || loadingFilters}
         bordered
         components={{
           header: {

@@ -8,12 +8,12 @@ import { dateFormat, dateFormatReverse, names } from './helpers';
 import SelectColumns from './SelectColumns';
 import ModalError from './ModalError';
 
-const nameOfStoreColumns = 'dashboardColumns';
 const paginationSave = 'dashboardPagination';
 const filtersSave = 'dashboardFilters';
 
 const DashBoard = ({ currentWbKey, date }) => {
   const [loading, setLoading] = useState(false);
+  const [loadingFilters, setLoadingFilters] = useState(false);
   const [error, setError] = useState('');
   const [goods, setGoods] = useState([]);
   const [filters, setFilters] = useState(null);
@@ -44,7 +44,7 @@ const DashBoard = ({ currentWbKey, date }) => {
 
   const getListFilters = async () => {
     try {
-      setLoading(true);
+      setLoadingFilters(true);
       const res = await fetchGoodsFilters({
         wb_keys: currentWbKey
       });
@@ -56,7 +56,7 @@ const DashBoard = ({ currentWbKey, date }) => {
     } catch (error) {
       console.log(error);
     } finally {
-      setLoading(false);
+      setLoadingFilters(false);
     }
   };
 
@@ -212,15 +212,14 @@ const DashBoard = ({ currentWbKey, date }) => {
   return (
     <>
       <SelectColumns
-        loading={loading}
-        type={nameOfStoreColumns}
+        loading={loading || loadingFilters}
         columnsAll={columns}
         columnsSelect={columnsSelect}
         setColumnsSelect={setColumnsSelect}
       />
 
       <Table
-        loading={loading}
+        loading={loading || loadingFilters}
         size="small"
         scroll={{ x: 0 }}
         bordered

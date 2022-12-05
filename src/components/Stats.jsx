@@ -14,8 +14,6 @@ import SelectColumns from './SelectColumns';
 import ModalError from './ModalError';
 import FilterRange from './FilterRange';
 
-const nameOfStoreColumnsOrders = 'statsColumnsOrders';
-const nameOfStoreColumnsWhs = 'statsColumnsWhs';
 const paginationSave = 'statsPagination';
 const filtersSave = 'statsFilters';
 
@@ -40,20 +38,16 @@ const Stats = ({
   );
 
   const [loading, setLoading] = useState(false);
+  const [loadingWh, setLoadingWh] = useState(false);
+  const [loadingFilters, setLoadingFilters] = useState(false);
   const [error, setError] = useState('');
   const [columnsOrders, setColumnsOrders] = useState([]);
   const [columnsWh, setColumnsWh] = useState([]);
   const [inputsValues, setInputsValues] = useState([]);
   const [dataSource, setDataSource] = useState([]);
   const [warehouses, setWarehouses] = useState([]);
-  const [columnsSelectOrders, setColumnsSelectOrders] = useState(
-    []
-    // JSON.parse(localStorage.getItem(nameOfStoreColumnsOrders)) || []
-  );
-  const [columnsSelectWh, setColumnsSelectWh] = useState(
-    []
-    // JSON.parse(localStorage.getItem(nameOfStoreColumnsWhs)) || []
-  );
+  const [columnsSelectOrders, setColumnsSelectOrders] = useState([]);
+  const [columnsSelectWh, setColumnsSelectWh] = useState([]);
   const [goods, setGoods] = useState([]);
   const [filters, setFilters] = useState(null);
   const inputRef = useRef([]);
@@ -151,7 +145,7 @@ const Stats = ({
 
   const getFilters = async () => {
     try {
-      setLoading(true);
+      setLoadingFilters(true);
       const res = await fetchOrdersFilters({
         wb_keys: currentWbKey,
         date_from: moment(date[0]).format(dateFormat),
@@ -165,13 +159,13 @@ const Stats = ({
     } catch (error) {
       console.log(error);
     } finally {
-      setLoading(false);
+      setLoadingFilters(false);
     }
   };
 
   const getWarehouses = async () => {
     try {
-      setLoading(true);
+      setLoadingWh(true);
       const res = await fetchWarehouses({
         date_from: moment(date[0]).format(dateFormat),
         date_to: moment(date[1]).format(dateFormat),
@@ -185,7 +179,7 @@ const Stats = ({
     } catch (error) {
       console.log(error);
     } finally {
-      setLoading(false);
+      setLoadingWh(false);
     }
   };
 
@@ -453,21 +447,19 @@ const Stats = ({
   return (
     <>
       <SelectColumns
-        loading={loading}
-        type={nameOfStoreColumnsOrders}
+        loading={loading || loadingFilters || loadingWh}
         columnsAll={columnsOrders}
         columnsSelect={columnsSelectOrders}
         setColumnsSelect={setColumnsSelectOrders}
       />
       <SelectColumns
-        loading={loading}
-        type={nameOfStoreColumnsWhs}
+        loading={loading || loadingFilters || loadingWh}
         columnsAll={columnsWh}
         columnsSelect={columnsSelectWh}
         setColumnsSelect={setColumnsSelectWh}
       />
       <Table
-        loading={loading}
+        loading={loading || loadingFilters || loadingWh}
         size="small"
         bordered
         // components={{

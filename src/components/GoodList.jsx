@@ -13,12 +13,12 @@ import { names } from './helpers';
 import SelectColumns from './SelectColumns';
 import ModalError from './ModalError';
 
-const nameOfStoreColumns = 'goodsColumns';
 const paginationSave = 'goodsPagination';
 const filtersSave = 'goodsFilters';
 
 const GoodList = ({ currentWbKey }) => {
   const [loading, setLoading] = useState(false);
+  const [loadingFilters, setLoadingFilters] = useState(false);
   const [loadingEdit, setLoadingEdit] = useState(false);
   const [errorEdit, setErrorEdit] = useState(null);
   const [error, setError] = useState('');
@@ -42,9 +42,7 @@ const GoodList = ({ currentWbKey }) => {
   );
 
   const [columns, setColumns] = useState([]);
-  const [columnsSelect, setColumnsSelect] = useState(
-    JSON.parse(localStorage.getItem(nameOfStoreColumns)) || []
-  );
+  const [columnsSelect, setColumnsSelect] = useState([]);
 
   const onFinish = async (data) => {
     try {
@@ -77,7 +75,7 @@ const GoodList = ({ currentWbKey }) => {
 
   const getGoodsListFilters = async () => {
     try {
-      setLoading(true);
+      setLoadingFilters(true);
       const res = await fetchGoodsListFilters({
         wb_keys: currentWbKey
       });
@@ -89,7 +87,7 @@ const GoodList = ({ currentWbKey }) => {
     } catch (error) {
       console.log(error);
     } finally {
-      setLoading(false);
+      setLoadingFilters(false);
     }
   };
 
@@ -170,207 +168,202 @@ const GoodList = ({ currentWbKey }) => {
   ]);
 
   useEffect(() => {
-    if (!columnsSelect.length) {
-      setColumnsSelect(columns);
-    }
+    setColumnsSelect(columns);
   }, [columns]);
 
   useEffect(() => {
-    if (filters) {
-      setColumns([
-        {
-          title: names.wb_key_name,
-          dataIndex: 'wb_key_name',
-          filterSearch: true,
-          filteredValue: currentFilters.wb_key_name,
-          filters: filters?.wb_key_names?.map((item) => {
-            return { text: item, value: item };
-          }),
-          sorter: true,
-          width: 120
-        },
-        {
-          title: names.category,
-          dataIndex: 'category',
-          filterSearch: true,
-          filteredValue: currentFilters.category,
-          filters: filters?.categories?.map((item) => {
-            return { text: item, value: item };
-          }),
-          sorter: true,
-          width: 120
-        },
-        {
-          title: names.brand,
-          dataIndex: 'brand',
-          filterSearch: true,
-          filteredValue: currentFilters.brand,
-          filters: filters?.brands?.map((item) => {
-            return { text: item, value: item };
-          }),
-          sorter: true,
-          width: 100
-        },
-        {
-          title: names.name,
-          dataIndex: 'name',
-          width: 120
-        },
-        {
-          title: names.subject,
-          dataIndex: 'subject',
-          filterSearch: true,
-          filteredValue: currentFilters.subject,
-          filters: filters?.subjects?.map((item) => {
-            return { text: item, value: item };
-          }),
-          sorter: true,
-          width: 100
-        },
-        {
-          title: names.article_1c,
-          dataIndex: 'article_1c',
-          filterSearch: true,
-          filteredValue: currentFilters.article_1c,
-          filters: filters?.articles_1c?.map((item) => {
-            return { text: item, value: item };
-          }),
-          sorter: true,
-          width: 100
-        },
-        {
-          title: names.article_wb,
-          dataIndex: 'article_wb',
-          filterSearch: true,
-          filteredValue: currentFilters.article_wb,
-          filters: filters?.articles_wb?.map((item) => {
-            return { text: item, value: item };
-          }),
-          sorter: true,
-          width: 100,
-          render: (text) => (
-            <a
-              href={`https://www.wildberries.ru/catalog/${text}/detail.aspx`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {text}
-            </a>
-          )
-        },
-        {
-          title: names.barcode,
-          dataIndex: 'barcode',
-          filterSearch: true,
-          filteredValue: currentFilters.barcode,
-          filters: filters?.barcodes?.map((item) => {
-            return { text: item, value: item };
-          }),
-          sorter: true,
-          width: 100
-        },
-        {
-          title: names.multiplicity,
-          dataIndex: 'multiplicity',
-          filteredValue: currentFilters.multiplicity,
-          filterDropdown: (props) => (
-            <FilterRange
-              {...props}
-              min={filters?.multiplicity?.min_value}
-              max={filters?.multiplicity?.max_value}
-            />
-          ),
-          sorter: true,
-          width: 100
-        },
-        {
-          title: names.stock_fbo,
-          dataIndex: 'stock_fbo',
-          filterSearch: true,
-          filteredValue: currentFilters.stock_fbo,
-          filterDropdown: (props) => (
-            <FilterRange
-              {...props}
-              min={filters?.stock_fbo?.min_value}
-              max={filters?.stock_fbo?.max_value}
-            />
-          ),
-          sorter: true,
-          width: 100
-        },
-        {
-          title: names.stock_fbs,
-          dataIndex: 'stock_fbs',
-          filterSearch: true,
-          filteredValue: currentFilters.stock_fbs,
-          filterDropdown: (props) => (
-            <FilterRange
-              {...props}
-              min={filters?.stock_fbs?.min_value}
-              max={filters?.stock_fbs?.max_value}
-            />
-          ),
-          sorter: true,
-          width: 100
-        },
-        {
-          title: names.discount_price,
-          dataIndex: 'discount_price',
-          sorter: true,
-          width: 140,
-          filteredValue: currentFilters.discount_price,
-          filterDropdown: (props) => (
-            <FilterRange
-              {...props}
-              min={filters?.discount_price?.min_value}
-              max={filters?.discount_price?.max_value}
-            />
-          )
-        },
-        {
-          title: names.price,
-          dataIndex: 'price',
-          sorter: true,
-          width: 100,
-          filteredValue: currentFilters.price,
-          filterDropdown: (props) => (
-            <FilterRange
-              {...props}
-              min={filters?.price?.min_value}
-              max={filters?.price?.max_value}
-            />
-          )
-        },
-        {
-          title: names.discount,
-          dataIndex: 'discount',
-          sorter: true,
-          width: 100,
-          filteredValue: currentFilters.discount,
-          filterDropdown: (props) => (
-            <FilterRange
-              {...props}
-              min={filters?.discount?.min_value}
-              max={filters?.discount?.max_value}
-            />
-          )
-        }
-      ]);
-    }
+    setColumns([
+      {
+        title: names.wb_key_name,
+        dataIndex: 'wb_key_name',
+        filterSearch: true,
+        filteredValue: currentFilters.wb_key_name,
+        filters: filters?.wb_key_names?.map((item) => {
+          return { text: item, value: item };
+        }),
+        sorter: true,
+        width: 120
+      },
+      {
+        title: names.category,
+        dataIndex: 'category',
+        filterSearch: true,
+        filteredValue: currentFilters.category,
+        filters: filters?.categories?.map((item) => {
+          return { text: item, value: item };
+        }),
+        sorter: true,
+        width: 120
+      },
+      {
+        title: names.brand,
+        dataIndex: 'brand',
+        filterSearch: true,
+        filteredValue: currentFilters.brand,
+        filters: filters?.brands?.map((item) => {
+          return { text: item, value: item };
+        }),
+        sorter: true,
+        width: 100
+      },
+      {
+        title: names.name,
+        dataIndex: 'name',
+        width: 120
+      },
+      {
+        title: names.subject,
+        dataIndex: 'subject',
+        filterSearch: true,
+        filteredValue: currentFilters.subject,
+        filters: filters?.subjects?.map((item) => {
+          return { text: item, value: item };
+        }),
+        sorter: true,
+        width: 100
+      },
+      {
+        title: names.article_1c,
+        dataIndex: 'article_1c',
+        filterSearch: true,
+        filteredValue: currentFilters.article_1c,
+        filters: filters?.articles_1c?.map((item) => {
+          return { text: item, value: item };
+        }),
+        sorter: true,
+        width: 100
+      },
+      {
+        title: names.article_wb,
+        dataIndex: 'article_wb',
+        filterSearch: true,
+        filteredValue: currentFilters.article_wb,
+        filters: filters?.articles_wb?.map((item) => {
+          return { text: item, value: item };
+        }),
+        sorter: true,
+        width: 100,
+        render: (text) => (
+          <a
+            href={`https://www.wildberries.ru/catalog/${text}/detail.aspx`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {text}
+          </a>
+        )
+      },
+      {
+        title: names.barcode,
+        dataIndex: 'barcode',
+        filterSearch: true,
+        filteredValue: currentFilters.barcode,
+        filters: filters?.barcodes?.map((item) => {
+          return { text: item, value: item };
+        }),
+        sorter: true,
+        width: 100
+      },
+      {
+        title: names.multiplicity,
+        dataIndex: 'multiplicity',
+        filteredValue: currentFilters.multiplicity,
+        filterDropdown: (props) => (
+          <FilterRange
+            {...props}
+            min={filters?.multiplicity?.min_value}
+            max={filters?.multiplicity?.max_value}
+          />
+        ),
+        sorter: true,
+        width: 100
+      },
+      {
+        title: names.stock_fbo,
+        dataIndex: 'stock_fbo',
+        filterSearch: true,
+        filteredValue: currentFilters.stock_fbo,
+        filterDropdown: (props) => (
+          <FilterRange
+            {...props}
+            min={filters?.stock_fbo?.min_value}
+            max={filters?.stock_fbo?.max_value}
+          />
+        ),
+        sorter: true,
+        width: 100
+      },
+      {
+        title: names.stock_fbs,
+        dataIndex: 'stock_fbs',
+        filterSearch: true,
+        filteredValue: currentFilters.stock_fbs,
+        filterDropdown: (props) => (
+          <FilterRange
+            {...props}
+            min={filters?.stock_fbs?.min_value}
+            max={filters?.stock_fbs?.max_value}
+          />
+        ),
+        sorter: true,
+        width: 100
+      },
+      {
+        title: names.discount_price,
+        dataIndex: 'discount_price',
+        sorter: true,
+        width: 140,
+        filteredValue: currentFilters.discount_price,
+        filterDropdown: (props) => (
+          <FilterRange
+            {...props}
+            min={filters?.discount_price?.min_value}
+            max={filters?.discount_price?.max_value}
+          />
+        )
+      },
+      {
+        title: names.price,
+        dataIndex: 'price',
+        sorter: true,
+        width: 100,
+        filteredValue: currentFilters.price,
+        filterDropdown: (props) => (
+          <FilterRange
+            {...props}
+            min={filters?.price?.min_value}
+            max={filters?.price?.max_value}
+          />
+        )
+      },
+      {
+        title: names.discount,
+        dataIndex: 'discount',
+        sorter: true,
+        width: 100,
+        filteredValue: currentFilters.discount,
+        filterDropdown: (props) => (
+          <FilterRange
+            {...props}
+            min={filters?.discount?.min_value}
+            max={filters?.discount?.max_value}
+          />
+        )
+      }
+    ]);
   }, [filters, currentFilters]);
 
   return (
     <>
       <SelectColumns
-        loading={loading}
-        type={nameOfStoreColumns}
+        loading={loading || loadingFilters}
         columnsAll={columns}
         columnsSelect={columnsSelect}
         setColumnsSelect={setColumnsSelect}
       />
 
       <Table
-        loading={loading}
+        loading={loading || loadingFilters}
         size="small"
         bordered
         components={{

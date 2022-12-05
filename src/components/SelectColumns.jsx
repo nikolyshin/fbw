@@ -3,7 +3,6 @@ import React from 'react';
 const { Option } = Select;
 
 const SelectColumns = ({
-  type,
   columnsAll,
   columnsSelect,
   setColumnsSelect,
@@ -24,16 +23,14 @@ const SelectColumns = ({
       }}
       onChange={(value) => {
         if (value.includes('all')) {
-          localStorage.setItem(type, JSON.stringify(columnsAll));
           setColumnsSelect(columnsAll);
         } else if (value.includes('none')) {
-          localStorage.setItem(type, JSON.stringify([]));
           setColumnsSelect([]);
         } else {
           let items = columnsAll.filter((item) =>
             value.includes(item.dataIndex)
           );
-          localStorage.setItem(type, JSON.stringify(items));
+
           setColumnsSelect(items);
         }
       }}
