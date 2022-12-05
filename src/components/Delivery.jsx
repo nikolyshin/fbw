@@ -18,6 +18,7 @@ const { Option } = Select;
 
 const nameOfStoreColumns = 'deliveryColumns';
 const paginationSave = 'deliveryPagination';
+const filtersSave = 'deliveryFilters';
 
 const Delivery = ({ currentWbKey }) => {
   const [loading, setLoading] = useState(false);
@@ -31,7 +32,9 @@ const Delivery = ({ currentWbKey }) => {
     JSON.parse(localStorage.getItem(nameOfStoreColumns)) || []
   );
   const [filters, setFilters] = useState(null);
-  const [currentFilters, setCurrentFilters] = useState(null);
+  const [currentFilters, setCurrentFilters] = useState(
+    JSON.parse(localStorage.getItem(filtersSave)) || []
+  );
   const [currentOrdering, setCurrentOrdering] = useState(null);
   const [pagination, setPagination] = useState(
     JSON.parse(localStorage.getItem(paginationSave)) || {
@@ -117,6 +120,7 @@ const Delivery = ({ currentWbKey }) => {
     setCurrentOrdering(ordering);
     setCurrentFilters(filters);
     setPagination(pagination);
+    localStorage.setItem(filtersSave, JSON.stringify(filters));
     localStorage.setItem(paginationSave, JSON.stringify(pagination));
   };
 
@@ -198,6 +202,7 @@ const Delivery = ({ currentWbKey }) => {
           title: names.date,
           width: 100,
           dataIndex: 'date',
+          filteredValue: currentFilters.date,
           filterDropdown: (props) => (
             <FilterRangeDate
               {...props}
@@ -216,6 +221,7 @@ const Delivery = ({ currentWbKey }) => {
           dataIndex: 'warehouse_name',
           width: 120,
           filterSearch: true,
+          filteredValue: currentFilters.warehouse_name,
           filters: filters?.warehouse_name?.map((item) => {
             return { text: item, value: item };
           })
@@ -229,6 +235,7 @@ const Delivery = ({ currentWbKey }) => {
           title: names.date_close,
           width: 100,
           dataIndex: 'date_close',
+          filteredValue: currentFilters.date_close,
           render: (date) => {
             return (
               <p>{date ? moment(date).format(dateFormatReverse) : null}</p>
@@ -283,6 +290,7 @@ const Delivery = ({ currentWbKey }) => {
           dataIndex: 'status',
           width: 220,
           filterSearch: true,
+          filteredValue: currentFilters.status,
           filters: Object.entries(filters?.status || []).map((item) => {
             return { text: item[1], value: item[0] };
           }),
@@ -307,7 +315,7 @@ const Delivery = ({ currentWbKey }) => {
         }
       ]);
     }
-  }, [filters]);
+  }, [filters, currentFilters]);
 
   return (
     <>

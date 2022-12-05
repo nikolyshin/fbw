@@ -15,6 +15,7 @@ import ModalError from './ModalError';
 
 const nameOfStoreColumns = 'goodsColumns';
 const paginationSave = 'goodsPagination';
+const filtersSave = 'goodsFilters';
 
 const GoodList = ({ currentWbKey }) => {
   const [loading, setLoading] = useState(false);
@@ -28,7 +29,9 @@ const GoodList = ({ currentWbKey }) => {
     data: [],
     visible: false
   });
-  const [currentFilters, setCurrentFilters] = useState(null);
+  const [currentFilters, setCurrentFilters] = useState(
+    JSON.parse(localStorage.getItem(filtersSave)) || []
+  );
   const [currentOrdering, setCurrentOrdering] = useState(null);
   const [pagination, setPagination] = useState(
     JSON.parse(localStorage.getItem(paginationSave)) || {
@@ -100,6 +103,7 @@ const GoodList = ({ currentWbKey }) => {
     setCurrentOrdering(ordering);
     setCurrentFilters(filters);
     setPagination(pagination);
+    localStorage.setItem(filtersSave, JSON.stringify(filters));
     localStorage.setItem(paginationSave, JSON.stringify(pagination));
   };
 
@@ -178,6 +182,7 @@ const GoodList = ({ currentWbKey }) => {
           title: names.wb_key_name,
           dataIndex: 'wb_key_name',
           filterSearch: true,
+          filteredValue: currentFilters.wb_key_name,
           filters: filters?.wb_key_names?.map((item) => {
             return { text: item, value: item };
           }),
@@ -188,6 +193,7 @@ const GoodList = ({ currentWbKey }) => {
           title: names.category,
           dataIndex: 'category',
           filterSearch: true,
+          filteredValue: currentFilters.category,
           filters: filters?.categories?.map((item) => {
             return { text: item, value: item };
           }),
@@ -198,6 +204,7 @@ const GoodList = ({ currentWbKey }) => {
           title: names.brand,
           dataIndex: 'brand',
           filterSearch: true,
+          filteredValue: currentFilters.brand,
           filters: filters?.brands?.map((item) => {
             return { text: item, value: item };
           }),
@@ -207,17 +214,13 @@ const GoodList = ({ currentWbKey }) => {
         {
           title: names.name,
           dataIndex: 'name',
-          /* filterSearch: true,
-        filters: filters?.brands?.map((item) => {
-          return { text: item, value: item };
-        }),
-        sorter: true, */
           width: 120
         },
         {
           title: names.subject,
           dataIndex: 'subject',
           filterSearch: true,
+          filteredValue: currentFilters.subject,
           filters: filters?.subjects?.map((item) => {
             return { text: item, value: item };
           }),
@@ -228,6 +231,7 @@ const GoodList = ({ currentWbKey }) => {
           title: names.article_1c,
           dataIndex: 'article_1c',
           filterSearch: true,
+          filteredValue: currentFilters.article_1c,
           filters: filters?.articles_1c?.map((item) => {
             return { text: item, value: item };
           }),
@@ -238,6 +242,7 @@ const GoodList = ({ currentWbKey }) => {
           title: names.article_wb,
           dataIndex: 'article_wb',
           filterSearch: true,
+          filteredValue: currentFilters.article_wb,
           filters: filters?.articles_wb?.map((item) => {
             return { text: item, value: item };
           }),
@@ -257,6 +262,7 @@ const GoodList = ({ currentWbKey }) => {
           title: names.barcode,
           dataIndex: 'barcode',
           filterSearch: true,
+          filteredValue: currentFilters.barcode,
           filters: filters?.barcodes?.map((item) => {
             return { text: item, value: item };
           }),
@@ -266,6 +272,7 @@ const GoodList = ({ currentWbKey }) => {
         {
           title: names.multiplicity,
           dataIndex: 'multiplicity',
+          filteredValue: currentFilters.multiplicity,
           filterDropdown: (props) => (
             <FilterRange
               {...props}
@@ -280,6 +287,7 @@ const GoodList = ({ currentWbKey }) => {
           title: names.stock_fbo,
           dataIndex: 'stock_fbo',
           filterSearch: true,
+          filteredValue: currentFilters.stock_fbo,
           filterDropdown: (props) => (
             <FilterRange
               {...props}
@@ -294,6 +302,7 @@ const GoodList = ({ currentWbKey }) => {
           title: names.stock_fbs,
           dataIndex: 'stock_fbs',
           filterSearch: true,
+          filteredValue: currentFilters.stock_fbs,
           filterDropdown: (props) => (
             <FilterRange
               {...props}
@@ -309,6 +318,7 @@ const GoodList = ({ currentWbKey }) => {
           dataIndex: 'discount_price',
           sorter: true,
           width: 140,
+          filteredValue: currentFilters.discount_price,
           filterDropdown: (props) => (
             <FilterRange
               {...props}
@@ -322,6 +332,7 @@ const GoodList = ({ currentWbKey }) => {
           dataIndex: 'price',
           sorter: true,
           width: 100,
+          filteredValue: currentFilters.price,
           filterDropdown: (props) => (
             <FilterRange
               {...props}
@@ -335,6 +346,7 @@ const GoodList = ({ currentWbKey }) => {
           dataIndex: 'discount',
           sorter: true,
           width: 100,
+          filteredValue: currentFilters.discount,
           filterDropdown: (props) => (
             <FilterRange
               {...props}
@@ -345,7 +357,7 @@ const GoodList = ({ currentWbKey }) => {
         }
       ]);
     }
-  }, [filters]);
+  }, [filters, currentFilters]);
 
   return (
     <>

@@ -10,13 +10,16 @@ import ModalError from './ModalError';
 
 const nameOfStoreColumns = 'dashboardColumns';
 const paginationSave = 'dashboardPagination';
+const filtersSave = 'dashboardFilters';
 
 const DashBoard = ({ currentWbKey, date }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [goods, setGoods] = useState([]);
   const [filters, setFilters] = useState(null);
-  const [currentFilters, setCurrentFilters] = useState(null);
+  const [currentFilters, setCurrentFilters] = useState(
+    JSON.parse(localStorage.getItem(filtersSave)) || []
+  );
   const [currentOrdering, setCurrentOrdering] = useState(null);
   const [columns, setColumns] = useState([]);
   const [columnsSelect, setColumnsSelect] = useState([]);
@@ -67,6 +70,7 @@ const DashBoard = ({ currentWbKey, date }) => {
     setCurrentOrdering(ordering);
     setCurrentFilters(filters);
     setPagination(pagination);
+    localStorage.setItem(filtersSave, JSON.stringify(filters));
     localStorage.setItem(paginationSave, JSON.stringify(pagination));
   };
 
@@ -145,6 +149,7 @@ const DashBoard = ({ currentWbKey, date }) => {
         width: 200,
         sorter: true,
         filterSearch: true,
+        filteredValue: currentFilters.wb_key,
         fixed: 'left',
         filters: filters?.wb_keys?.map((item) => {
           return { text: item, value: item };
@@ -155,6 +160,7 @@ const DashBoard = ({ currentWbKey, date }) => {
         dataIndex: 'category',
         sorter: true,
         filterSearch: true,
+        filteredValue: currentFilters.category,
         width: 200,
         fixed: 'left',
         filters: filters?.categories?.map((item) => {
@@ -166,6 +172,7 @@ const DashBoard = ({ currentWbKey, date }) => {
         dataIndex: 'subject',
         sorter: true,
         filterSearch: true,
+        filteredValue: currentFilters.subject,
         width: 200,
         fixed: 'left',
         filters: filters?.subjects?.map((item) => {
@@ -176,6 +183,7 @@ const DashBoard = ({ currentWbKey, date }) => {
         title: names.brand,
         dataIndex: 'brand',
         width: 200,
+        filteredValue: currentFilters.brand,
         sorter: true,
         filterSearch: true,
         fixed: 'left',
@@ -199,7 +207,7 @@ const DashBoard = ({ currentWbKey, date }) => {
         };
       })
     ]);
-  }, [filters, arrDates]);
+  }, [filters, arrDates, currentFilters]);
 
   return (
     <>
