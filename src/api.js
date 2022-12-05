@@ -197,7 +197,9 @@ export const fetchGetCompaniesSurcharge = (data) => {
     .get(`/companies/surcharge`, {
       params: data
     })
-    .then((response) => response.data);
+    .then((response) => {
+      return { data: response.data, status: response.status };
+    });
 };
 
 export const fetchPatchCompaniesSurcharge = (data) => {

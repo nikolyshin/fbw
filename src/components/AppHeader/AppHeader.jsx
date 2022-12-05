@@ -107,10 +107,10 @@ const AppHeader = ({
     try {
       setLoading(true);
       const res = await fetchGetCompaniesSurcharge();
-      if (res) {
-        setSurcharge(res.value);
+      if (res.status === 200) {
+        setSurcharge(res.data.value);
       } else {
-        setError(res?.detail);
+        setError(...Object.values(res.data));
       }
     } catch (error) {
       console.log(error);
@@ -124,9 +124,9 @@ const AppHeader = ({
       setLoading(true);
       const res = await fetchPatchCompaniesSurcharge(data);
       if (res.status === 200) {
-        setSurcharge(res.value);
+        setSurcharge(res.data.value);
       } else {
-        setError(res.data?.value[0]);
+        setError(...Object.values(res.data));
       }
     } catch (error) {
       console.log(error);
